@@ -13,11 +13,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Electricity Calclator',
+      title: 'Electric Facility Calculator',
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const MyHomePage(title: 'Electricity Calclator'),
+      home: const MyHomePage(title: 'Electric Facility Calculator'),
     );
   }
 }
@@ -41,10 +41,10 @@ class _MyHomePageState extends State<MyHomePage> {
   double dResistanceVal = 0;
 
 // Textfieldのコントローラー初期化
-  var _elecOutController = TextEditingController();
-  var _cosFaiController = TextEditingController();
-  var _voltController = TextEditingController();
-  var _lenController = TextEditingController();
+  var _elecOutController = TextEditingController(text: '1500');
+  var _cosFaiController = TextEditingController(text: '80');
+  var _voltController = TextEditingController(text: '200');
+  var _lenController = TextEditingController(text: '10');
 
 // 計算実行
   _calcRun() {
@@ -188,9 +188,9 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      body: ListView(
         children: <Widget>[
+          const Text('\n計算条件\n'),
           Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
@@ -214,8 +214,9 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: TextField(
               controller: _elecOutController,
+              textAlign: TextAlign.center,
               decoration: const InputDecoration(
-                labelText: '電気容量[W]　(整数)',
+                labelText: '電気容量[W]\n(整数)',
               ),
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -224,8 +225,9 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: TextField(
               controller: _voltController,
+              textAlign: TextAlign.center,
               decoration: const InputDecoration(
-                labelText: '線間電圧[V]　(整数)',
+                labelText: '線間電圧[V]\n(整数)',
               ),
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -234,8 +236,9 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: TextField(
               controller: _cosFaiController,
+              textAlign: TextAlign.center,
               decoration: const InputDecoration(
-                labelText: '力率[%]　(整数)',
+                labelText: '力率[%]\n(整数)',
               ),
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -244,41 +247,55 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: TextField(
               controller: _lenController,
+              textAlign: TextAlign.center,
               decoration: const InputDecoration(
-                labelText: 'ケーブル長さ[m]　(整数)',
+                labelText: 'ケーブル長さ[m]\n(整数)',
               ),
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
           ),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                const Text('電流[A]'),
-                Text(currentVal),
-              ]),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                const Text('CVケーブル[mm^2]'),
-                Text(cvCableSize),
-              ]),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                const Text('電圧降下[V]'),
-                Text(voltDropVal),
-              ]),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                const Text('ケーブル電力損失[W]'),
-                Text(powLossVal),
-              ]),
+          const Text('\n\n'),
           ElevatedButton(
             onPressed: _calcRun,
             child: const Text('計算実行'),
           ),
+          const Text('\n\n計算結果\n\n'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text('電流  :  '),
+              Text(currentVal),
+              const Text('  [A]'),
+            ],
+          ),
+          const Text('\n'),
+          Table(
+            border: TableBorder.all(),
+            columnWidths: const <int, TableColumnWidth>{
+              0: FlexColumnWidth(),
+              1: FlexColumnWidth(),
+              2: FlexColumnWidth(),
+            },
+            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+            children: <TableRow>[
+              const TableRow(
+                children: <Widget>[
+                  Center(child: Text('CVケーブル[mm2]')),
+                  Center(child: Text('電圧降下[V]')),
+                  Center(child: Text('ケーブル電力損失[W]')),
+                ],
+              ),
+              TableRow(
+                children: <Widget>[
+                  Center(child: Text(cvCableSize)),
+                  Center(child: Text(voltDropVal)),
+                  Center(child: Text(powLossVal)),
+                ],
+              ),
+            ],
+          ),
+          const Text('\n\n\n'),
         ],
       ),
       drawer: Drawer(
