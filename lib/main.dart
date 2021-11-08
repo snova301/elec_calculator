@@ -70,8 +70,6 @@ class _MyHomePageState extends State<MyHomePage> {
       } else if ((ddPhaseVal == '三相') && (dCosFai <= 1)) {
         // 三相の電流計算
         dCurrentVal = dElecOut / (sqrt(3) * dVolt * dCosFai);
-        // 小数点の長さ固定して文字列に変換
-        currentVal = dCurrentVal.toStringAsFixed(1);
 
         // 昭和電線のHPよりケーブル許容電流から600V CV-3Cケーブルの太さを選定
         // 昭和電線のHPはJCS 0168-2から値を取得
@@ -121,8 +119,6 @@ class _MyHomePageState extends State<MyHomePage> {
       } else if ((ddPhaseVal == '単相') && (dCosFai <= 1)) {
         // 単相の電流計算
         dCurrentVal = dElecOut / (dVolt * dCosFai);
-        // 小数点の長さ固定して文字列に変換
-        currentVal = dCurrentVal.toStringAsFixed(1);
 
         // 昭和電線のHPよりケーブル許容電流からCV-2Cケーブルの太さを選定
         // 昭和電線のHPはJCS 0168-2から値を取得
@@ -170,6 +166,10 @@ class _MyHomePageState extends State<MyHomePage> {
           dResistanceVal = 0;
         }
       }
+
+      // 電流値小数点の長さ固定して文字列に変換
+      currentVal = dCurrentVal.toStringAsFixed(1);
+
       // 電圧降下計算
       // 今回はケーブル長が短いものとして、抵抗と電流のみで計算
       double dVoltDrop = dResistanceVal * dCurrentVal * dLen;
@@ -385,7 +385,7 @@ class MethodPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
             const Text('ここでは計算の方法を紹介します。'),
-            const Text('参考までに難易度は第3種電気主任技術者の試験レベルです。'),
+            // const Text('参考までに難易度は第3種電気主任技術者の試験レベルです。'),
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
