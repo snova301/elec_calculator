@@ -13,11 +13,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Electric Facility Calculator',
+      title: 'Electric Facility Calculator (beta)',
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const MyHomePage(title: '計算画面'),
+      home: const MyHomePage(title: '計算画面(ベータ版)'),
     );
   }
 }
@@ -413,8 +413,8 @@ class AboutPage extends StatelessWidget {
       body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            const Text('このアプリはベータ版です。実験的に運用しています。\n'),
             const Text('このアプリは作業現場での確認やすぐに電圧降下、電力損失を計算したい時に使用できます。'),
-            const Text('なお、多くの個数の計算をする時は不向きです。'),
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
