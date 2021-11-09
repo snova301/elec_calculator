@@ -71,8 +71,8 @@ class _MyHomePageState extends State<MyHomePage> {
         // 三相の電流計算
         dCurrentVal = dElecOut / (sqrt(3) * dVolt * dCosFai);
 
-        // 昭和電線のHPよりケーブル許容電流から600V CV-3Cケーブルの太さを選定
-        // 昭和電線のHPはJCS 0168-2から値を取得
+        // JCMAのHPよりケーブル許容電流から600V CV-3Cケーブルの太さを選定
+        // https://www.jcma2.jp/gijutsu/shiryou/index.html
         if (dCurrentVal <= 32.0) {
           cvCableSize = '2';
           dResistanceVal = 9.42;
@@ -120,8 +120,8 @@ class _MyHomePageState extends State<MyHomePage> {
         // 単相の電流計算
         dCurrentVal = dElecOut / (dVolt * dCosFai);
 
-        // 昭和電線のHPよりケーブル許容電流からCV-2Cケーブルの太さを選定
-        // 昭和電線のHPはJCS 0168-2から値を取得
+        // JCMAのHPよりケーブル許容電流から600V CV-3Cケーブルの太さを選定
+        // https://www.jcma2.jp/gijutsu/shiryou/index.html
         if (dCurrentVal <= 39) {
           cvCableSize = '2';
           dResistanceVal = 9.42;
@@ -188,7 +188,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: ListView(
+      body: Column(
         children: <Widget>[
           const Text('\n計算条件\n'),
           Row(
