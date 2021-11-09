@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const MyHomePage(title: 'Electric Facility Calculator'),
+      home: const MyHomePage(title: '計算画面'),
     );
   }
 }
@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
         // JCMAのHPよりケーブル許容電流から600V CV-3Cケーブルの太さを選定
         // https://www.jcma2.jp/gijutsu/shiryou/index.html
-        if (dCurrentVal <= 32.0) {
+        if (dCurrentVal <= 32) {
           cvCableSize = '2';
           dResistanceVal = 9.42;
         } else if ((dCurrentVal > 32) && (dCurrentVal <= 45)) {
@@ -120,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // 単相の電流計算
         dCurrentVal = dElecOut / (dVolt * dCosFai);
 
-        // JCMAのHPよりケーブル許容電流から600V CV-3Cケーブルの太さを選定
+        // JCMAのHPよりケーブル許容電流から600V CV-2Cケーブルの太さを選定
         // https://www.jcma2.jp/gijutsu/shiryou/index.html
         if (dCurrentVal <= 39) {
           cvCableSize = '2';
@@ -333,7 +333,7 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             ListTile(
-              title: const Text('About Apps'),
+              title: const Text('About App'),
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => const AboutPage()));
@@ -353,20 +353,20 @@ class SettingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Second Route"),
+        title: const Text("設定ページ"),
       ),
-      body: Center(
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
+      body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
             const Text('このページは設定ページです。'),
+            const Text('ケーブルの許容電流の設定を行えるようにする予定です。'),
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
               },
               child: const Text('Go back!'),
             ),
-          ])),
+          ]),
     );
   }
 }
@@ -378,21 +378,25 @@ class MethodPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Method Route"),
+        title: const Text("計算方法"),
       ),
-      body: Center(
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-            const Text('ここでは計算の方法を紹介します。'),
-            // const Text('参考までに難易度は第3種電気主任技術者の試験レベルです。'),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Go back!'),
-            ),
-          ])),
+      body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Text('ここでは計算の方法を紹介します。\n'),
+            const Text('単相の場合\n   電流I = 電力P / (電圧V * 力率cosφ)'),
+            const Text('三相の場合\n   電流I = 電力P / (√3 * 電圧V * 力率cosφ)'),
+            const Text('\nケーブルサイズは流れる電流が許容電流より小さくなるサイズの最小値を選定'),
+            const Text('\n電圧降下と電力損失は選定されたケーブルの単位長あたりの抵抗とケーブル長さから抵抗値Rを求め'),
+            const Text('   ケーブルの電圧降下ΔV = 電流I * ケーブルの抵抗値R'),
+            const Text('   ケーブルの電力損失Pl = 電流I * 電流I * ケーブルの抵抗値R'),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.pop(context);
+            //   },
+            //   child: const Text('Go back!'),
+            // ),
+          ]),
     );
   }
 }
@@ -404,12 +408,11 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("About Route"),
+        title: const Text("About App"),
       ),
-      body: Center(
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
+      body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
             const Text('このアプリは作業現場での確認やすぐに電圧降下、電力損失を計算したい時に使用できます。'),
             const Text('なお、多くの個数の計算をする時は不向きです。'),
             ElevatedButton(
@@ -418,7 +421,7 @@ class AboutPage extends StatelessWidget {
               },
               child: const Text('Go back!'),
             ),
-          ])),
+          ]),
     );
   }
 }
