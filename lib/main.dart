@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -6,8 +7,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  MobileAds.instance.initialize();
+  // if (Platform.isAndroid || Platform.isIOS) {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // MobileAds.instance.initialize();
+  // }
   runApp(const MyApp());
 }
 
@@ -61,14 +64,12 @@ class _MyHomePageState extends State<MyHomePage> {
   var _lenController = TextEditingController(text: '10');
 
 // admob
-  final BannerAd myBanner = BannerAd(
-    adUnitId: 'ca-app-pub-3940256099942544/6300978111',
-    size: AdSize.banner,
-    request: AdRequest(),
-    listener: BannerAdListener(),
-  )..load();
-  // AdWidget adWidget = AdWidget(ad: myBanner);
-//  myBanner.load();
+  // final BannerAd myBanner = BannerAd(
+  //   adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+  //   size: AdSize.banner,
+  //   request: AdRequest(),
+  //   listener: BannerAdListener(),
+  // )..load();
 
 // 計算実行
   _calcRun() {
@@ -214,27 +215,31 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: ListView(
         children: <Widget>[
-          const Text('\n計算条件\n'),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                const Text('負荷の相'),
-                DropdownButton(
-                  value: ddPhaseVal,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      ddPhaseVal = newValue!;
-                    });
-                  },
-                  items: <String>['単相', '三相']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ]),
+          const Expanded(
+            child: Text('\n計算条件\n'),
+          ),
+          Expanded(
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  const Text('負荷の相'),
+                  DropdownButton(
+                    value: ddPhaseVal,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        ddPhaseVal = newValue!;
+                      });
+                    },
+                    items: <String>['単相', '三相']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ]),
+          ),
           Expanded(
             child: TextField(
               controller: _elecOutController,
@@ -279,7 +284,9 @@ class _MyHomePageState extends State<MyHomePage> {
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
           ),
-          const Text('\n\n'),
+          const Expanded(
+            child: Text('\n\n'),
+          ),
           ElevatedButton(
             onPressed: _calcRun,
             child: const Text('計算実行'),
@@ -366,20 +373,12 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      // bottomNavigationBar: AdmobBanner(
-      //   adUnitId: AdMobService().getBannerAdUnitId(),
-      //   adSize: AdmobBannerSize(
-      //     width: MediaQuery.of(context).size.width.toInt(),
-      //     height: AdMobService().getHeight(context).toInt(),
-      //     name: 'SMART_BANNER',
+      // bottomNavigationBar: Container(
+      //   alignment: Alignment.center,
+      //   child: AdWidget(ad: myBanner),
+      //   width: myBanner.size.width.toDouble(),
+      //   height: myBanner.size.height.toDouble(),
       // ),
-      // ),
-      bottomNavigationBar: Container(
-        alignment: Alignment.center,
-        child: AdWidget(ad: myBanner),
-        width: myBanner.size.width.toDouble(),
-        height: myBanner.size.height.toDouble(),
-      ),
     );
   }
 }
