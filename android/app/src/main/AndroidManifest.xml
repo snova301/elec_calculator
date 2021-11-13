@@ -2,7 +2,7 @@
     package="com.example.elec_calculator">
    <application
         android:label="elec_calculator"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/elec_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -37,5 +37,10 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+<meta-data
+          android:name="com.google.android.gms.ads.APPLICATION_ID"
+          android:value="ca-app-pub-4492357213325569~4147492011"/>
+
     </application>
 </manifest>

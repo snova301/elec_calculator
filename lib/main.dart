@@ -3,8 +3,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   runApp(const MyApp());
 }
 
@@ -56,6 +59,16 @@ class _MyHomePageState extends State<MyHomePage> {
   var _cosFaiController = TextEditingController(text: '80');
   var _voltController = TextEditingController(text: '200');
   var _lenController = TextEditingController(text: '10');
+
+// admob
+  final BannerAd myBanner = BannerAd(
+    adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+    size: AdSize.banner,
+    request: AdRequest(),
+    listener: BannerAdListener(),
+  )..load();
+  // AdWidget adWidget = AdWidget(ad: myBanner);
+//  myBanner.load();
 
 // 計算実行
   _calcRun() {
@@ -199,7 +212,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Column(
+      body: ListView(
         children: <Widget>[
           const Text('\n計算条件\n'),
           Row(
@@ -352,6 +365,20 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
+      ),
+      // bottomNavigationBar: AdmobBanner(
+      //   adUnitId: AdMobService().getBannerAdUnitId(),
+      //   adSize: AdmobBannerSize(
+      //     width: MediaQuery.of(context).size.width.toInt(),
+      //     height: AdMobService().getHeight(context).toInt(),
+      //     name: 'SMART_BANNER',
+      // ),
+      // ),
+      bottomNavigationBar: Container(
+        alignment: Alignment.center,
+        child: AdWidget(ad: myBanner),
+        width: myBanner.size.width.toDouble(),
+        height: myBanner.size.height.toDouble(),
       ),
     );
   }

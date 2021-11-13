@@ -1,19 +1,17 @@
-# elec_calculator
+# 概要
 
-A new Flutter project.
+このアプリはケーブル設計に役に立つ計算アプリです。
 
-## Getting Started
+【主な機能】
+- 電気容量、電圧、力率、ケーブル長さを入力
+- 電流値、ケーブルのサイズ、電圧降下、ケーブルの電力損失を自動計算
+- 計算方法を記載
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+# プライバシーポリシー
+プライバシーポリシーは別ファイルを参照ください。
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# リンク
 
 web app
 https://ewacdj-3936b.web.app
