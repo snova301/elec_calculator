@@ -215,43 +215,40 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: ListView(
         children: <Widget>[
-          const Flexible(
-            child: Text('\n計算条件\n'),
-          ),
-          Flexible(
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  const Text('負荷の相'),
-                  DropdownButton(
-                    value: ddPhaseVal,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        ddPhaseVal = newValue!;
-                      });
-                    },
-                    items: <String>['単相', '三相']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ]),
-          ),
-          Flexible(
-            child: TextField(
-              controller: _elecOutController,
-              textAlign: TextAlign.center,
-              decoration: const InputDecoration(
-                labelText: '電気容量[W]\n(整数)',
-              ),
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          const Text('\n計算条件\n'),
+          Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                const Text('負荷の相'),
+                DropdownButton(
+                  value: ddPhaseVal,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      ddPhaseVal = newValue!;
+                    });
+                  },
+                  items: <String>['単相', '三相']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ]),
+          // Expanded(
+          // child: TextField(
+          TextField(
+            controller: _elecOutController,
+            textAlign: TextAlign.center,
+            decoration: const InputDecoration(
+              labelText: '電気容量[W]\n(整数)',
             ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           ),
-          Flexible(
+          // ),
+          Expanded(
             child: TextField(
               controller: _voltController,
               textAlign: TextAlign.center,
@@ -262,7 +259,7 @@ class _MyHomePageState extends State<MyHomePage> {
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
           ),
-          Flexible(
+          Expanded(
             child: TextField(
               controller: _cosFaiController,
               textAlign: TextAlign.center,
@@ -273,7 +270,7 @@ class _MyHomePageState extends State<MyHomePage> {
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
           ),
-          Flexible(
+          Expanded(
             child: TextField(
               controller: _lenController,
               textAlign: TextAlign.center,
@@ -284,7 +281,7 @@ class _MyHomePageState extends State<MyHomePage> {
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
           ),
-          const Flexible(
+          const Expanded(
             child: Text('\n\n'),
           ),
           ElevatedButton(
