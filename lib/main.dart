@@ -215,10 +215,10 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: ListView(
         children: <Widget>[
-          const Expanded(
+          const Flexible(
             child: Text('\n計算条件\n'),
           ),
-          Expanded(
+          Flexible(
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
@@ -240,7 +240,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ]),
           ),
-          Expanded(
+          Flexible(
             child: TextField(
               controller: _elecOutController,
               textAlign: TextAlign.center,
@@ -251,7 +251,7 @@ class _MyHomePageState extends State<MyHomePage> {
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
           ),
-          Expanded(
+          Flexible(
             child: TextField(
               controller: _voltController,
               textAlign: TextAlign.center,
@@ -262,7 +262,7 @@ class _MyHomePageState extends State<MyHomePage> {
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
           ),
-          Expanded(
+          Flexible(
             child: TextField(
               controller: _cosFaiController,
               textAlign: TextAlign.center,
@@ -273,7 +273,7 @@ class _MyHomePageState extends State<MyHomePage> {
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
           ),
-          Expanded(
+          Flexible(
             child: TextField(
               controller: _lenController,
               textAlign: TextAlign.center,
@@ -284,7 +284,7 @@ class _MyHomePageState extends State<MyHomePage> {
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
           ),
-          const Expanded(
+          const Flexible(
             child: Text('\n\n'),
           ),
           ElevatedButton(
