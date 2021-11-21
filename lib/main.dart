@@ -4,9 +4,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() {
+  // 広告用
   // if (Platform.isAndroid || Platform.isIOS) {
   // WidgetsFlutterBinding.ensureInitialized();
   // MobileAds.instance.initialize();
@@ -23,13 +24,13 @@ class MyApp extends StatelessWidget {
       title: 'Electric Facility Calculator (beta)',
       theme: ThemeData(
         primarySwatch: Colors.green,
-        // fontFamily: 'Noto Sans Japanese',
+        // fontFamily: "Noto Sans JP",
       ),
-      // locale: const Locale("ja", "JP"),
+      locale: const Locale("ja", "JP"),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
-        // GlobalCupertinoLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
         Locale("ja", "JP"),
@@ -236,8 +237,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   }).toList(),
                 ),
               ]),
-          // Expanded(
-          // child: TextField(
           TextField(
             controller: _elecOutController,
             textAlign: TextAlign.center,
@@ -247,42 +246,37 @@ class _MyHomePageState extends State<MyHomePage> {
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           ),
-          // ),
-          Expanded(
-            child: TextField(
-              controller: _voltController,
-              textAlign: TextAlign.center,
-              decoration: const InputDecoration(
-                labelText: '線間電圧[V]\n(整数)',
+          Column(
+            children: <Widget>[
+              TextField(
+                controller: _voltController,
+                textAlign: TextAlign.center,
+                decoration: const InputDecoration(
+                  labelText: '線間電圧[V]\n(整数)',
+                ),
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               ),
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            ),
-          ),
-          Expanded(
-            child: TextField(
-              controller: _cosFaiController,
-              textAlign: TextAlign.center,
-              decoration: const InputDecoration(
-                labelText: '力率[%]\n(整数)',
+              TextField(
+                controller: _cosFaiController,
+                textAlign: TextAlign.center,
+                decoration: const InputDecoration(
+                  labelText: '力率[%]\n(整数)',
+                ),
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               ),
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            ),
-          ),
-          Expanded(
-            child: TextField(
-              controller: _lenController,
-              textAlign: TextAlign.center,
-              decoration: const InputDecoration(
-                labelText: 'ケーブル長さ[m]\n(整数)',
+              TextField(
+                controller: _lenController,
+                textAlign: TextAlign.center,
+                decoration: const InputDecoration(
+                  labelText: 'ケーブル長さ[m]\n(整数)',
+                ),
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               ),
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            ),
-          ),
-          const Expanded(
-            child: Text('\n\n'),
+              const Text('\n\n'),
+            ],
           ),
           ElevatedButton(
             onPressed: _calcRun,
@@ -370,11 +364,28 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      // bottomNavigationBar: Container(
-      //   alignment: Alignment.center,
-      //   child: AdWidget(ad: myBanner),
+
+      // 広告用
+      // bottomNavigationBar:
+      // alignment: Alignment.center,
+      // child:
+      //AdWidget(ad: myBanner),
       //   width: myBanner.size.width.toDouble(),
       //   height: myBanner.size.height.toDouble(),
+
+      // bottomNavigationBar: BottomNavigationBar(
+      //   // onTap: onTabTapped,
+      //   // currentIndex: currentIndex,
+      //   items: [
+      //     const BottomNavigationBarItem(
+      //       icon: Icon(Icons.home),
+      //       label: 'Home',
+      //     ),
+      //     const BottomNavigationBarItem(
+      //       icon: Icon(Icons.mail),
+      //       label: 'Messages',
+      //     ),
+      //   ],
       // ),
     );
   }
@@ -420,15 +431,15 @@ class MethodPage extends StatelessWidget {
             const Text('ここでは計算の方法を紹介します。\n'),
             const Text('単相の場合\n   電流I = 電力P / (電圧V * 力率cosφ)'),
             const Text('三相の場合\n   電流I = 電力P / (√3 * 電圧V * 力率cosφ)'),
-            const Text('\nケーブルサイズは流れる電流が許容電流より小さくなるサイズの最小値を選定'),
-            const Text('\n電圧降下と電力損失は選定されたケーブルの単位長あたりの抵抗とケーブル長さから抵抗値Rを求め'),
-            const Text('   ケーブルの電圧降下ΔV = 電流I * ケーブルの抵抗値R'),
-            const Text('   ケーブルの電力損失Pl = 電流I * 電流I * ケーブルの抵抗値R'),
+            const Text('\nケーブルサイズは流れる電流が許容電流より小さくなるサイズの最小値を選定。'),
+            const Text('\n電圧降下と電力損失は選定されたケーブルの単位長あたりの抵抗とケーブル長さから抵抗値Rを求め、'),
+            const Text('   ケーブルの電圧降下ΔV\n     = 電流I * ケーブルの抵抗値R'),
+            const Text('   ケーブルの電力損失Pl\n     = 電流I * 電流I * ケーブルの抵抗値R'),
             // ElevatedButton(
             //   onPressed: () {
             //     Navigator.pop(context);
             //   },
-            //   child: const Text('Go back!'),
+            //   child: const Text('戻る'),
             // ),
           ]),
     );
