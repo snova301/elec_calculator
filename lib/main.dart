@@ -336,15 +336,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.pop(context);
               },
             ),
-            ListTile(
-              title: const Text('設定'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const SettingPage()));
-              },
-            ),
+            // ListTile(
+            //   title: const Text('設定'),
+            //   onTap: () {
+            //     Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //             builder: (context) => const SettingPage()));
+            //   },
+            // ),
             ListTile(
               title: const Text('計算方法'),
               onTap: () {
@@ -464,7 +464,7 @@ class AboutPage extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('Go back!'),
+              child: const Text('戻る'),
             ),
           ]),
     );
