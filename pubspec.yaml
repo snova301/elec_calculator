@@ -31,7 +31,7 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  google_mobile_ads: ^0.13.6
+  # google_mobile_ads: ^0.13.6
   flutter_launcher_icons: "^0.8.0"
 
 flutter_icons:

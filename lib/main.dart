@@ -7,11 +7,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 // import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() {
-  // 広告用
-  // if (Platform.isAndroid || Platform.isIOS) {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // MobileAds.instance.initialize();
-  // }
   runApp(const MyApp());
 }
 
@@ -26,6 +21,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.green,
         // fontFamily: "Noto Sans JP",
       ),
+
+      // ダークモード対応
+      // darkTheme: ThemeData.dark(),
+      // themeMode: ThemeMode.system,
+
+      // 中華系フォント対策
       locale: const Locale("ja", "JP"),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
@@ -35,6 +36,8 @@ class MyApp extends StatelessWidget {
       supportedLocales: const [
         Locale("ja", "JP"),
       ],
+
+      // ページタイトル
       home: const MyHomePage(title: '計算画面(ベータ版)'),
     );
   }
@@ -55,25 +58,36 @@ class _MyHomePageState extends State<MyHomePage> {
   String cvCableSize = '0';
   String voltDropVal = '0';
   String powLossVal = '0';
+  String calcPhaseVal = '単相';
+  String calcAppaPowVal = '0';
+  String calcActPowVal = '0';
+  String calcReactPowVal = '0';
+  String calcSinFaiVal = '0';
   double dCurrentVal = 0;
-  double dResistanceVal = 0;
+  double dRVal = 0;
+  double dXVal = 0;
+  double dKVal = 1;
+  double dCalcAppaPowVal = 0;
 
-// Textfieldのコントローラー初期化
+  // Textfieldのコントローラー初期化
   var _elecOutController = TextEditingController(text: '1500');
   var _cosFaiController = TextEditingController(text: '80');
   var _voltController = TextEditingController(text: '200');
   var _lenController = TextEditingController(text: '10');
+  var _calcVoltController = TextEditingController(text: '100');
+  var _calcCurController = TextEditingController(text: '10');
+  var _calcCosFaiController = TextEditingController(text: '80');
 
 // admob
   // final BannerAd myBanner = BannerAd(
-  //   adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+  //   adUnitId: '',
   //   size: AdSize.banner,
   //   request: AdRequest(),
   //   listener: BannerAdListener(),
   // )..load();
 
-// 計算実行
-  _calcRun() {
+  // ケーブル設計の計算実行
+  void _designCalcRun() {
     setState(() {
       // Textfieldのテキスト取り出し
       String strElecOut = _elecOutController.text;
@@ -87,306 +101,492 @@ class _MyHomePageState extends State<MyHomePage> {
       double dVolt = double.parse(strVolt);
       double dLen = double.parse(strLen) / 1000;
 
+      // cosφからsinφを算出
+      double dSinFai = sqrt(1 - pow(dCosFai, 2));
+
       // 相ごとの計算
-      if (dCosFai > 1) {
+      if ((dCosFai > 1) || (dCosFai < 0)) {
         currentVal = 'Error';
         cvCableSize = 'Error';
         voltDropVal = 'Error';
         powLossVal = 'Error';
-      } else if ((ddPhaseVal == '三相') && (dCosFai <= 1)) {
-        // 三相の電流計算
-        dCurrentVal = dElecOut / (sqrt(3) * dVolt * dCosFai);
-
-        // JCMAのHPよりケーブル許容電流から600V CV-3Cケーブルの太さを選定
-        // https://www.jcma2.jp/gijutsu/shiryou/index.html
-        if (dCurrentVal <= 32) {
-          cvCableSize = '2';
-          dResistanceVal = 9.42;
-        } else if ((dCurrentVal > 32) && (dCurrentVal <= 45)) {
-          cvCableSize = '3.5';
-          dResistanceVal = 5.3;
-        } else if ((dCurrentVal > 45) && (dCurrentVal <= 58)) {
-          cvCableSize = '5.5';
-          dResistanceVal = 3.4;
-        } else if ((dCurrentVal > 58) && (dCurrentVal <= 71)) {
-          cvCableSize = '8';
-          dResistanceVal = 2.36;
-        } else if ((dCurrentVal > 71) && (dCurrentVal <= 97)) {
-          cvCableSize = '14';
-          dResistanceVal = 1.34;
-        } else if ((dCurrentVal > 97) && (dCurrentVal <= 125)) {
-          cvCableSize = '22';
-          dResistanceVal = 0.849;
-        } else if ((dCurrentVal > 125) && (dCurrentVal <= 170)) {
-          cvCableSize = '38';
-          dResistanceVal = 0.491;
-        } else if ((dCurrentVal > 170) && (dCurrentVal <= 215)) {
-          cvCableSize = '60';
-          dResistanceVal = 0.311;
-        } else if ((dCurrentVal > 215) && (dCurrentVal <= 285)) {
-          cvCableSize = '100';
-          dResistanceVal = 0.187;
-        } else if ((dCurrentVal > 285) && (dCurrentVal <= 360)) {
-          cvCableSize = '150';
-          dResistanceVal = 0.124;
-        } else if ((dCurrentVal > 360) && (dCurrentVal <= 420)) {
-          cvCableSize = '200';
-          dResistanceVal = 0.093;
-        } else if ((dCurrentVal > 420) && (dCurrentVal <= 470)) {
-          cvCableSize = '250';
-          dResistanceVal = 0.075;
-        } else if ((dCurrentVal > 470) && (dCurrentVal <= 540)) {
-          cvCableSize = '325';
-          dResistanceVal = 0.058;
-        } else if (dCurrentVal > 540) {
-          cvCableSize = '要相談';
-          dResistanceVal = 0;
-        }
       } else if ((ddPhaseVal == '単相') && (dCosFai <= 1)) {
-        // 単相の電流計算
+        // 単相の電流計算と電圧降下計算用係数
         dCurrentVal = dElecOut / (dVolt * dCosFai);
+        dKVal = 1;
 
-        // JCMAのHPよりケーブル許容電流から600V CV-2Cケーブルの太さを選定
-        // https://www.jcma2.jp/gijutsu/shiryou/index.html
+        // ケーブル許容電流から600V CV-2Cケーブルの太さを選定
         if (dCurrentVal <= 39) {
           cvCableSize = '2';
-          dResistanceVal = 9.42;
         } else if ((dCurrentVal > 39) && (dCurrentVal <= 54)) {
           cvCableSize = '3.5';
-          dResistanceVal = 5.3;
         } else if ((dCurrentVal > 54) && (dCurrentVal <= 69)) {
           cvCableSize = '5.5';
-          dResistanceVal = 3.4;
         } else if ((dCurrentVal > 69) && (dCurrentVal <= 85)) {
           cvCableSize = '8';
-          dResistanceVal = 3.4;
         } else if ((dCurrentVal > 85) && (dCurrentVal <= 115)) {
           cvCableSize = '14';
-          dResistanceVal = 1.34;
         } else if ((dCurrentVal > 115) && (dCurrentVal <= 150)) {
           cvCableSize = '22';
-          dResistanceVal = 0.849;
         } else if ((dCurrentVal > 150) && (dCurrentVal <= 205)) {
           cvCableSize = '38';
-          dResistanceVal = 0.491;
         } else if ((dCurrentVal > 205) && (dCurrentVal <= 260)) {
           cvCableSize = '60';
-          dResistanceVal = 0.311;
         } else if ((dCurrentVal > 260) && (dCurrentVal <= 345)) {
           cvCableSize = '100';
-          dResistanceVal = 0.187;
         } else if ((dCurrentVal > 345) && (dCurrentVal <= 435)) {
           cvCableSize = '150';
-          dResistanceVal = 0.124;
         } else if ((dCurrentVal > 435) && (dCurrentVal <= 505)) {
           cvCableSize = '200';
-          dResistanceVal = 0.093;
         } else if ((dCurrentVal > 505) && (dCurrentVal <= 570)) {
           cvCableSize = '250';
-          dResistanceVal = 0.075;
         } else if ((dCurrentVal > 570) && (dCurrentVal <= 650)) {
           cvCableSize = '325';
-          dResistanceVal = 0.058;
         } else if (dCurrentVal > 650) {
           cvCableSize = '要相談';
-          dResistanceVal = 0;
         }
+      } else if ((ddPhaseVal == '三相') && (dCosFai <= 1)) {
+        // 三相の電流計算と電圧降下計算用係数
+        dCurrentVal = dElecOut / (sqrt(3) * dVolt * dCosFai);
+        dKVal = sqrt(3);
+
+        // ケーブル許容電流から600V CV-3Cケーブルの太さを選定
+        if (dCurrentVal <= 32) {
+          cvCableSize = '2';
+        } else if ((dCurrentVal > 32) && (dCurrentVal <= 45)) {
+          cvCableSize = '3.5';
+        } else if ((dCurrentVal > 45) && (dCurrentVal <= 58)) {
+          cvCableSize = '5.5';
+        } else if ((dCurrentVal > 58) && (dCurrentVal <= 71)) {
+          cvCableSize = '8';
+        } else if ((dCurrentVal > 71) && (dCurrentVal <= 97)) {
+          cvCableSize = '14';
+        } else if ((dCurrentVal > 97) && (dCurrentVal <= 125)) {
+          cvCableSize = '22';
+        } else if ((dCurrentVal > 125) && (dCurrentVal <= 170)) {
+          cvCableSize = '38';
+        } else if ((dCurrentVal > 170) && (dCurrentVal <= 215)) {
+          cvCableSize = '60';
+        } else if ((dCurrentVal > 215) && (dCurrentVal <= 285)) {
+          cvCableSize = '100';
+        } else if ((dCurrentVal > 285) && (dCurrentVal <= 360)) {
+          cvCableSize = '150';
+        } else if ((dCurrentVal > 360) && (dCurrentVal <= 420)) {
+          cvCableSize = '200';
+        } else if ((dCurrentVal > 420) && (dCurrentVal <= 470)) {
+          cvCableSize = '250';
+        } else if ((dCurrentVal > 470) && (dCurrentVal <= 540)) {
+          cvCableSize = '325';
+        } else if (dCurrentVal > 540) {
+          cvCableSize = '要相談';
+        }
+      }
+
+      // CV-2Cと3Cはインピーダンスが同じだと仮定し
+      if (cvCableSize == '2') {
+        dRVal = 9.42;
+        dXVal = 0.119;
+      } else if (cvCableSize == '3.5') {
+        dRVal = 5.3;
+        dXVal = 0.110;
+      } else if (cvCableSize == '5.5') {
+        dRVal = 3.4;
+        dXVal = 0.110;
+      } else if (cvCableSize == '8') {
+        dRVal = 2.36;
+        dXVal = 0.104;
+      } else if (cvCableSize == '14') {
+        dRVal = 1.34;
+        dXVal = 0.0994;
+      } else if (cvCableSize == '22') {
+        dRVal = 0.849;
+        dXVal = 0.0984;
+      } else if (cvCableSize == '38') {
+        dRVal = 0.491;
+        dXVal = 0.0925;
+      } else if (cvCableSize == '60') {
+        dRVal = 0.311;
+        dXVal = 0.0922;
+      } else if (cvCableSize == '100') {
+        dRVal = 0.187;
+        dXVal = 0.0928;
+      } else if (cvCableSize == '150') {
+        dRVal = 0.124;
+        dXVal = 0.0893;
+      } else if (cvCableSize == '200') {
+        dRVal = 0.093;
+        dXVal = 0.0906;
+      } else if (cvCableSize == '250') {
+        dRVal = 0.075;
+        dXVal = 0.0887;
+      } else if (cvCableSize == '325') {
+        dRVal = 0.058;
+        dXVal = 0.0867;
+      } else if (cvCableSize == '要相談') {
+        dRVal = 0;
+        dXVal = 0;
       }
 
       // 電流値小数点の長さ固定して文字列に変換
       currentVal = dCurrentVal.toStringAsFixed(1);
 
-      // 電圧降下計算
-      // 今回はケーブル長が短いものとして、抵抗と電流のみで計算
-      double dVoltDrop = dResistanceVal * dCurrentVal * dLen;
+      // ケーブル電圧降下計算
+      double dVoltDrop =
+          dKVal * dCurrentVal * dLen * (dRVal * dCosFai + dXVal * dSinFai);
       voltDropVal = dVoltDrop.toStringAsFixed(1);
 
-      // 電力損失計算
-      // 今回はケーブル長が短いものとして、抵抗と電流のみで計算
-      double dPowLoss = dResistanceVal * dResistanceVal * dCurrentVal * dLen;
+      // ケーブル電力損失計算
+      double dPowLoss = dRVal * dRVal * dCurrentVal * dLen;
       powLossVal = dPowLoss.toStringAsFixed(1);
+    });
+  }
+
+  void _elecPowCalc() {
+    setState(() {
+      // Textfieldのテキスト取り出し
+      String strCalcVolt = _calcVoltController.text;
+      String strCalcCur = _calcCurController.text;
+      String strCalcCosFai = _calcCosFaiController.text;
+
+      // string2double
+      double dCalcVolt = double.parse(strCalcVolt);
+      double dCalcCur = double.parse(strCalcCur);
+      double dCalcCosFai = double.parse(strCalcCosFai) / 100;
+
+      // cosφからsinφを算出
+      double dCalcSinFai = sqrt(1 - pow(dCalcCosFai, 2));
+
+      if (calcPhaseVal == '単相') {
+        // 単相電力計算
+        dCalcAppaPowVal = dCalcVolt * dCalcCur;
+      } else if (calcPhaseVal == '三相') {
+        // 3相電力計算
+        dCalcAppaPowVal = sqrt(3) * dCalcVolt * dCalcCur;
+      }
+      double dCalcActPowVal = dCalcAppaPowVal * dCalcCosFai;
+      double dCalcReactPowVal = dCalcAppaPowVal * dCalcSinFai;
+
+      // double2string
+      calcAppaPowVal = (dCalcAppaPowVal / 1000).toStringAsFixed(2);
+      calcActPowVal = (dCalcActPowVal / 1000).toStringAsFixed(2);
+      calcReactPowVal = (dCalcReactPowVal / 1000).toStringAsFixed(2);
+      calcSinFaiVal = (dCalcSinFai * 100).toStringAsFixed(1);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: ListView(
-        children: <Widget>[
-          const Text('\n計算条件\n'),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.title),
+          bottom: const TabBar(
+            tabs: <Widget>[
+              Tab(
+                icon: Icon(Icons.design_services),
+                text: 'ケーブル設計',
+              ),
+              Tab(
+                icon: Icon(Icons.calculate),
+                text: '電力計算',
+              ),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: <Widget>[
+            ListView(
               children: <Widget>[
-                const Text('負荷の相'),
-                DropdownButton(
-                  value: ddPhaseVal,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      ddPhaseVal = newValue!;
-                    });
-                  },
-                  items: <String>['単相', '三相']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+                const Text(
+                  '\n計算条件\n',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-              ]),
-          TextField(
-            controller: _elecOutController,
-            textAlign: TextAlign.center,
-            decoration: const InputDecoration(
-              labelText: '電気容量[W]\n(整数)',
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          ),
-          Column(
-            children: <Widget>[
-              TextField(
-                controller: _voltController,
-                textAlign: TextAlign.center,
-                decoration: const InputDecoration(
-                  labelText: '線間電圧[V]\n(整数)',
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    const Text('負荷の相'),
+                    DropdownButton(
+                      value: ddPhaseVal,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          ddPhaseVal = newValue!;
+                        });
+                      },
+                      items: <String>['単相', '三相']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 ),
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              ),
-              TextField(
-                controller: _cosFaiController,
-                textAlign: TextAlign.center,
-                decoration: const InputDecoration(
-                  labelText: '力率[%]\n(整数)',
+                TextField(
+                  controller: _elecOutController,
+                  textAlign: TextAlign.center,
+                  decoration: const InputDecoration(
+                    labelText: '電気容量[W]\n(整数)',
+                  ),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 ),
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              ),
-              TextField(
-                controller: _lenController,
-                textAlign: TextAlign.center,
-                decoration: const InputDecoration(
-                  labelText: 'ケーブル長さ[m]\n(整数)',
+                Column(
+                  children: <Widget>[
+                    TextField(
+                      controller: _voltController,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(
+                        labelText: '線間電圧[V]\n(整数)',
+                      ),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    ),
+                    TextField(
+                      controller: _cosFaiController,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(
+                        labelText: '力率[%]\n(整数)',
+                      ),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    ),
+                    TextField(
+                      controller: _lenController,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(
+                        labelText: 'ケーブル長さ[m]\n(整数)',
+                      ),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    ),
+                    const Text('\n\n'),
+                  ],
                 ),
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              ),
-              const Text('\n\n'),
-            ],
-          ),
-          ElevatedButton(
-            onPressed: _calcRun,
-            child: const Text('計算実行'),
-          ),
-          const Text('\n\n計算結果\n\n'),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text('電流  :  '),
-              Text(currentVal),
-              const Text('  [A]'),
-            ],
-          ),
-          const Text('\n'),
-          Table(
-            border: TableBorder.all(),
-            columnWidths: const <int, TableColumnWidth>{
-              0: FlexColumnWidth(),
-              1: FlexColumnWidth(),
-              2: FlexColumnWidth(),
-            },
-            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-            children: <TableRow>[
-              const TableRow(
-                children: <Widget>[
-                  Center(child: Text('CVケーブル[mm2]')),
-                  Center(child: Text('電圧降下[V]')),
-                  Center(child: Text('ケーブル電力損失[W]')),
-                ],
-              ),
-              TableRow(
-                children: <Widget>[
-                  Center(child: Text(cvCableSize)),
-                  Center(child: Text(voltDropVal)),
-                  Center(child: Text(powLossVal)),
-                ],
-              ),
-            ],
-          ),
-          const Text('\n\n\n'),
-        ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.green,
-              ),
-              child: Text('メニュー'),
+                ElevatedButton(
+                  onPressed: _designCalcRun,
+                  child: const Text('計算実行'),
+                ),
+                const Text(
+                  '\n\n計算結果\n\n',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const Text('電流  :  '),
+                    Text(currentVal),
+                    const Text('  [A]'),
+                  ],
+                ),
+                const Text('\n'),
+                DataTable(
+                  columns: const <DataColumn>[
+                    DataColumn(
+                      label: Text(
+                        'CVケーブル\n[mm2]',
+                        style: TextStyle(fontStyle: FontStyle.italic),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        '電圧降下\n[V]',
+                        style: TextStyle(fontStyle: FontStyle.italic),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        '電力損失\n[W]',
+                        style: TextStyle(fontStyle: FontStyle.italic),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                  rows: <DataRow>[
+                    DataRow(
+                      cells: <DataCell>[
+                        DataCell(Text(cvCableSize)),
+                        DataCell(Text(voltDropVal)),
+                        DataCell(Text(powLossVal)),
+                      ],
+                    ),
+                  ],
+                ),
+                const Text('\n\n\n'),
+              ],
             ),
-            ListTile(
-              title: const Text('計算画面'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            // ListTile(
-            //   title: const Text('設定'),
-            //   onTap: () {
-            //     Navigator.push(
-            //         context,
-            //         MaterialPageRoute(
-            //             builder: (context) => const SettingPage()));
-            //   },
-            // ),
-            ListTile(
-              title: const Text('計算方法'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const MethodPage()));
-              },
-            ),
-            ListTile(
-              title: const Text('About App'),
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const AboutPage()));
-              },
+            ListView(
+              children: <Widget>[
+                const Text(
+                  '\n計算条件\n',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    const Text('負荷の相'),
+                    DropdownButton(
+                      value: calcPhaseVal,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          calcPhaseVal = newValue!;
+                        });
+                      },
+                      items: <String>['単相', '三相']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: <Widget>[
+                    TextField(
+                      controller: _calcVoltController,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(
+                        labelText: '線間電圧[V]\n(整数)',
+                      ),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    ),
+                    TextField(
+                      controller: _calcCurController,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(
+                        labelText: '電流[A]\n(整数)',
+                      ),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    ),
+                    TextField(
+                      controller: _calcCosFaiController,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(
+                        labelText: '力率[%]\n(整数)',
+                      ),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    ),
+                    const Text('\n\n'),
+                  ],
+                ),
+                ElevatedButton(
+                  onPressed: _elecPowCalc,
+                  child: const Text('計算実行'),
+                ),
+                const Text(
+                  '\n\n計算結果\n\n',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+
+                // admob
+                // BannerAd(
+                //   adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+                //   size: AdSize.banner,
+                //   request: AdRequest(),
+                //   listener: BannerAdListener(),
+                // );
+
+                DataTable(
+                  columns: const <DataColumn>[
+                    DataColumn(
+                      label: Text(
+                        '皮相電力\n[kW]',
+                        style: TextStyle(fontStyle: FontStyle.italic),
+                        // textAlign: TextAlign.center,
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        '有効電力\n[kW]',
+                        style: TextStyle(fontStyle: FontStyle.italic),
+                        // textAlign: TextAlign.center,
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        '無効電力\n[kW]',
+                        style: TextStyle(fontStyle: FontStyle.italic),
+                        // textAlign: TextAlign.center,
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        'sinφ\n[%]',
+                        style: TextStyle(fontStyle: FontStyle.italic),
+                        // textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                  rows: <DataRow>[
+                    DataRow(
+                      cells: <DataCell>[
+                        DataCell(Text(calcAppaPowVal)),
+                        DataCell(Text(calcActPowVal)),
+                        DataCell(Text(calcReactPowVal)),
+                        DataCell(Text(calcSinFaiVal)),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                ),
+                child: Text('メニュー'),
+              ),
+              ListTile(
+                title: const Text('計算画面'),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              // ListTile(
+              //   title: const Text('設定'),
+              //   onTap: () {
+              //     Navigator.push(
+              //         context,
+              //         MaterialPageRoute(
+              //             builder: (context) => const SettingPage()));
+              //   },
+              // ),
+              ListTile(
+                title: const Text('計算方法'),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const MethodPage()));
+                },
+              ),
+              ListTile(
+                title: const Text('About App'),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AboutPage()));
+                },
+              ),
+            ],
+          ),
+        ),
       ),
-
-      // 広告用
-      // bottomNavigationBar:
-      // alignment: Alignment.center,
-      // child:
-      //AdWidget(ad: myBanner),
-      //   width: myBanner.size.width.toDouble(),
-      //   height: myBanner.size.height.toDouble(),
-
-      // bottomNavigationBar: BottomNavigationBar(
-      //   // onTap: onTabTapped,
-      //   // currentIndex: currentIndex,
-      //   items: [
-      //     const BottomNavigationBarItem(
-      //       icon: Icon(Icons.home),
-      //       label: 'Home',
-      //     ),
-      //     const BottomNavigationBarItem(
-      //       icon: Icon(Icons.mail),
-      //       label: 'Messages',
-      //     ),
-      //   ],
-      // ),
     );
   }
 }
@@ -435,6 +635,8 @@ class MethodPage extends StatelessWidget {
             const Text('\n電圧降下と電力損失は選定されたケーブルの単位長あたりの抵抗とケーブル長さから抵抗値Rを求め、'),
             const Text('   ケーブルの電圧降下ΔV\n     = 電流I * ケーブルの抵抗値R'),
             const Text('   ケーブルの電力損失Pl\n     = 電流I * 電流I * ケーブルの抵抗値R'),
+            const Text('参考 : JCMA, 低圧ケーブルの許容電流表 (1989)'),
+            // URL : https://www.jcma2.jp/gijutsu/shiryou/index.html
             // ElevatedButton(
             //   onPressed: () {
             //     Navigator.pop(context);
