@@ -1,10 +1,11 @@
+// import 'dart:html';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-// import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';　// 広告用
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Electric Facility Calculator (beta)',
+      title: 'Electric Facility Calculator',
       theme: ThemeData(
         primarySwatch: Colors.green,
         // fontFamily: "Noto Sans JP",
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
       ],
 
       // ページタイトル
-      home: const MyHomePage(title: '計算画面(ベータ版)'),
+      home: const MyHomePage(title: '計算画面'),
     );
   }
 }
@@ -66,7 +67,8 @@ class _MyHomePageState extends State<MyHomePage> {
   double dCurrentVal = 0;
   double dRVal = 0;
   double dXVal = 0;
-  double dKVal = 1;
+  double dK1Val = 1; // 電圧降下計算の係数
+  double dK2Val = 2; // 電力損失計算の係数
   double dCalcAppaPowVal = 0;
 
   // Textfieldのコントローラー初期化
@@ -78,12 +80,12 @@ class _MyHomePageState extends State<MyHomePage> {
   var _calcCurController = TextEditingController(text: '10');
   var _calcCosFaiController = TextEditingController(text: '80');
 
-// admob
-  // final BannerAd myBanner = BannerAd(
-  //   adUnitId: '',
+  // admobの関数定義
+  // BannerAd adMyBanner = BannerAd(
+  //   adUnitId: 'ca-app-pub-3940256099942544/6300978111', // テスト用
   //   size: AdSize.banner,
-  //   request: AdRequest(),
-  //   listener: BannerAdListener(),
+  //   request: const AdRequest(),
+  //   listener: const BannerAdListener(),
   // )..load();
 
   // ケーブル設計の計算実行
@@ -111,9 +113,10 @@ class _MyHomePageState extends State<MyHomePage> {
         voltDropVal = 'Error';
         powLossVal = 'Error';
       } else if ((ddPhaseVal == '単相') && (dCosFai <= 1)) {
-        // 単相の電流計算と電圧降下計算用係数
+        // 単相の電流計算と計算係数設定
         dCurrentVal = dElecOut / (dVolt * dCosFai);
-        dKVal = 1;
+        dK1Val = 1;
+        dK2Val = 2;
 
         // ケーブル許容電流から600V CV-2Cケーブルの太さを選定
         if (dCurrentVal <= 39) {
@@ -146,9 +149,10 @@ class _MyHomePageState extends State<MyHomePage> {
           cvCableSize = '要相談';
         }
       } else if ((ddPhaseVal == '三相') && (dCosFai <= 1)) {
-        // 三相の電流計算と電圧降下計算用係数
+        // 三相の電流計算と計算係数設定
         dCurrentVal = dElecOut / (sqrt(3) * dVolt * dCosFai);
-        dKVal = sqrt(3);
+        dK1Val = sqrt(3);
+        dK2Val = 3;
 
         // ケーブル許容電流から600V CV-3Cケーブルの太さを選定
         if (dCurrentVal <= 32) {
@@ -232,11 +236,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
       // ケーブル電圧降下計算
       double dVoltDrop =
-          dKVal * dCurrentVal * dLen * (dRVal * dCosFai + dXVal * dSinFai);
+          dK1Val * dCurrentVal * dLen * (dRVal * dCosFai + dXVal * dSinFai);
       voltDropVal = dVoltDrop.toStringAsFixed(1);
 
       // ケーブル電力損失計算
-      double dPowLoss = dRVal * dRVal * dCurrentVal * dLen;
+      double dPowLoss = dK2Val * dRVal * dCurrentVal * dCurrentVal * dLen;
       powLossVal = dPowLoss.toStringAsFixed(1);
     });
   }
@@ -297,9 +301,10 @@ class _MyHomePageState extends State<MyHomePage> {
         body: TabBarView(
           children: <Widget>[
             ListView(
+              padding: const EdgeInsets.all(10),
               children: <Widget>[
                 const Text(
-                  '\n計算条件\n',
+                  '計算条件\n',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Row(
@@ -327,7 +332,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   controller: _elecOutController,
                   textAlign: TextAlign.center,
                   decoration: const InputDecoration(
-                    labelText: '電気容量[W]\n(整数)',
+                    labelText: '電気容量(有効電力)[W]\n(整数)',
                   ),
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -372,56 +377,60 @@ class _MyHomePageState extends State<MyHomePage> {
                   '\n\n計算結果\n\n',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Text('電流  :  '),
-                    Text(currentVal),
-                    const Text('  [A]'),
-                  ],
-                ),
                 const Text('\n'),
-                DataTable(
-                  columns: const <DataColumn>[
-                    DataColumn(
-                      label: Text(
-                        'CVケーブル\n[mm2]',
-                        style: TextStyle(fontStyle: FontStyle.italic),
-                        textAlign: TextAlign.center,
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columns: const <DataColumn>[
+                      DataColumn(
+                        label: Text(
+                          '電流\n[A]',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        '電圧降下\n[V]',
-                        style: TextStyle(fontStyle: FontStyle.italic),
-                        textAlign: TextAlign.center,
+                      DataColumn(
+                        label: Text(
+                          'CVケーブル\n[mm2]',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        '電力損失\n[W]',
-                        style: TextStyle(fontStyle: FontStyle.italic),
-                        textAlign: TextAlign.center,
+                      DataColumn(
+                        label: Text(
+                          '電圧降下\n[V]',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                  ],
-                  rows: <DataRow>[
-                    DataRow(
-                      cells: <DataCell>[
-                        DataCell(Text(cvCableSize)),
-                        DataCell(Text(voltDropVal)),
-                        DataCell(Text(powLossVal)),
-                      ],
-                    ),
-                  ],
+                      DataColumn(
+                        label: Text(
+                          '電力損失\n[W]',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                    rows: <DataRow>[
+                      DataRow(
+                        cells: <DataCell>[
+                          DataCell(Text(currentVal)),
+                          DataCell(Text(cvCableSize)),
+                          DataCell(Text(voltDropVal)),
+                          DataCell(Text(powLossVal)),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
                 const Text('\n\n\n'),
               ],
             ),
             ListView(
+              padding: const EdgeInsets.all(10),
               children: <Widget>[
                 const Text(
-                  '\n計算条件\n',
+                  '計算条件\n',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Row(
@@ -485,56 +494,50 @@ class _MyHomePageState extends State<MyHomePage> {
                   '\n\n計算結果\n\n',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-
-                // admob
-                // BannerAd(
-                //   adUnitId: 'ca-app-pub-3940256099942544/6300978111',
-                //   size: AdSize.banner,
-                //   request: AdRequest(),
-                //   listener: BannerAdListener(),
-                // );
-
-                DataTable(
-                  columns: const <DataColumn>[
-                    DataColumn(
-                      label: Text(
-                        '皮相電力\n[kW]',
-                        style: TextStyle(fontStyle: FontStyle.italic),
-                        // textAlign: TextAlign.center,
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columns: const <DataColumn>[
+                      DataColumn(
+                        label: Text(
+                          '皮相電力\n[kW]',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                          // textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        '有効電力\n[kW]',
-                        style: TextStyle(fontStyle: FontStyle.italic),
-                        // textAlign: TextAlign.center,
+                      DataColumn(
+                        label: Text(
+                          '有効電力\n[kW]',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                          // textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        '無効電力\n[kW]',
-                        style: TextStyle(fontStyle: FontStyle.italic),
-                        // textAlign: TextAlign.center,
+                      DataColumn(
+                        label: Text(
+                          '無効電力\n[kW]',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                          // textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                    DataColumn(
-                      label: Text(
-                        'sinφ\n[%]',
-                        style: TextStyle(fontStyle: FontStyle.italic),
-                        // textAlign: TextAlign.center,
+                      DataColumn(
+                        label: Text(
+                          'sinφ\n[%]',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                          // textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                  ],
-                  rows: <DataRow>[
-                    DataRow(
-                      cells: <DataCell>[
-                        DataCell(Text(calcAppaPowVal)),
-                        DataCell(Text(calcActPowVal)),
-                        DataCell(Text(calcReactPowVal)),
-                        DataCell(Text(calcSinFaiVal)),
-                      ],
-                    ),
-                  ],
+                    ],
+                    rows: <DataRow>[
+                      DataRow(
+                        cells: <DataCell>[
+                          DataCell(Text(calcAppaPowVal)),
+                          DataCell(Text(calcActPowVal)),
+                          DataCell(Text(calcReactPowVal)),
+                          DataCell(Text(calcSinFaiVal)),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -556,15 +559,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   Navigator.pop(context);
                 },
               ),
-              // ListTile(
-              //   title: const Text('設定'),
-              //   onTap: () {
-              //     Navigator.push(
-              //         context,
-              //         MaterialPageRoute(
-              //             builder: (context) => const SettingPage()));
-              //   },
-              // ),
               ListTile(
                 title: const Text('計算方法'),
                 onTap: () {
@@ -575,7 +569,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
               ListTile(
-                title: const Text('About App'),
+                title: const Text('About'),
                 onTap: () {
                   Navigator.push(
                       context,
@@ -586,32 +580,14 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
+        // 広告用のbottomnavigator
+        // bottomNavigationBar: Container(
+        //   alignment: Alignment.center,
+        //   child: AdWidget(ad: adMyBanner),
+        //   width: adMyBanner.size.width.toDouble(),
+        //   height: adMyBanner.size.height.toDouble(),
+        // ),
       ),
-    );
-  }
-}
-
-class SettingPage extends StatelessWidget {
-  const SettingPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("設定ページ"),
-      ),
-      body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const Text('このページは設定ページです。'),
-            const Text('ケーブルの許容電流の設定を行えるようにする予定です。'),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Go back!'),
-            ),
-          ]),
     );
   }
 }
@@ -625,25 +601,56 @@ class MethodPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text("計算方法"),
       ),
-      body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const Text('ここでは計算の方法を紹介します。\n'),
-            const Text('単相の場合\n   電流I = 電力P / (電圧V * 力率cosφ)'),
-            const Text('三相の場合\n   電流I = 電力P / (√3 * 電圧V * 力率cosφ)'),
-            const Text('\nケーブルサイズは流れる電流が許容電流より小さくなるサイズの最小値を選定。'),
-            const Text('\n電圧降下と電力損失は選定されたケーブルの単位長あたりの抵抗とケーブル長さから抵抗値Rを求め、'),
-            const Text('   ケーブルの電圧降下ΔV\n     = 電流I * ケーブルの抵抗値R'),
-            const Text('   ケーブルの電力損失Pl\n     = 電流I * 電流I * ケーブルの抵抗値R'),
-            const Text('参考 : JCMA, 低圧ケーブルの許容電流表 (1989)'),
-            // URL : https://www.jcma2.jp/gijutsu/shiryou/index.html
-            // ElevatedButton(
-            //   onPressed: () {
-            //     Navigator.pop(context);
-            //   },
-            //   child: const Text('戻る'),
-            // ),
-          ]),
+      body: ListView(padding: const EdgeInsets.all(8), children: <Widget>[
+        const Text('ここでは計算の方法を紹介します。'),
+        const Text(
+          '\n\n【ケーブル設計計算】\n',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        const Text('有効電力をP, 線電流をI, 線間電圧をV, 力率をconsφとすると、'),
+        const Text('  単相の場合'),
+        const Text('     I = P / (V * cosφ)'),
+        const Text('  三相の場合'),
+        const Text('     I = P / (√3 * V * cosφ)'),
+        const Text('\nケーブルサイズは流れる電流が許容電流より小さくなるサイズの最小値を選定。'),
+        const Text('電圧降下と電力損失は選定されたケーブルの単位長あたりのインピーダンスとケーブル長さから抵抗値Rを求める。'),
+        const Text('\nこのとき、ケーブルの電圧降下をΔV, ケーブルの単位長インピーダンスをr+jx, ケーブルの長さをlとすると、'),
+        const Text('  単相の場合'),
+        const Text('     ΔV = I * l * ( r * cosφ + x * sinφ )'),
+        const Text('  三相の場合'),
+        const Text('     ΔV = √3 * I * l * ( r * cosφ + x * sinφ )'),
+        const Text('\nまた、ケーブルの電力損失Plをとすると'),
+        const Text('  単相の場合'),
+        const Text('     Pl = 2 * I^2 * r'),
+        const Text('  三相の場合'),
+        const Text('     Pl = 3 * I^2 * r'),
+        const Text(
+          '\n\n【電力計算】\n',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        const Text('線間電圧、電流、力率から各電力を求める。'),
+        const Text('線電流をI, 線間電圧をV, 力率をconsφ, 皮相電力をS, 有効電力をP, 無効電力をQとすると、'),
+        const Text('  単相の場合'),
+        const Text('     S = V * I'),
+        const Text('     P = V * I * cosφ'),
+        const Text('     Q = V * I * sinφ'),
+        const Text('  三相の場合'),
+        const Text('     S = √3 * V * I'),
+        const Text('     P = √3 * V * I * cosφ'),
+        const Text('     Q = √3 * V * I * sinφ'),
+        const Text(
+          '\n\n【参考】',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        const Text('- JCMA, 低圧ケーブルの許容電流表 (1989)\n'),
+        // URL : https://www.jcma2.jp/gijutsu/shiryou/index.html
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('戻る'),
+        ),
+      ]),
     );
   }
 }
@@ -655,20 +662,26 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("About App"),
+        title: const Text("About"),
       ),
-      body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const Text('このアプリはベータ版です。実験的に運用しています。\n'),
-            const Text('このアプリは作業現場での確認やすぐに電圧降下、電力損失を計算したい時に使用できます。'),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('戻る'),
-            ),
-          ]),
+      body: ListView(padding: const EdgeInsets.all(8), children: <Widget>[
+        const Text('【本アプリについて】'),
+        const Text('本アプリは電気設備設計時に必要な計算ツールを提供します。'),
+        const Text('作業現場での確認やすぐに電圧降下、電力損失を計算するための強力なツールです。'),
+        const Text('広告がありますが、全ての機能を無料で使用できます。'),
+        const Text('\n【免責事項】'),
+        const Text('本アプリで計算された結果は実測値を保証するものではありません。'),
+        const Text('本アプリの利用によって生じた損害は、製作者または配信者はその責任を負いません。'),
+        // const Text('\n【プライバシーポリシー】'),
+        // const Text('本アプリのプライバシーポリシーは以下のサイトに記載しております。'),
+        // const Text('http\n'),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('戻る'),
+        ),
+      ]),
     );
   }
 }

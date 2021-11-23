@@ -46,6 +46,7 @@ app.*.map.json
 /android/app/release
 /android/key.properties
 key.jks
+/android/app/src/main/AndroidManifest.xml
 
 
 # Logs
