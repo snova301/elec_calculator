@@ -5,7 +5,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-// import 'package:google_mobile_ads/google_mobile_ads.dart';　// 広告用
+import 'package:google_mobile_ads/google_mobile_ads.dart'; // 広告用
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Electric Facility Calculator',
+      title: '電気設備計算アシスタント',
       theme: ThemeData(
         primarySwatch: Colors.green,
         // fontFamily: "Noto Sans JP",

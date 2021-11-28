@@ -2,7 +2,7 @@
     package="com.example.elec_calculator">
    <application
         android:label="elec_calculator"
-        android:icon="@mipmap/elec_icon">
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
