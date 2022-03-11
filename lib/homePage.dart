@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 
 import 'desingElecCalc.dart';
 import 'methodPage.dart';
-import 'settingPage.dart';
+// import 'settingPage.dart';
 import 'aboutPage.dart';
 
 class MyHomePage extends StatefulWidget {
