@@ -1,36 +1,38 @@
-// import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 // import 'package:google_mobile_ads/google_mobile_ads.dart'; // 広告用
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'homePage.dart';
-import 'settingPage.dart';
 
 void main() {
-  runApp(const MyApp());
+  // runApp(MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+final counterProvider = StateProvider((ref) => true);
+
+class MyApp extends ConsumerWidget {
+// class MyApp extends StatelessWidget {
+  MyApp({Key? key}) : super(key: key);
+  bool boolThemeColor = false;
 
   @override
-  Widget build(BuildContext context) {
-    // bool boolThemeColor = SettingPageState().boolThemeColor;
+  // Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final count = ref.watch(counterProvider.state).state;
 
     return MaterialApp(
       title: '電気設備計算アシスタント',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        // fontFamily: "Noto Sans JP",
-      ),
-      // theme: SettingPageState().boolThemeColor
-      //     ? ThemeData.light()
-      //     : ThemeData.dark(),
-      // theme: boolThemeColor ? ThemeData.dark() : ThemeData.light(),
+      theme: count
+          ? ThemeData.dark()
+          : ThemeData(
+              primarySwatch: Colors.green,
+              // fontFamily: "Noto Sans JP",
+            ),
 
       // ダークモード対応
-      darkTheme: ThemeData.dark(),
-      themeMode: ThemeMode.system,
+      // darkTheme: ThemeData.dark(),
+      // themeMode: ThemeMode.system,
 
       // 中華系フォント対策
       locale: const Locale("ja", "JP"),

@@ -59,9 +59,6 @@ class DesignElecCalc extends MyHomePageState {
     double dPowLoss = dK2Val * dRVal * dCurrentVal * dCurrentVal * dLen;
     powLossVal = dPowLoss.toStringAsFixed(1);
 
-    print(currentVal);
-    // print([currentVal, cvCableSize, voltDropVal, powLossVal]);
-
     return [currentVal, cvCableSize, voltDropVal, powLossVal];
   }
 

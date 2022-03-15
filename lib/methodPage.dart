@@ -57,6 +57,9 @@ class MethodPage extends StatelessWidget {
             Navigator.pop(context);
           },
           child: const Text('戻る'),
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.green),
+          ),
         ),
       ]),
     );
