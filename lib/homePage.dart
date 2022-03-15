@@ -209,7 +209,7 @@ class MyHomePageState extends State<MyHomePage> {
                       // color: Colors.red,
                       child: Container(
                         alignment: const Alignment(0, 0),
-                        width: blockSizeHorizontal * 40,
+                        width: blockSizeHorizontal * 50,
                         padding: const EdgeInsets.all(10),
                         margin: const EdgeInsets.all(10),
                         // decoration: BoxDecoration(
@@ -268,8 +268,9 @@ class MyHomePageState extends State<MyHomePage> {
                                   const Tooltip(
                                     message: '整数のみ',
                                     child: Text(
-                                      '電気容量[W]',
+                                      '電気容量\n[W]',
                                       style: TextStyle(color: Colors.grey),
+                                      textAlign: TextAlign.center,
                                     ),
                                   ),
                                   TextField(
@@ -294,8 +295,9 @@ class MyHomePageState extends State<MyHomePage> {
                                   const Tooltip(
                                     message: '整数のみ',
                                     child: Text(
-                                      '線間電圧[V]',
+                                      '線間電圧\n[V]',
                                       style: TextStyle(color: Colors.grey),
+                                      textAlign: TextAlign.center,
                                     ),
                                   ),
                                   TextField(
@@ -328,8 +330,9 @@ class MyHomePageState extends State<MyHomePage> {
                                   const Tooltip(
                                     message: '1-100%の整数のみ',
                                     child: Text(
-                                      '力率[%]',
+                                      '力率\n[%]',
                                       style: TextStyle(color: Colors.grey),
+                                      textAlign: TextAlign.center,
                                     ),
                                   ),
                                   TextField(
@@ -354,8 +357,9 @@ class MyHomePageState extends State<MyHomePage> {
                                   const Tooltip(
                                     message: '整数のみ',
                                     child: Text(
-                                      'ケーブル長[m]',
+                                      'ケーブル長\n[m]',
                                       style: TextStyle(color: Colors.grey),
+                                      textAlign: TextAlign.center,
                                     ),
                                   ),
                                   TextField(
@@ -382,7 +386,11 @@ class MyHomePageState extends State<MyHomePage> {
                       blockSizeHorizontal * 20, 0, blockSizeHorizontal * 20, 0),
                   child: ElevatedButton(
                     onPressed: _designCalcRun,
-                    child: const Text('計算実行'),
+                    child: const Text(
+                      '計算実行',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.green),
                       padding:
@@ -411,8 +419,9 @@ class MyHomePageState extends State<MyHomePage> {
                             Container(
                               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                               child: const Text(
-                                '電流[A]',
+                                '電流\n[A]',
                                 style: TextStyle(color: Colors.grey),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                             Container(
@@ -437,8 +446,9 @@ class MyHomePageState extends State<MyHomePage> {
                             Container(
                               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                               child: const Text(
-                                'CVケーブル[mm2]',
+                                'CVケーブル\n[mm2]',
                                 style: TextStyle(color: Colors.grey),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                             Container(
@@ -468,8 +478,9 @@ class MyHomePageState extends State<MyHomePage> {
                             Container(
                               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                               child: const Text(
-                                '電圧降下[V]',
+                                '電圧降下\n[V]',
                                 style: TextStyle(color: Colors.grey),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                             Container(
@@ -494,8 +505,9 @@ class MyHomePageState extends State<MyHomePage> {
                             Container(
                               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                               child: const Text(
-                                '電力損失[W]',
+                                '電力損失\n[W]',
                                 style: TextStyle(color: Colors.grey),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                             Container(
@@ -530,7 +542,7 @@ class MyHomePageState extends State<MyHomePage> {
                       // color: Colors.red,
                       child: Container(
                         alignment: const Alignment(0, 0),
-                        width: blockSizeHorizontal * 40,
+                        width: blockSizeHorizontal * 50,
                         padding: const EdgeInsets.all(10),
                         margin: const EdgeInsets.all(10),
                         // decoration: BoxDecoration(
@@ -590,8 +602,9 @@ class MyHomePageState extends State<MyHomePage> {
                                   const Tooltip(
                                     message: '整数のみ',
                                     child: Text(
-                                      '線間電圧[V]',
+                                      '線間電圧\n[V]',
                                       style: TextStyle(color: Colors.grey),
+                                      textAlign: TextAlign.center,
                                     ),
                                   ),
                                   TextField(
@@ -616,8 +629,9 @@ class MyHomePageState extends State<MyHomePage> {
                                   const Tooltip(
                                     message: '整数のみ',
                                     child: Text(
-                                      '電流[A]',
+                                      '電流\n[A]',
                                       style: TextStyle(color: Colors.grey),
+                                      textAlign: TextAlign.center,
                                     ),
                                   ),
                                   TextField(
@@ -650,8 +664,9 @@ class MyHomePageState extends State<MyHomePage> {
                                   const Tooltip(
                                     message: '1-100%の整数のみ',
                                     child: Text(
-                                      '力率[%]',
+                                      '力率\n[%]',
                                       style: TextStyle(color: Colors.grey),
+                                      textAlign: TextAlign.center,
                                     ),
                                   ),
                                   TextField(
@@ -686,7 +701,11 @@ class MyHomePageState extends State<MyHomePage> {
                       blockSizeHorizontal * 20, 0, blockSizeHorizontal * 20, 0),
                   child: ElevatedButton(
                     onPressed: _elecPowCalcRun,
-                    child: const Text('計算実行'),
+                    child: const Text(
+                      '計算実行',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.green),
                       padding:
@@ -715,8 +734,9 @@ class MyHomePageState extends State<MyHomePage> {
                             Container(
                               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                               child: const Text(
-                                '皮相電力[kVA]',
+                                '皮相電力\n[kVA]',
                                 style: TextStyle(color: Colors.grey),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                             Container(
@@ -741,8 +761,9 @@ class MyHomePageState extends State<MyHomePage> {
                             Container(
                               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                               child: const Text(
-                                '有効電力[kW]',
+                                '有効電力\n[kW]',
                                 style: TextStyle(color: Colors.grey),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                             Container(
@@ -772,8 +793,9 @@ class MyHomePageState extends State<MyHomePage> {
                             Container(
                               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                               child: const Text(
-                                '無効電力[kVar]',
+                                '無効電力\n[kVar]',
                                 style: TextStyle(color: Colors.grey),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                             Container(
@@ -798,8 +820,9 @@ class MyHomePageState extends State<MyHomePage> {
                             Container(
                               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                               child: const Text(
-                                'sinφ[%]',
+                                'sinφ\n[%]',
                                 style: TextStyle(color: Colors.grey),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                             Container(
