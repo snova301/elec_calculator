@@ -2,37 +2,101 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 // import 'package:google_mobile_ads/google_mobile_ads.dart'; // 広告用
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:elec_facility_calc/stateManager.dart';
 import 'homePage.dart';
 
 void main() {
-  // runApp(MyApp());
-  runApp(ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(child: MyApp()));
 }
 
-final counterProvider = StateProvider((ref) => true);
+/// initiallize provider for setteings
+final isDarkmodeProvider = StateProvider((ref) => true);
+final bottomNaviSelectProvider = StateProvider((ref) => 0);
 
-class MyApp extends ConsumerWidget {
-// class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
-  bool boolThemeColor = false;
+/// initiallize provider for cableDesign
+var cableDesignElecOutProvider = StateProvider((ref) {
+  return TextEditingController(text: '1500');
+});
+var cableDesignCosFaiProvider = StateProvider((ref) {
+  return TextEditingController(text: '80');
+});
+var cableDesignVoltProvider = StateProvider((ref) {
+  return TextEditingController(text: '200');
+});
+var cableDesignCableLenProvider = StateProvider((ref) {
+  return TextEditingController(text: '10');
+});
+final cableDesignPhaseProvider = StateProvider((ref) => '単相');
+final cableDesignCableTypeProvider = StateProvider((ref) => '600V CV-2C');
+final cableDesignCurrentProvider = StateProvider((ref) => '0');
+final cableDesignCableSizeProvider = StateProvider((ref) => '0');
+final cableDesignVoltDropProvider = StateProvider((ref) => '0');
+final cableDesignPowerLossProvider = StateProvider((ref) => '0');
+
+/// initiallize provider for conduit design
+final conduitListItemProvider = StateProvider((ref) => []);
+final conduitCableSizeListProvider = StateProvider((ref) => []);
+final conduitConduitTypeProvider = StateProvider((ref) => 'PF管');
+final conduitConduitSize32Provider = StateProvider((ref) => '');
+final conduitConduitSize48Provider = StateProvider((ref) => '');
+
+/// initiallize provider for elecpower
+var elecPowerVoltProvider = StateProvider((ref) {
+  return TextEditingController(text: '100');
+});
+var elecPowerCurrentProvider = StateProvider((ref) {
+  return TextEditingController(text: '10');
+});
+var elecPowerCosFaiProvider = StateProvider((ref) {
+  return TextEditingController(text: '80');
+});
+final elecPowerPhaseProvider = StateProvider((ref) => '単相');
+final elecPowerApparentPowerProvider = StateProvider((ref) => '0');
+final elecPowerActivePowerProvider = StateProvider((ref) => '0');
+final elecPowerReactivePowerProvider = StateProvider((ref) => '0');
+final elecPowerSinFaiProvider = StateProvider((ref) => '0');
+
+/// App settings
+class MyApp extends ConsumerStatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
 
   @override
-  // Widget build(BuildContext context) {
-  Widget build(BuildContext context, WidgetRef ref) {
-    final count = ref.watch(counterProvider.state).state;
+  MyAppState createState() => MyAppState();
+}
+
+class MyAppState extends ConsumerState<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+
+    /// ダークモードの設定読込
+    try {
+      StateManagerClass().getDarkmodeVal(ref);
+    } catch (e) {
+      print('getDarkmodeVal Error');
+    }
+
+    /// 前回の計算データ読込
+    try {
+      StateManagerClass().getCalcData(ref);
+    } catch (e) {
+      print('getCalcData Error');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDarkmode = ref.watch(isDarkmodeProvider.state).state;
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: '電気設備計算アシスタント',
-      theme: count
-          ? ThemeData.dark()
-          : ThemeData(
-              primarySwatch: Colors.green,
-              // fontFamily: "Noto Sans JP",
-            ),
-
-      // ダークモード対応
-      // darkTheme: ThemeData.dark(),
-      // themeMode: ThemeMode.system,
+      home: const MyHomePage(),
+      theme: ThemeData(
+        brightness: isDarkmode ? Brightness.dark : Brightness.light,
+        primarySwatch: Colors.green,
+        fontFamily: 'NotoSansJP',
+      ),
 
       // 中華系フォント対策
       locale: const Locale("ja", "JP"),
@@ -44,9 +108,6 @@ class MyApp extends ConsumerWidget {
       supportedLocales: const [
         Locale("ja", "JP"),
       ],
-
-      // ページタイトル
-      home: const MyHomePage(title: '計算画面'),
     );
   }
 }

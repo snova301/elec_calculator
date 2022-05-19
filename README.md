@@ -1,28 +1,26 @@
-# 概要
+# Electricity Calculator
 
-このアプリは電気設備計算に役に立つアプリです。
-サービスは予告なく停止することがあります。
-
-【主な機能】
-- 電気容量、電圧、力率、ケーブル長さを入力
-- 電流値、ケーブルのサイズ、電圧降下、ケーブルの電力損失を自動計算
-- 計算方法を記載
-
-使用上の注意や使用方法については[こちら](https://snova301.github.io/AppService/)を参照ください。
+![](https://img.shields.io/badge/dart-v2.16.2-blue?style=flat&logo=dart) ![](https://img.shields.io/badge/flutter-v2.10.5-blue?style=flat&logo=flutter) ![](https://img.shields.io/badge/-firebase-orange?style=flat&logo=firebase)
 
 
-
-# 　ご使用前にお読みください
-本アプリで計算された結果は実測値を保証するものではありません。
-また、本アプリの利用によって生じた損害は、製作者または配信者はその責任を負いません。
+Electricity Calculator is mobile/web app for all electrical engineer.
 
 
-
-# プライバシーポリシー
-プライバシーポリシーは[こちら](https://snova301.github.io/AppService/elec_calculator/privacypolicy.html)を参照ください。
+<img src='assets/screenshot/Screenshot_1651470156.png' width='200'>
 
 
+## Getting Started
 
-# 配信先
-[Android](https://play.google.com/store/apps/details?id=com.github.snova301.elec_calculator)
+For android app
+
+<a href='https://play.google.com/store/apps/details?id=com.github.snova301.elec_calculator&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Google Play で手に入れよう' src='https://play.google.com/intl/ja/badges/static/images/badges/ja_badge_web_generic.png' width='150'/></a>
+
+
+For web app (w/ Firebase)
+
 [web](https://ewacdj-3936b.web.app/)
+
+
+## How to use
+
+You can know how to use to click [here](https://snova301.github.io/AppService/elec_calculator/home.html). Only Japanese words.

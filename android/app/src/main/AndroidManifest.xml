@@ -2,8 +2,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.elec_calculator">
+
+    <queries>
+      <!-- If your app opens https URLs -->
+      <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:scheme="https" />
+      </intent>
+    </queries>
+
    <application
-        android:label="elec_calculator"
+        android:label="電気設備アシスタント"
         android:icon="@mipmap/launcher_icon"
         tools:replace="android:icon"
         >

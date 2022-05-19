@@ -1,5 +1,5 @@
 name: elec_facility_calc
-description: '電気設備設計時に必要な計算ツールを提供します。'
+description: '電気設備の設計や施工を強力にアシストする計算ツールです。'
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 2.0.1+13
+version: 3.0.1+16
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -32,8 +32,10 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   google_mobile_ads: ^0.13.6
-  flutter_launcher_icons: "^0.8.0"
+  flutter_launcher_icons: ^0.9.2
   flutter_riverpod: ^1.0.3
+  shared_preferences: ^2.0.13
+  url_launcher: ^6.1.2
 
 flutter_icons:
   android: "launcher_icon"
@@ -96,3 +98,8 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+  fonts:
+  - family: NotoSansJP
+    fonts:
+      - asset: assets/fonts/NotoSansJP-Regular.otf
