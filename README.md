@@ -6,7 +6,7 @@
 Electricity Calculator is mobile/web app for all electrical engineer.
 
 
-<img src='assets/screenshot/Screenshot_1651470156.png' width='200'>
+<img src='assets/screenshot/Screenshot_1652947673.png' width='200'>
 
 
 ## Getting Started
