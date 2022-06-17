@@ -1,10 +1,12 @@
-import 'package:elec_facility_calc/homePage.dart';
-import 'package:elec_facility_calc/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:elec_facility_calc/src/view/home_page.dart';
+import 'package:elec_facility_calc/main.dart';
+import 'package:elec_facility_calc/src/viewmodel/calc_logic.dart';
+
 // import 'package:google_mobile_ads/google_mobile_ads.dart'; // 広告用
-import 'calcLogic.dart';
 
 class CalcPage extends ConsumerStatefulWidget {
   const CalcPage({Key? key}) : super(key: key);

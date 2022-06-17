@@ -1,8 +1,9 @@
 import 'dart:math';
-import 'package:elec_facility_calc/stateManager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'cableConduitDataClass.dart';
-import 'main.dart';
+
+import 'package:elec_facility_calc/main.dart';
+import 'package:elec_facility_calc/src/model/cable_conduit_data_class.dart';
+import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 
 /// 各計算のロジック部分
 /// view側とは基本的にproviderで受け渡し

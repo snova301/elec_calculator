@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:elec_facility_calc/calcPage.dart';
-import 'package:elec_facility_calc/aboutPage.dart';
-import 'package:elec_facility_calc/settingPage.dart';
+
+import 'package:elec_facility_calc/src/view/calc_page.dart';
+import 'package:elec_facility_calc/src/view/about_page.dart';
+import 'package:elec_facility_calc/src/view/setting_page.dart';
 
 class MyHomePage extends ConsumerWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -122,7 +123,7 @@ class DrawerContents extends Drawer {
                 leading: const Icon(Icons.architecture),
                 trailing: const Icon(Icons.open_in_browser),
                 onTap: () {
-                  launch_Url(
+                  launch_url(
                       'https://snova301.github.io/AppService/elec_calculator/method.html');
                 },
               ),
@@ -140,7 +141,7 @@ class DrawerContents extends Drawer {
         );
 }
 
-void launch_Url(urlname) async {
+void launch_url(urlname) async {
   final Uri _url = Uri.parse(urlname);
   if (!await launchUrl(_url)) throw 'Could not launch $_url';
 }

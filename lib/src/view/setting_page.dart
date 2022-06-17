@@ -1,7 +1,8 @@
-import 'package:elec_facility_calc/stateManager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'main.dart';
+
+import 'package:elec_facility_calc/main.dart';
+import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 
 class SettingPage extends ConsumerWidget {
   const SettingPage({Key? key}) : super(key: key);
