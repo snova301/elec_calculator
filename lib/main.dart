@@ -1,14 +1,36 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 import 'package:elec_facility_calc/src/view/home_page.dart';
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 
 // import 'package:google_mobile_ads/google_mobile_ads.dart'; // 広告用
 
-void main() {
-  runApp(const ProviderScope(child: MyApp()));
+void main() async {
+  /// クラッシュハンドラ
+  runZonedGuarded<Future<void>>(() async {
+    /// Firebaseの初期化
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+
+    /// クラッシュハンドラ(Flutterフレームワーク内でスローされたすべてのエラー)
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+
+    /// runApp w/ Riverpod
+    runApp(const ProviderScope(child: MyApp()));
+  },
+
+      /// クラッシュハンドラ(Flutterフレームワーク内でキャッチされないエラー)
+      (error, stack) =>
+          FirebaseCrashlytics.instance.recordError(error, stack, fatal: true));
 }
 
 /// initiallize provider for setteings
