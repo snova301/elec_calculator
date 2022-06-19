@@ -1,13 +1,14 @@
-import 'package:elec_facility_calc/src/view/calc_cable_design_page.dart';
-import 'package:elec_facility_calc/src/view/calc_conduit_page.dart';
-import 'package:elec_facility_calc/src/view/calc_elec_power_page.dart';
+import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:elec_facility_calc/src/view/home_page.dart';
 import 'package:elec_facility_calc/main.dart';
+import 'package:elec_facility_calc/src/view/home_page.dart';
 import 'package:elec_facility_calc/src/viewmodel/calc_logic.dart';
+import 'package:elec_facility_calc/src/view/calc_cable_design_page.dart';
+import 'package:elec_facility_calc/src/view/calc_conduit_page.dart';
+import 'package:elec_facility_calc/src/view/calc_elec_power_page.dart';
 
 // import 'package:google_mobile_ads/google_mobile_ads.dart'; // 広告用
 
@@ -30,15 +31,15 @@ class CalcPageState extends ConsumerState<CalcPage> {
   @override
   Widget build(BuildContext context) {
     /// 画面情報取得
-    final _mediaQueryData = MediaQuery.of(context);
-    final _screenWidth = _mediaQueryData.size.width;
-    final _blockWidth = _screenWidth / 100 * 20;
-    final _listViewPadding = _screenWidth / 20;
-    // final screenHeight = _mediaQueryData.size.height;
+    final mediaQueryData = MediaQuery.of(context);
+    final screenWidth = mediaQueryData.size.width;
+    final blockWidth = screenWidth / 100 * 20;
+    final listViewPadding = screenWidth / 20;
+    // final screenHeight = mediaQueryData.size.height;
     // final blockSizeVertical = screenHeight / 100;
 
     /// 電線管設計用
-    int _maxNumCable = 10;
+    int maxNumCable = 10;
 
     return Scaffold(
       appBar: AppBar(
@@ -50,15 +51,18 @@ class CalcPageState extends ConsumerState<CalcPage> {
       /// widgetのListから選択し、ListViewを表示する
       body: <Widget>[
         ListViewCableDesign(
-            listViewPadding: _listViewPadding, blockWidth: _blockWidth),
+          listViewPadding: listViewPadding,
+          blockWidth: blockWidth,
+        ),
         ListViewElecPower(
-            listViewPadding: _listViewPadding, blockWidth: _blockWidth),
+          listViewPadding: listViewPadding,
+          blockWidth: blockWidth,
+        ),
         ListViewConduit(
-            listViewPadding: _listViewPadding,
-            blockWidth: _blockWidth,
-            maxNumCable: _maxNumCable)
-        // _ListViewConduit(
-        //     context, ref, _listViewPadding, _blockWidth, _conduitMaxNumCable),
+          listViewPadding: listViewPadding,
+          blockWidth: blockWidth,
+          maxNumCable: maxNumCable,
+        ),
       ][ref.read(bottomNaviSelectProvider)],
 
       drawer: DrawerContents(context),
@@ -91,7 +95,7 @@ class CalcPageState extends ConsumerState<CalcPage> {
               tooltip: 'ケーブル追加',
               child: const Icon(Icons.add),
               onPressed: () {
-                if (ref.read(conduitListItemProvider).length < _maxNumCable) {
+                if (ref.read(conduitListItemProvider).length < maxNumCable) {
                   CalcLogic(ref).conduitCableAddRun();
                 }
               },
@@ -163,14 +167,19 @@ class PhaseSelectCard extends ConsumerWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     ref.read(provider.state).state = '単相';
+                    ref.read(cableDesignInProvider.notifier).phaseUpdate('単相');
+                    print(ref.read(cableDesignInProvider).phase);
                   },
-                  child: const Text('単相'),
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
-                        ref.watch(provider) == '単相' ? null : Colors.grey),
+                        ref.watch(cableDesignInProvider).phase == '単相'
+                            ? null
+                            : Colors.grey),
+                    // ref.watch(provider) == '単相' ? null : Colors.grey),
                     padding:
                         MaterialStateProperty.all(const EdgeInsets.all(20)),
                   ),
+                  child: const Text('単相'),
                 ),
               ),
               Container(
@@ -178,14 +187,19 @@ class PhaseSelectCard extends ConsumerWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     ref.read(provider.state).state = '三相';
+                    ref.read(cableDesignInProvider.notifier).phaseUpdate('三相');
+                    print(ref.read(cableDesignInProvider).phase);
                   },
-                  child: const Text('三相'),
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
-                        ref.watch(provider) == '三相' ? null : Colors.grey),
+                        ref.watch(cableDesignInProvider).phase == '三相'
+                            ? null
+                            : Colors.grey),
+                    // ref.watch(provider) == '三相' ? null : Colors.grey),
                     padding:
                         MaterialStateProperty.all(const EdgeInsets.all(20.0)),
                   ),
+                  child: const Text('三相'),
                 ),
               ),
             ],
@@ -321,10 +335,6 @@ class RunElevatedButton extends ConsumerWidget {
                   },
                 );
         },
-        child: const Text(
-          '計算実行',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.redAccent),
           padding: MaterialStateProperty.all(const EdgeInsets.all(30.0)),
@@ -333,6 +343,10 @@ class RunElevatedButton extends ConsumerWidget {
               borderRadius: BorderRadius.circular(15),
             ),
           ),
+        ),
+        child: const Text(
+          '計算実行',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
       ),
     );

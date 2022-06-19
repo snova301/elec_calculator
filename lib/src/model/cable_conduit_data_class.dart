@@ -4,24 +4,24 @@
 /// 参考 : パナソニック株式会社法人向け, https://www2.panasonic.biz/jp/
 
 class CableConduitDataClass {
-  Map selectCableData(_str) {
-    if (_str == '600V CV-2C') {
+  Map selectCableData(str) {
+    if (str == '600V CV-2C') {
       return cableData600VCV2C;
-    } else if (_str == '600V CV-3C') {
+    } else if (str == '600V CV-3C') {
       return cableData600VCV3C;
-    } else if (_str == '600V CVT') {
+    } else if (str == '600V CVT') {
       return cableData600VCVT;
     } else {
       return cableDataIV;
     }
   }
 
-  Map selectConduitData(_str) {
-    if (_str == 'PF管') {
+  Map selectConduitData(str) {
+    if (str == 'PF管') {
       return conduitPF;
-    } else if (_str == 'C管(薄鋼)') {
+    } else if (str == 'C管(薄鋼)') {
       return conduitCP;
-    } else if (_str == 'G管(厚鋼)') {
+    } else if (str == 'G管(厚鋼)') {
       return conduitGP;
     } else {
       return conduitFEP;

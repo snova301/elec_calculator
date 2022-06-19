@@ -43,14 +43,13 @@ class MyHomePage extends ConsumerWidget {
 }
 
 class _HomePagePush extends Align {
-  _HomePagePush(BuildContext context, String title, pagepush, bool _isCulcPage)
+  _HomePagePush(BuildContext context, String title, pagepush, bool isCulcPage)
       : super(
           child: Container(
             width: MediaQuery.of(context).size.width / 2,
             // padding: const EdgeInsets.all(10),
-            margin: _isCulcPage
-                ? const EdgeInsets.all(15)
-                : const EdgeInsets.all(5),
+            margin:
+                isCulcPage ? const EdgeInsets.all(15) : const EdgeInsets.all(5),
             child: ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -58,16 +57,16 @@ class _HomePagePush extends Align {
                   MaterialPageRoute(builder: (context) => pagepush),
                 );
               },
-              child: Text(title),
               style: ButtonStyle(
                 padding: MaterialStateProperty.all(
-                  _isCulcPage
+                  isCulcPage
                       ? const EdgeInsets.fromLTRB(20, 40, 20, 40)
                       : const EdgeInsets.fromLTRB(20, 20, 20, 20),
                 ),
                 backgroundColor: MaterialStateProperty.all(
-                    _isCulcPage ? null : Colors.grey[800]),
+                    isCulcPage ? null : Colors.grey[800]),
               ),
+              child: Text(title),
             ),
           ),
         );
@@ -142,6 +141,6 @@ class DrawerContents extends Drawer {
 }
 
 void launch_url(urlname) async {
-  final Uri _url = Uri.parse(urlname);
-  if (!await launchUrl(_url)) throw 'Could not launch $_url';
+  final Uri url = Uri.parse(urlname);
+  if (!await launchUrl(url)) throw 'Could not launch $url';
 }

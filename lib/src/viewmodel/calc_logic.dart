@@ -16,8 +16,8 @@ class CalcLogic {
 
   /// 力率が0-100%の中に入っているか判定。
   /// 入っていたらtrue, 入っていなかったらfalseを返す。
-  bool isCosFaiCorrect(String _strCosFai) {
-    double dCosFai = double.parse(_strCosFai);
+  bool isCosFaiCorrect(String strCosFai) {
+    double dCosFai = double.parse(strCosFai);
     return (dCosFai >= 0 && dCosFai <= 100) ? true : false;
   }
 
@@ -33,108 +33,105 @@ class CalcLogic {
   /// ケーブル設計のロジック部分
   void cableDesignCalcRun() {
     // 計算用変数初期化
-    double _dCurrentVal = 0;
-    double _dRVal = 0;
-    double _dXVal = 0;
-    double _dK1Val = 1; // 電圧降下計算の係数
-    double _dK2Val = 2; // 電力損失計算の係数
-    Map _cableData = {}; // ケーブルのインピーダンスと許容電流のマップデータ
+    double dCurrentVal = 0;
+    double dRVal = 0;
+    double dXVal = 0;
+    double dK1Val = 1; // 電圧降下計算の係数
+    double dK2Val = 2; // 電力損失計算の係数
+    Map cableData = {}; // ケーブルのインピーダンスと許容電流のマップデータ
 
     // Textfieldのテキスト取り出し
-    String _strElecOut = ref.read(cableDesignElecOutProvider).text;
-    String _strCosFai = ref.read(cableDesignCosFaiProvider).text;
-    String _strVolt = ref.read(cableDesignVoltProvider).text;
-    String _strLen = ref.read(cableDesignCableLenProvider).text;
+    String strElecOut = ref.read(cableDesignElecOutProvider).text;
+    String strCosFai = ref.read(cableDesignCosFaiProvider).text;
+    String strVolt = ref.read(cableDesignVoltProvider).text;
+    String strLen = ref.read(cableDesignCableLenProvider).text;
 
     // string2double
-    double _dElecOut = double.parse(_strElecOut);
-    double _dCosFai = double.parse(_strCosFai) / 100;
-    double _dVolt = double.parse(_strVolt);
-    double _dLen = double.parse(_strLen) / 1000;
+    double dElecOut = double.parse(strElecOut);
+    double dCosFai = double.parse(strCosFai) / 100;
+    double dVolt = double.parse(strVolt);
+    double dLen = double.parse(strLen) / 1000;
 
     // cosφからsinφを算出
-    double _dSinFai = sqrt(1 - pow(_dCosFai, 2));
+    double dSinFai = sqrt(1 - pow(dCosFai, 2));
 
     // 相ごとの計算(単相)
-    if ((ref.read(cableDesignPhaseProvider) == '単相') && (_dCosFai <= 1)) {
+    if ((ref.read(cableDesignPhaseProvider) == '単相') && (dCosFai <= 1)) {
       // 単相の電流計算と計算係数設定
-      _dCurrentVal = _dElecOut / (_dVolt * _dCosFai);
-      _dK1Val = 1;
-      _dK2Val = 2;
+      dCurrentVal = dElecOut / (dVolt * dCosFai);
+      dK1Val = 1;
+      dK2Val = 2;
     }
     // 相ごとの計算(三相)
-    else if ((ref.read(cableDesignPhaseProvider) == '三相') && (_dCosFai <= 1)) {
+    else if ((ref.read(cableDesignPhaseProvider) == '三相') && (dCosFai <= 1)) {
       // 三相の電流計算と計算係数設定
-      _dCurrentVal = _dElecOut / (sqrt(3) * _dVolt * _dCosFai);
-      _dK1Val = sqrt(3);
-      _dK2Val = 3;
+      dCurrentVal = dElecOut / (sqrt(3) * dVolt * dCosFai);
+      dK1Val = sqrt(3);
+      dK2Val = 3;
     }
 
     /// ケーブル種類からデータを取得
-    _cableData = CableConduitDataClass()
+    cableData = CableConduitDataClass()
         .selectCableData(ref.read(cableDesignCableTypeProvider));
 
     /// ケーブル許容電流から600V CV-3Cケーブルの太さを選定
     /// 許容電流を満たすケーブルサイズをリストに追加
-    List _cableAnswerList = [];
-    _cableData.forEach((key, value) {
-      if (value[2] >= _dCurrentVal) {
-        _cableAnswerList
-            .add([key, value[0], value[1]]); // [ケーブルサイズ, 抵抗, リアクタンス]
+    List cableAnswerList = [];
+    cableData.forEach((key, value) {
+      if (value[2] >= dCurrentVal) {
+        cableAnswerList.add([key, value[0], value[1]]); // [ケーブルサイズ, 抵抗, リアクタンス]
       }
     });
 
     /// 許容電流が満たせない場合は'規格なし'を返す。
     /// ケーブルサイズをproviderに書き込み
-    String _cableSize = '';
-    if (_cableAnswerList.isEmpty) {
-      _cableSize = '規格なし';
-      _dRVal = _dXVal = 0;
+    String cableSize = '';
+    if (cableAnswerList.isEmpty) {
+      cableSize = '規格なし';
+      dRVal = dXVal = 0;
     } else {
-      _cableSize = _cableAnswerList[0][0];
-      _dRVal = _cableAnswerList[0][1];
-      _dXVal = _cableAnswerList[0][2];
+      cableSize = cableAnswerList[0][0];
+      dRVal = cableAnswerList[0][1];
+      dXVal = cableAnswerList[0][2];
     }
-    ref.read(cableDesignCableSizeProvider.state).state = _cableSize;
+    ref.read(cableDesignCableSizeProvider.state).state = cableSize;
 
     // 電流値小数点の長さ固定して文字列に変換
     ref.read(cableDesignCurrentProvider.state).state =
-        _dCurrentVal.toStringAsFixed(1);
+        dCurrentVal.toStringAsFixed(1);
 
     // ケーブル電圧降下計算
-    double _dVoltDrop = _dK1Val *
-        _dCurrentVal *
-        _dLen *
-        (_dRVal * _dCosFai + _dXVal * _dSinFai);
+    double dVoltDrop =
+        dK1Val * dCurrentVal * dLen * (dRVal * dCosFai + dXVal * dSinFai);
     ref.read(cableDesignVoltDropProvider.state).state =
-        _dVoltDrop.toStringAsFixed(1);
+        dVoltDrop.toStringAsFixed(1);
 
     // ケーブル電力損失計算
-    double _dPowLoss = _dK2Val * _dRVal * _dCurrentVal * _dCurrentVal * _dLen;
+    double dPowLoss = dK2Val * dRVal * dCurrentVal * dCurrentVal * dLen;
     ref.read(cableDesignPowerLossProvider.state).state =
-        _dPowLoss.toStringAsFixed(1);
+        dPowLoss.toStringAsFixed(1);
 
     /// shared_prefに保存
     StateManagerClass().setCalcData(ref);
   }
 
   /// 電線管設計でケーブルカードのケーブル種別を変更するメソッド。
-  void conduitCardSelectType(int _index, String? _value) {
+  void conduitCardSelectType(int index, String? value) {
     /// ケーブル種類の変更
-    ref.read(conduitListItemProvider.state).state[_index]['type'] = _value!;
+    ref.read(conduitListItemProvider.state).state[index]['type'] = value!;
 
     /// ケーブルサイズの変更
-    Map _cableData = CableConduitDataClass().selectCableData(_value);
-    ref.read(conduitListItemProvider.state).state[_index]['size'] =
-        _cableData.keys.toList()[0].toString();
+    Map cableData = CableConduitDataClass().selectCableData(value);
+    ref.read(conduitListItemProvider.state).state[index]['size'] =
+        cableData.keys.toList()[0].toString();
 
     /// ケーブル外径の変更
-    ref.read(conduitListItemProvider.state).state[_index]['radius'] =
-        _cableData.values.toList()[0][3];
+    ref.read(conduitListItemProvider.state).state[index]['radius'] =
+        cableData.values.toList()[0][3];
 
     /// ケーブルサイズリストの更新
-    ref.read(conduitCableSizeListProvider.state).state[_index] =
-        _cableData.keys.toList();
+    ref.read(conduitCableSizeListProvider.state).state[index] =
+        cableData.keys.toList();
 
     /// 各Listの更新
     ref.read(conduitListItemProvider.state).state = [
@@ -149,15 +146,15 @@ class CalcLogic {
   }
 
   /// 電線管設計でケーブルカードのケーブルサイズを変更するメソッド。
-  void conduitCardSelectSize(int _index, String? _value) {
+  void conduitCardSelectSize(int index, String? value) {
     /// ケーブルサイズの変更
-    ref.read(conduitListItemProvider.state).state[_index]['size'] = _value;
+    ref.read(conduitListItemProvider.state).state[index]['size'] = value;
 
     /// ケーブル外径の変更
-    Map _cableData = CableConduitDataClass().selectCableData(
-        ref.read(conduitListItemProvider.state).state[_index]['type']);
-    ref.read(conduitListItemProvider.state).state[_index]['radius'] =
-        _cableData[_value][3];
+    Map cableData = CableConduitDataClass().selectCableData(
+        ref.read(conduitListItemProvider.state).state[index]['type']);
+    ref.read(conduitListItemProvider.state).state[index]['radius'] =
+        cableData[value][3];
 
     /// Listの更新
     ref.read(conduitListItemProvider.state).state = [
@@ -180,10 +177,10 @@ class CalcLogic {
     ];
 
     /// ケーブル種類からデータを取得
-    Map _cableData = CableConduitDataClass().selectCableData('600V CV-2C');
+    Map cableData = CableConduitDataClass().selectCableData('600V CV-2C');
 
     /// ケーブルサイズリストを変更
-    ref.read(conduitCableSizeListProvider).add(_cableData.keys.toList());
+    ref.read(conduitCableSizeListProvider).add(cableData.keys.toList());
     ref.read(conduitCableSizeListProvider.state).state = [
       ...ref.read(conduitCableSizeListProvider)
     ];
@@ -193,15 +190,15 @@ class CalcLogic {
   }
 
   /// 電線管設計でケーブルカードを削除するメソッド
-  void conduitCableRemove(_index) {
+  void conduitCableRemove(index) {
     /// リストから削除
-    ref.read(conduitListItemProvider).removeAt(_index);
+    ref.read(conduitListItemProvider).removeAt(index);
     ref.read(conduitListItemProvider.state).state = [
       ...ref.read(conduitListItemProvider)
     ];
 
     /// ケーブルサイズから削除
-    ref.read(conduitCableSizeListProvider).removeAt(_index);
+    ref.read(conduitCableSizeListProvider).removeAt(index);
 
     /// 電線管設計実行
     conduitCalcRun();
@@ -211,8 +208,8 @@ class CalcLogic {
   }
 
   /// 電線管設計の電線管種類変更
-  void conduitTypeChange(String? _value) {
-    ref.read(conduitConduitTypeProvider.state).state = _value!;
+  void conduitTypeChange(String? value) {
+    ref.read(conduitConduitTypeProvider.state).state = value!;
 
     /// 電線管設計実行
     conduitCalcRun();
@@ -223,41 +220,41 @@ class CalcLogic {
     // print(ref.read(conduitListItemProvider));
 
     /// conduitListItemProvider内の直径からケーブル面積を計算
-    List _cableAreaList = ref
+    List cableAreaList = ref
         .watch(conduitListItemProvider)
         .map((e) => {'type': e['type'], 'area': pow(e['radius'] / 2, 2) * pi})
         .toList();
 
     /// CVTケーブルなら面積を3倍にし、ケーブルの直径のListからケーブル面積の合計を計算
-    double _cableArea = 0;
-    for (var _i in _cableAreaList) {
-      _cableArea += _i['type'] == '600V CVT' ? _i['area'] * 3 : _i['area'];
+    double cableArea = 0;
+    for (var i in cableAreaList) {
+      cableArea += i['type'] == '600V CVT' ? i['area'] * 3 : i['area'];
     }
 
     /// 電線管の直径を抽出
-    Map _conduitRadiusMap = CableConduitDataClass()
+    Map conduitRadiusMap = CableConduitDataClass()
         .selectConduitData(ref.watch(conduitConduitTypeProvider));
 
     /// 電線管の直径のListから電線管の断面積を計算と比較
-    List _conduitArea32List = [];
-    List _conduitArea48List = [];
-    double _conduitArea;
-    _conduitRadiusMap.forEach((key, value) {
-      _conduitArea = pow(value / 2, 2) * pi;
-      if (_conduitArea * 0.32 > _cableArea) {
-        _conduitArea32List.add(key);
+    List conduitArea32List = [];
+    List conduitArea48List = [];
+    double conduitArea;
+    conduitRadiusMap.forEach((key, value) {
+      conduitArea = pow(value / 2, 2) * pi;
+      if (conduitArea * 0.32 > cableArea) {
+        conduitArea32List.add(key);
       }
-      if (_conduitArea * 0.48 > _cableArea) {
-        _conduitArea48List.add(key);
+      if (conduitArea * 0.48 > cableArea) {
+        conduitArea48List.add(key);
       }
     });
 
     /// conduitConduitSizeProviderの変更
     /// emptyなら'規格なし'を返す
     ref.read(conduitConduitSize32Provider.state).state =
-        _conduitArea32List.isNotEmpty ? _conduitArea32List[0] : '規格なし';
+        conduitArea32List.isNotEmpty ? conduitArea32List[0] : '規格なし';
     ref.read(conduitConduitSize48Provider.state).state =
-        _conduitArea48List.isNotEmpty ? _conduitArea48List[0] : '規格なし';
+        conduitArea48List.isNotEmpty ? conduitArea48List[0] : '規格なし';
 
     /// shared_prefに保存
     StateManagerClass().setCalcData(ref);
@@ -266,38 +263,38 @@ class CalcLogic {
   /// 電力計算のロジック部分
   void elecPowerCalcRun() {
     // Textfieldのテキスト取り出し
-    String _strCalcVolt = ref.read(elecPowerVoltProvider).text;
-    String _strCalcCur = ref.read(elecPowerCurrentProvider).text;
-    String _strCalcCosFai = ref.read(elecPowerCosFaiProvider).text;
+    String strCalcVolt = ref.read(elecPowerVoltProvider).text;
+    String strCalcCur = ref.read(elecPowerCurrentProvider).text;
+    String strCalcCosFai = ref.read(elecPowerCosFaiProvider).text;
 
     // string2double
-    double _dCalcVolt = double.parse(_strCalcVolt);
-    double _dCalcCur = double.parse(_strCalcCur);
-    double _dCalcCosFai = double.parse(_strCalcCosFai) / 100;
-    double _dCalcAppaPowVal = 0;
+    double dCalcVolt = double.parse(strCalcVolt);
+    double dCalcCur = double.parse(strCalcCur);
+    double dCalcCosFai = double.parse(strCalcCosFai) / 100;
+    double dCalcAppaPowVal = 0;
 
     // cosφからsinφを算出
-    double _dCalcSinFai = sqrt(1 - pow(_dCalcCosFai, 2));
+    double dCalcSinFai = sqrt(1 - pow(dCalcCosFai, 2));
 
     if (ref.read(elecPowerPhaseProvider) == '単相') {
       // 単相電力計算
-      _dCalcAppaPowVal = _dCalcVolt * _dCalcCur;
+      dCalcAppaPowVal = dCalcVolt * dCalcCur;
     } else if (ref.read(elecPowerPhaseProvider) == '三相') {
       // 3相電力計算
-      _dCalcAppaPowVal = sqrt(3) * _dCalcVolt * _dCalcCur;
+      dCalcAppaPowVal = sqrt(3) * dCalcVolt * dCalcCur;
     }
-    double _dCalcActPowVal = _dCalcAppaPowVal * _dCalcCosFai;
-    double _dCalcReactPowVal = _dCalcAppaPowVal * _dCalcSinFai;
+    double dCalcActPowVal = dCalcAppaPowVal * dCalcCosFai;
+    double dCalcReactPowVal = dCalcAppaPowVal * dCalcSinFai;
 
     // double2string
     ref.read(elecPowerApparentPowerProvider.state).state =
-        (_dCalcAppaPowVal / 1000).toStringAsFixed(2);
+        (dCalcAppaPowVal / 1000).toStringAsFixed(2);
     ref.read(elecPowerActivePowerProvider.state).state =
-        (_dCalcActPowVal / 1000).toStringAsFixed(2);
+        (dCalcActPowVal / 1000).toStringAsFixed(2);
     ref.read(elecPowerReactivePowerProvider.state).state =
-        (_dCalcReactPowVal / 1000).toStringAsFixed(2);
+        (dCalcReactPowVal / 1000).toStringAsFixed(2);
     ref.read(elecPowerSinFaiProvider.state).state =
-        (_dCalcSinFai * 100).toStringAsFixed(1);
+        (dCalcSinFai * 100).toStringAsFixed(1);
 
     /// shared_prefに保存
     StateManagerClass().setCalcData(ref);

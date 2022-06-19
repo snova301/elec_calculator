@@ -34,8 +34,8 @@ class ListViewConduit extends ConsumerWidget {
             padding:
                 EdgeInsets.fromLTRB(listViewPadding, 10, listViewPadding, 10),
             itemCount: ref.watch(conduitListItemProvider).length,
-            itemBuilder: (context, _index) {
-              return ConduitCableCard(index: _index);
+            itemBuilder: (context, index) {
+              return ConduitCableCard(index: index);
             },
           ),
         ),
@@ -81,8 +81,8 @@ class ConduitConduitTypeCard extends ConsumerWidget {
               );
             },
           ).toList(),
-          onChanged: (String? _value) {
-            CalcLogic(ref).conduitTypeChange(_value);
+          onChanged: (String? value) {
+            CalcLogic(ref).conduitTypeChange(value);
           },
         ),
       ),
@@ -179,8 +179,8 @@ class ConduitCableCard extends ConsumerWidget {
                       );
                     },
                   ).toList(),
-                  onChanged: (String? _value) {
-                    CalcLogic(ref).conduitCardSelectType(index, _value);
+                  onChanged: (String? value) {
+                    CalcLogic(ref).conduitCardSelectType(index, value);
                   },
                 ),
               ],
@@ -209,8 +209,8 @@ class ConduitCableCard extends ConsumerWidget {
                       );
                     },
                   ).toList(),
-                  onChanged: (String? _value) {
-                    CalcLogic(ref).conduitCardSelectSize(index, _value);
+                  onChanged: (String? value) {
+                    CalcLogic(ref).conduitCardSelectSize(index, value);
                   },
                 ),
                 Container(
