@@ -111,6 +111,9 @@ class MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
     final isDarkmode = ref.watch(isDarkmodeProvider.state).state;
+    print(ref.watch(cableDesignOutProvider).cableSize);
+    ref.read(cableDesignOutProvider.notifier).add();
+    print(ref.watch(cableDesignOutProvider).cableSize);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -120,6 +123,7 @@ class MyAppState extends ConsumerState<MyApp> {
         brightness: isDarkmode ? Brightness.dark : Brightness.light,
         primarySwatch: Colors.green,
         fontFamily: 'NotoSansJP',
+        useMaterial3: true,
       ),
 
       // 中華系フォント対策

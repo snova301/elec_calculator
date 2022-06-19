@@ -158,29 +158,171 @@ class StateManagerClass {
   }
 }
 
-// /// データモデルの定義
-// class CableDesignData {
-//   String phase; // 相
-//   String current; // 電流
-//   String cableSize; // ケーブルサイズ
-//   String voltDrop; // 電圧降下
-//   String powerLoss; // 電力損失
-//   CableDesignData(
-//     this.phase,
-//     this.current,
-//     this.cableSize,
-//     this.voltDrop,
-//     this.powerLoss,
-//   );
+/// ケーブル設計入力のProviderの定義
+final cableDesignInProvider = StateProvider<CableDesignInData>((ref) {
+  return CableDesignInData(
+    phase: '単相',
+    cableType: '600V CV-2C',
+    elecOut: '1500',
+    volt: '200',
+    cosfai: '80',
+    cableLength: '10',
+  );
+});
 
-//   /// Map型に変換
-//   Map toJson() => {
-//         'phase': phase,
-//         'current': current,
-//         'cableSize': cableSize,
-//         'voltDrop': voltDrop,
-//         'powerLoss': powerLoss,
-//       };
+/// ケーブル設計入力のProvider入力データの定義
+class CableDesignInData {
+  String phase; // 相
+  String cableType; // ケーブル種類
+  String elecOut; // 電気出力
+  String volt; // 電圧
+  String cosfai; // 力率
+  String cableLength; // ケーブル長さ
+
+  CableDesignInData({
+    required this.phase,
+    required this.cableType,
+    required this.elecOut,
+    required this.volt,
+    required this.cosfai,
+    required this.cableLength,
+  });
+}
+
+/// ケーブル設計の結果のProviderの定義
+final cableDesignOutProvider =
+    StateNotifierProvider<CableDesignOutNotifier, CableDesignOutData>((ref) {
+  return CableDesignOutNotifier();
+});
+
+/// StateNotifierの中身を定義
+class CableDesignOutNotifier extends StateNotifier<CableDesignOutData> {
+  // 空のマップとして初期化
+  CableDesignOutNotifier()
+      : super(CableDesignOutData(
+          current: '0',
+          cableSize: '0',
+          voltDrop: '0',
+          powerLoss: '0',
+        ));
+
+  /// 追加
+  void add() {
+    // state = {...state};
+    state.cableSize = '1';
+  }
+
+  /// ケーブル設計のロジック部分
+  // void cableDesignCalcRun() {
+  //   // 計算用変数初期化
+  //   double _dCurrentVal = 0;
+  //   double _dRVal = 0;
+  //   double _dXVal = 0;
+  //   double _dK1Val = 1; // 電圧降下計算の係数
+  //   double _dK2Val = 2; // 電力損失計算の係数
+  //   Map _cableData = {}; // ケーブルのインピーダンスと許容電流のマップデータ
+
+  //   // Textfieldのテキスト取り出し
+  //   String _strElecOut = ref.read(cableDesignElecOutProvider).text;
+  //   String _strCosFai = ref.read(cableDesignCosFaiProvider).text;
+  //   String _strVolt = ref.read(cableDesignVoltProvider).text;
+  //   String _strLen = ref.read(cableDesignCableLenProvider).text;
+
+  //   // string2double
+  //   double _dElecOut = double.parse(_strElecOut);
+  //   double _dCosFai = double.parse(_strCosFai) / 100;
+  //   double _dVolt = double.parse(_strVolt);
+  //   double _dLen = double.parse(_strLen) / 1000;
+
+  //   // cosφからsinφを算出
+  //   double _dSinFai = sqrt(1 - pow(_dCosFai, 2));
+
+  //   // 相ごとの計算(単相)
+  //   if ((ref.read(cableDesignPhaseProvider) == '単相') && (_dCosFai <= 1)) {
+  //     // 単相の電流計算と計算係数設定
+  //     _dCurrentVal = _dElecOut / (_dVolt * _dCosFai);
+  //     _dK1Val = 1;
+  //     _dK2Val = 2;
+  //   }
+  //   // 相ごとの計算(三相)
+  //   else if ((ref.read(cableDesignPhaseProvider) == '三相') && (_dCosFai <= 1)) {
+  //     // 三相の電流計算と計算係数設定
+  //     _dCurrentVal = _dElecOut / (sqrt(3) * _dVolt * _dCosFai);
+  //     _dK1Val = sqrt(3);
+  //     _dK2Val = 3;
+  //   }
+
+  //   /// ケーブル種類からデータを取得
+  //   _cableData = CableConduitDataClass()
+  //       .selectCableData(ref.read(cableDesignCableTypeProvider));
+
+  //   /// ケーブル許容電流から600V CV-3Cケーブルの太さを選定
+  //   /// 許容電流を満たすケーブルサイズをリストに追加
+  //   List _cableAnswerList = [];
+  //   _cableData.forEach((key, value) {
+  //     if (value[2] >= _dCurrentVal) {
+  //       _cableAnswerList
+  //           .add([key, value[0], value[1]]); // [ケーブルサイズ, 抵抗, リアクタンス]
+  //     }
+  //   });
+
+  //   /// 許容電流が満たせない場合は'規格なし'を返す。
+  //   /// ケーブルサイズをproviderに書き込み
+  //   String _cableSize = '';
+  //   if (_cableAnswerList.isEmpty) {
+  //     _cableSize = '規格なし';
+  //     _dRVal = _dXVal = 0;
+  //   } else {
+  //     _cableSize = _cableAnswerList[0][0];
+  //     _dRVal = _cableAnswerList[0][1];
+  //     _dXVal = _cableAnswerList[0][2];
+  //   }
+  //   ref.read(cableDesignCableSizeProvider.state).state = _cableSize;
+
+  //   // 電流値小数点の長さ固定して文字列に変換
+  //   ref.read(cableDesignCurrentProvider.state).state =
+  //       _dCurrentVal.toStringAsFixed(1);
+
+  //   // ケーブル電圧降下計算
+  //   double _dVoltDrop = _dK1Val *
+  //       _dCurrentVal *
+  //       _dLen *
+  //       (_dRVal * _dCosFai + _dXVal * _dSinFai);
+  //   ref.read(cableDesignVoltDropProvider.state).state =
+  //       _dVoltDrop.toStringAsFixed(1);
+
+  //   // ケーブル電力損失計算
+  //   double _dPowLoss = _dK2Val * _dRVal * _dCurrentVal * _dCurrentVal * _dLen;
+  //   ref.read(cableDesignPowerLossProvider.state).state =
+  //       _dPowLoss.toStringAsFixed(1);
+
+  //   /// shared_prefに保存
+  //   StateManagerClass().setCalcData(ref);
+  // }
+
+}
+
+/// データモデルの定義
+class CableDesignOutData {
+  String current; // 電流
+  String cableSize; // ケーブルサイズ
+  String voltDrop; // 電圧降下
+  String powerLoss; // 電力損失
+
+  CableDesignOutData({
+    required this.current,
+    required this.cableSize,
+    required this.voltDrop,
+    required this.powerLoss,
+  });
+
+  // /// Map型に変換
+  // Map toMap() => {
+  //       'current': current,
+  //       'cableSize': cableSize,
+  //       'voltDrop': voltDrop,
+  //       'powerLoss': powerLoss,
+  //     };
 
 //   /// JSONオブジェクトを代入
 //   CableDesignData.fromJson(Map json)
@@ -189,7 +331,7 @@ class StateManagerClass {
 //         cableSize = json['cableSize'],
 //         voltDrop = json['voltDrop'],
 //         powerLoss = json['powerLoss'];
-// }
+}
 
 // /// データモデルの定義
 // class ElecPowerData {

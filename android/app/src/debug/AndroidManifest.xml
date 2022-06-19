@@ -3,7 +3,7 @@
     package="com.example.elec_calculator">
    <application
         android:label="電気設備アシスタント"
-        android:icon="@mipmap/elec_icon"
+        android:icon="@mipmap/launcher_icon"
         tools:replace="android:icon"
         >
         <activity
