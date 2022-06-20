@@ -210,9 +210,20 @@ class PhaseSelectCard extends ConsumerWidget {
   }
 }
 
-/// ケーブル種類選択widget
-class CableDeignSelectCableType extends ConsumerWidget {
-  const CableDeignSelectCableType({Key? key}) : super(key: key);
+/// 入力用のwidget
+class InputTextCard extends ConsumerWidget {
+  final String title;
+  final String unit;
+  final String message;
+  final TextEditingController controller;
+
+  const InputTextCard({
+    Key? key,
+    required this.title,
+    required this.unit,
+    required this.message,
+    required this.controller,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -221,73 +232,18 @@ class CableDeignSelectCableType extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
+            // padding: const EdgeInsets.all(8),
             margin: const EdgeInsets.fromLTRB(8, 8, 0, 0),
-            child: const Tooltip(
-              message: 'ドロップダウンから選択してください',
+            child: Tooltip(
+              message: message,
               child: Text(
-                'ケーブル種類',
-                style: TextStyle(
+                title,
+                style: const TextStyle(
                   fontSize: 13,
                 ),
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.center,
-            child: DropdownButton(
-              value: ref.watch(cableDesignCableTypeProvider),
-              items: <String>['600V CV-2C', '600V CV-3C', '600V CVT', 'IV']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  alignment: AlignmentDirectional.centerStart,
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (String? value) {
-                ref.read(cableDesignCableTypeProvider.state).state = value!;
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// 入力用のwidget
-class InputTextCard extends ConsumerWidget {
-  final String title;
-  final String unit;
-  final String message;
-  final StateProvider<TextEditingController> provider;
-
-  const InputTextCard({
-    Key? key,
-    required this.title,
-    required this.unit,
-    required this.message,
-    required this.provider,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Align(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-              // padding: const EdgeInsets.all(8),
-              margin: const EdgeInsets.fromLTRB(8, 8, 0, 0),
-              child: Tooltip(
-                message: message,
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 13,
-                  ),
-                ),
-              )),
           ListTile(
             trailing: Text(
               unit,
@@ -296,7 +252,7 @@ class InputTextCard extends ConsumerWidget {
               ),
             ),
             title: TextField(
-              controller: ref.watch(provider),
+              controller: controller,
               textAlign: TextAlign.right,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -311,7 +267,8 @@ class InputTextCard extends ConsumerWidget {
 /// 実行ボタンのWidget
 class RunElevatedButton extends ConsumerWidget {
   final double paddingSize;
-  final StateProvider<TextEditingController> provider;
+  final TextEditingController provider;
+  // final StateProvider<TextEditingController> provider;
 
   const RunElevatedButton({
     Key? key,
@@ -326,7 +283,8 @@ class RunElevatedButton extends ConsumerWidget {
       margin: EdgeInsets.fromLTRB(paddingSize, 0, paddingSize, 0),
       child: ElevatedButton(
         onPressed: () {
-          CalcLogic(ref).isCosFaiCorrect(ref.read(provider).text)
+          CalcLogic(ref).isCosFaiCorrect(provider.text)
+              // CalcLogic(ref).isCosFaiCorrect(ref.read(provider).text)
               ? CalcLogic(ref).selectButtonRun()
               : showDialog<void>(
                   context: context,
@@ -368,7 +326,7 @@ class OutputTextCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Align(
+    return Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[

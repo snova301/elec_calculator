@@ -41,10 +41,14 @@ class CalcLogic {
     Map cableData = {}; // ケーブルのインピーダンスと許容電流のマップデータ
 
     // Textfieldのテキスト取り出し
-    String strElecOut = ref.read(cableDesignElecOutProvider).text;
-    String strCosFai = ref.read(cableDesignCosFaiProvider).text;
-    String strVolt = ref.read(cableDesignVoltProvider).text;
-    String strLen = ref.read(cableDesignCableLenProvider).text;
+    // String strElecOut = ref.read(cableDesignElecOutProvider).text;
+    // String strCosFai = ref.read(cableDesignCosFaiProvider).text;
+    // String strVolt = ref.read(cableDesignVoltProvider).text;
+    // String strLen = ref.read(cableDesignCableLenProvider).text;
+    String strElecOut = ref.read(cableDesignInProvider).elecOut.text;
+    String strCosFai = ref.read(cableDesignInProvider).cosfai.text;
+    String strVolt = ref.read(cableDesignInProvider).volt.text;
+    String strLen = ref.read(cableDesignInProvider).cableLength.text;
 
     // string2double
     double dElecOut = double.parse(strElecOut);

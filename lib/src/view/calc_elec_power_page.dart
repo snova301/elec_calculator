@@ -19,51 +19,51 @@ class ListViewElecPower extends ConsumerWidget {
         /// 入力表示
         const SeparateText(title: '計算条件'),
         PhaseSelectCard(provider: elecPowerPhaseProvider),
-        InputTextCard(
-          title: '線間電圧',
-          unit: 'V',
-          message: '整数のみ',
-          provider: elecPowerVoltProvider,
-        ),
-        InputTextCard(
-          title: '電流',
-          unit: 'A',
-          message: '整数のみ',
-          provider: elecPowerCurrentProvider,
-        ),
-        InputTextCard(
-          title: '力率',
-          unit: '%',
-          message: '1-100%の整数のみ',
-          provider: elecPowerCosFaiProvider,
-        ),
+        // InputTextCard(
+        //   title: '線間電圧',
+        //   unit: 'V',
+        //   message: '整数のみ',
+        //   provider: elecPowerVoltProvider,
+        // ),
+        // InputTextCard(
+        //   title: '電流',
+        //   unit: 'A',
+        //   message: '整数のみ',
+        //   provider: elecPowerCurrentProvider,
+        // ),
+        // InputTextCard(
+        //   title: '力率',
+        //   unit: '%',
+        //   message: '1-100%の整数のみ',
+        //   provider: elecPowerCosFaiProvider,
+        // ),
 
-        /// 計算実行ボタン
-        RunElevatedButton(
-            paddingSize: blockWidth, provider: elecPowerCosFaiProvider),
+        // /// 計算実行ボタン
+        // RunElevatedButton(
+        //     paddingSize: blockWidth, provider: elecPowerCosFaiProvider),
 
-        /// 結果表示
-        const SeparateText(title: '計算結果'),
-        OutputTextCard(
-          title: '皮相電力',
-          unit: 'kVA',
-          provider: elecPowerApparentPowerProvider,
-        ),
-        OutputTextCard(
-          title: '有効電力',
-          unit: 'kW',
-          provider: elecPowerActivePowerProvider,
-        ),
-        OutputTextCard(
-          title: '無効電力',
-          unit: 'kVar',
-          provider: elecPowerReactivePowerProvider,
-        ),
-        OutputTextCard(
-          title: 'sinφ',
-          unit: '%',
-          provider: elecPowerSinFaiProvider,
-        ),
+        // /// 結果表示
+        // const SeparateText(title: '計算結果'),
+        // OutputTextCard(
+        //   title: '皮相電力',
+        //   unit: 'kVA',
+        //   provider: elecPowerApparentPowerProvider,
+        // ),
+        // OutputTextCard(
+        //   title: '有効電力',
+        //   unit: 'kW',
+        //   provider: elecPowerActivePowerProvider,
+        // ),
+        // OutputTextCard(
+        //   title: '無効電力',
+        //   unit: 'kVar',
+        //   provider: elecPowerReactivePowerProvider,
+        // ),
+        // OutputTextCard(
+        //   title: 'sinφ',
+        //   unit: '%',
+        //   provider: elecPowerSinFaiProvider,
+        // ),
       ],
     );
   }

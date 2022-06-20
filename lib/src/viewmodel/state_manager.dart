@@ -169,18 +169,23 @@ final cableDesignInProvider =
 class CableDesignInNotifier extends StateNotifier<CableDesignInData> {
   // 空のデータとして初期化
   CableDesignInNotifier()
-      : super(const CableDesignInData(
+      : super(CableDesignInData(
           phase: '単相',
           cableType: '600V CV-2C',
-          elecOut: '1500',
-          volt: '200',
-          cosfai: '80',
-          cableLength: '10',
+          elecOut: TextEditingController(text: '1500'),
+          volt: TextEditingController(text: '200'),
+          cosfai: TextEditingController(text: '80'),
+          cableLength: TextEditingController(text: '10'),
         ));
 
   /// 相の変更
   void phaseUpdate(String phase) {
     state = state.copyWith(phase: phase);
+  }
+
+  /// ケーブル種類の変更
+  void cableTypeUpdate(String cableType) {
+    state = state.copyWith(cableType: cableType);
   }
 }
 
@@ -190,10 +195,10 @@ class CableDesignInData with _$CableDesignInData {
   const factory CableDesignInData({
     required String phase, // 相
     required String cableType, // ケーブル種類
-    required String elecOut, // 電気出力
-    required String volt, // 電圧
-    required String cosfai, // 力率
-    required String cableLength, // ケーブル長さ
+    required TextEditingController elecOut, // 電気出力
+    required TextEditingController volt, // 電圧
+    required TextEditingController cosfai, // 力率
+    required TextEditingController cableLength, // ケーブル長さ
   }) = _CableDesignInData;
 
   // factory CableDesignInData.fromJson(Map<String, Object?> json) =>
@@ -210,7 +215,7 @@ final cableDesignOutProvider =
 class CableDesignOutNotifier extends StateNotifier<CableDesignOutData> {
   // 空のマップとして初期化
   CableDesignOutNotifier()
-      : super(CableDesignOutData(
+      : super(const CableDesignOutData(
           current: '0',
           cableSize: '0',
           voltDrop: '0',
@@ -218,25 +223,39 @@ class CableDesignOutNotifier extends StateNotifier<CableDesignOutData> {
         ));
 
   /// 計算実行
-  void run() {
-    // state = {...state};
-    state.cableSize = '1';
-  }
+  // void run() {
+  //   // state = {...state};
+  //   state.cableSize = '1';
+  // }
 }
 
-/// データモデルの定義
-class CableDesignOutData {
-  String current; // 電流
-  String cableSize; // ケーブルサイズ
-  String voltDrop; // 電圧降下
-  String powerLoss; // 電力損失
+/// ケーブル設計出力のProviderデータの定義
+@freezed
+class CableDesignOutData with _$CableDesignOutData {
+  const factory CableDesignOutData({
+    required String current, // 電流
+    required String cableSize, // ケーブルサイズ
+    required String voltDrop, // 電圧降下
+    required String powerLoss, // 電力損失
+  }) = _CableDesignOutData;
 
-  CableDesignOutData({
-    required this.current,
-    required this.cableSize,
-    required this.voltDrop,
-    required this.powerLoss,
-  });
+  // factory CableDesignOutData.fromJson(Map<String, Object?> json) =>
+  //     _$CableDesignOutDataFromJson(json);
+}
+
+// /// データモデルの定義
+// class CableDesignOutData {
+//   String current; // 電流
+//   String cableSize; // ケーブルサイズ
+//   String voltDrop; // 電圧降下
+//   String powerLoss; // 電力損失
+
+//   CableDesignOutData({
+//     required this.current,
+//     required this.cableSize,
+//     required this.voltDrop,
+//     required this.powerLoss,
+//   });
 
   // /// Map型に変換
   // Map toMap() => {
@@ -253,7 +272,7 @@ class CableDesignOutData {
 //         cableSize = json['cableSize'],
 //         voltDrop = json['voltDrop'],
 //         powerLoss = json['powerLoss'];
-}
+// }
 
 // /// データモデルの定義
 // class ElecPowerData {
