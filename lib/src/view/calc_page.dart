@@ -135,81 +135,6 @@ class SeparateText extends ConsumerWidget {
   }
 }
 
-/// 相の選択widget
-class PhaseSelectCard extends ConsumerWidget {
-  final StateProvider provider;
-
-  const PhaseSelectCard({Key? key, required this.provider}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            margin: const EdgeInsets.fromLTRB(8, 8, 0, 0),
-            child: const Tooltip(
-              message: '選択してください',
-              child: Text(
-                '電源の相',
-                style: TextStyle(
-                  fontSize: 13,
-                ),
-              ),
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                margin: const EdgeInsets.all(8),
-                child: ElevatedButton(
-                  onPressed: () {
-                    ref.read(provider.state).state = '単相';
-                    ref.read(cableDesignInProvider.notifier).phaseUpdate('単相');
-                    print(ref.read(cableDesignInProvider).phase);
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        ref.watch(cableDesignInProvider).phase == '単相'
-                            ? null
-                            : Colors.grey),
-                    // ref.watch(provider) == '単相' ? null : Colors.grey),
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20)),
-                  ),
-                  child: const Text('単相'),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.all(8),
-                child: ElevatedButton(
-                  onPressed: () {
-                    ref.read(provider.state).state = '三相';
-                    ref.read(cableDesignInProvider.notifier).phaseUpdate('三相');
-                    print(ref.read(cableDesignInProvider).phase);
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        ref.watch(cableDesignInProvider).phase == '三相'
-                            ? null
-                            : Colors.grey),
-                    // ref.watch(provider) == '三相' ? null : Colors.grey),
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20.0)),
-                  ),
-                  child: const Text('三相'),
-                ),
-              ),
-            ],
-          )
-        ],
-      ),
-    );
-  }
-}
-
 /// 入力用のwidget
 class InputTextCard extends ConsumerWidget {
   final String title;
@@ -264,52 +189,6 @@ class InputTextCard extends ConsumerWidget {
   }
 }
 
-/// 実行ボタンのWidget
-class RunElevatedButton extends ConsumerWidget {
-  final double paddingSize;
-  final TextEditingController provider;
-
-  const RunElevatedButton({
-    Key? key,
-    required this.paddingSize,
-    required this.provider,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      margin: EdgeInsets.fromLTRB(paddingSize, 0, paddingSize, 0),
-      child: ElevatedButton(
-        onPressed: () {
-          CalcLogic(ref).isCosFaiCorrect(provider.text)
-              // CalcLogic(ref).isCosFaiCorrect(ref.read(provider).text)
-              ? CalcLogic(ref).selectButtonRun()
-              : showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return _CosFaiAlertDialog(context);
-                  },
-                );
-        },
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.redAccent),
-          padding: MaterialStateProperty.all(const EdgeInsets.all(30.0)),
-          shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
-        ),
-        child: const Text(
-          '計算実行',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-      ),
-    );
-  }
-}
-
 /// 結果用のwidget
 class OutputTextCard extends ConsumerWidget {
   final String title;
@@ -357,8 +236,8 @@ class OutputTextCard extends ConsumerWidget {
 }
 
 /// 力率が0-100%の範囲内にない場合、ポップアップ表示で警告
-class _CosFaiAlertDialog extends AlertDialog {
-  _CosFaiAlertDialog(BuildContext context)
+class CosFaiAlertDialog extends AlertDialog {
+  CosFaiAlertDialog(BuildContext context)
       : super(
           title: const Text('力率数値異常'),
           content: SingleChildScrollView(

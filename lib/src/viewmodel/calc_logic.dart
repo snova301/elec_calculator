@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:elec_facility_calc/main.dart';
-import 'package:elec_facility_calc/src/model/cable_conduit_data_class.dart';
+import 'package:elec_facility_calc/src/data/cable_conduit_data_class.dart';
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 
 /// 各計算のロジック部分
@@ -21,15 +21,6 @@ class CalcLogic {
     return (dCosFai >= 0 && dCosFai <= 100) ? true : false;
   }
 
-  /// 実行ボタンを押したときの対応
-  void selectButtonRun() {
-    if (ref.read(bottomNaviSelectProvider) == 0) {
-      CalcLogic(ref).cableDesignCalcRun();
-    } else if (ref.read(bottomNaviSelectProvider) == 1) {
-      CalcLogic(ref).elecPowerCalcRun();
-    }
-  }
-
   /// ケーブル設計のロジック部分
   void cableDesignCalcRun() {
     // 計算用変数初期化
@@ -41,11 +32,12 @@ class CalcLogic {
     Map cableData = {}; // ケーブルのインピーダンスと許容電流のマップデータ
 
     // Textfieldのテキスト取り出し
-    String strCableType = ref.read(cableDesignPhaseProvider);
-    String strElecOut = ref.read(cableDesignInProvider).elecOut.text;
-    String strCosFai = ref.read(cableDesignInProvider).cosfai.text;
-    String strVolt = ref.read(cableDesignInProvider).volt.text;
-    String strLen = ref.read(cableDesignInProvider).cableLength.text;
+    String strPhase = ref.read(cableDesignProvider).phase;
+    String strElecOut = ref.read(cableDesignProvider).elecOut.text;
+    String strCosFai = ref.read(cableDesignProvider).cosfai.text;
+    String strVolt = ref.read(cableDesignProvider).volt.text;
+    String strLen = ref.read(cableDesignProvider).cableLength.text;
+    String strCableType = ref.read(cableDesignProvider).cableType;
 
     // string2double
     double dElecOut = double.parse(strElecOut);
@@ -57,14 +49,14 @@ class CalcLogic {
     double dSinFai = sqrt(1 - pow(dCosFai, 2));
 
     // 相ごとの計算(単相)
-    if ((strCableType == '単相') && (dCosFai <= 1)) {
+    if ((strPhase == '単相') && (dCosFai <= 1)) {
       // 単相の電流計算と計算係数設定
       dCurrentVal = dElecOut / (dVolt * dCosFai);
       dK1Val = 1;
       dK2Val = 2;
     }
     // 相ごとの計算(三相)
-    else if ((strCableType == '三相') && (dCosFai <= 1)) {
+    else if ((strPhase == '三相') && (dCosFai <= 1)) {
       // 三相の電流計算と計算係数設定
       dCurrentVal = dElecOut / (sqrt(3) * dVolt * dCosFai);
       dK1Val = sqrt(3);
@@ -72,8 +64,7 @@ class CalcLogic {
     }
 
     /// ケーブル種類からデータを取得
-    cableData = CableConduitDataClass()
-        .selectCableData(ref.read(cableDesignCableTypeProvider));
+    cableData = CableConduitDataClass().selectCableData(strCableType);
 
     /// ケーブル許容電流から600V CV-3Cケーブルの太さを選定
     /// 許容電流を満たすケーブルサイズをリストに追加
@@ -96,25 +87,25 @@ class CalcLogic {
     }
 
     /// ケーブルサイズをproviderに書き込み
-    ref.read(cableDesignOutProvider.notifier).cableSizeUpdate(cableSize);
+    ref.read(cableDesignProvider.notifier).cableSizeUpdate(cableSize);
 
     /// 電流値小数点の長さ固定して文字列に変換
     /// providerに書込み
     String strCurrentVal = dCurrentVal.toStringAsFixed(1);
-    ref.read(cableDesignOutProvider.notifier).currentUpdate(strCurrentVal);
+    ref.read(cableDesignProvider.notifier).currentUpdate(strCurrentVal);
 
     /// ケーブル電圧降下計算
     /// providerに書込み
     double dVoltDrop =
         dK1Val * dCurrentVal * dLen * (dRVal * dCosFai + dXVal * dSinFai);
     String strVoltDrop = dVoltDrop.toStringAsFixed(1);
-    ref.read(cableDesignOutProvider.notifier).voltDropUpdate(strVoltDrop);
+    ref.read(cableDesignProvider.notifier).voltDropUpdate(strVoltDrop);
 
     /// ケーブル電力損失計算
     /// providerに書込み
     double dPowLoss = dK2Val * dRVal * dCurrentVal * dCurrentVal * dLen;
     String strPowLoss = dPowLoss.toStringAsFixed(1);
-    ref.read(cableDesignOutProvider.notifier).powerLossUpdate(strPowLoss);
+    ref.read(cableDesignProvider.notifier).powerLossUpdate(strPowLoss);
 
     /// shared_prefに保存
     StateManagerClass().setCalcData(ref);
@@ -268,38 +259,51 @@ class CalcLogic {
   /// 電力計算のロジック部分
   void elecPowerCalcRun() {
     // Textfieldのテキスト取り出し
-    String strCalcVolt = ref.read(elecPowerVoltProvider).text;
-    String strCalcCur = ref.read(elecPowerCurrentProvider).text;
-    String strCalcCosFai = ref.read(elecPowerCosFaiProvider).text;
+    // String strVolt = ref.read(elecPowerVoltProvider).text;
+    // String strCurrent = ref.read(elecPowerCurrentProvider).text;
+    // String strCosFai = ref.read(elecPowerCosFaiProvider).text;
+
+    String strPhase = ref.read(elecPowerProvider).phase;
+    String strVolt = ref.read(elecPowerProvider).volt.text;
+    String strCurrent = ref.read(elecPowerProvider).current.text;
+    String strCosFai = ref.read(elecPowerProvider).cosFai.text;
 
     // string2double
-    double dCalcVolt = double.parse(strCalcVolt);
-    double dCalcCur = double.parse(strCalcCur);
-    double dCalcCosFai = double.parse(strCalcCosFai) / 100;
-    double dCalcAppaPowVal = 0;
+    double dVolt = double.parse(strVolt);
+    double dCurrent = double.parse(strCurrent);
+    double dCosFai = double.parse(strCosFai) / 100;
+    double dAppaPow = 0;
 
     // cosφからsinφを算出
-    double dCalcSinFai = sqrt(1 - pow(dCalcCosFai, 2));
+    double dSinFai = sqrt(1 - pow(dCosFai, 2));
 
-    if (ref.read(elecPowerPhaseProvider) == '単相') {
-      // 単相電力計算
-      dCalcAppaPowVal = dCalcVolt * dCalcCur;
-    } else if (ref.read(elecPowerPhaseProvider) == '三相') {
-      // 3相電力計算
-      dCalcAppaPowVal = sqrt(3) * dCalcVolt * dCalcCur;
+    if (strPhase == '単相') {
+      /// 単相電力計算
+      dAppaPow = dVolt * dCurrent;
+    } else if (strPhase == '三相') {
+      /// 3相電力計算
+      dAppaPow = sqrt(3) * dVolt * dCurrent;
     }
-    double dCalcActPowVal = dCalcAppaPowVal * dCalcCosFai;
-    double dCalcReactPowVal = dCalcAppaPowVal * dCalcSinFai;
 
-    // double2string
-    ref.read(elecPowerApparentPowerProvider.state).state =
-        (dCalcAppaPowVal / 1000).toStringAsFixed(2);
-    ref.read(elecPowerActivePowerProvider.state).state =
-        (dCalcActPowVal / 1000).toStringAsFixed(2);
-    ref.read(elecPowerReactivePowerProvider.state).state =
-        (dCalcReactPowVal / 1000).toStringAsFixed(2);
-    ref.read(elecPowerSinFaiProvider.state).state =
-        (dCalcSinFai * 100).toStringAsFixed(1);
+    /// 有効電力と無効電力の計算
+    double dActPow = dAppaPow * dCosFai;
+    double dReactPow = dAppaPow * dSinFai;
+
+    /// double2string
+    String strAppaPow = (dAppaPow / 1000).toStringAsFixed(2);
+    String strActPow = (dActPow / 1000).toStringAsFixed(2);
+    String strReactPow = (dReactPow / 1000).toStringAsFixed(2);
+    String strSinFai = (dSinFai * 100).toStringAsFixed(1);
+
+    /// providerに書込み
+    // ref.read(elecPowerApparentPowerProvider.state).state = strAppaPow;
+    // ref.read(elecPowerActivePowerProvider.state).state = strActPow;
+    // ref.read(elecPowerReactivePowerProvider.state).state = strReactPow;
+    // ref.read(elecPowerSinFaiProvider.state).state = strSinFai;
+    ref.read(elecPowerProvider.notifier).apparentPowerUpdate(strAppaPow);
+    ref.read(elecPowerProvider.notifier).activePowerUpdate(strActPow);
+    ref.read(elecPowerProvider.notifier).reactivePowerUpdate(strReactPow);
+    ref.read(elecPowerProvider.notifier).sinFaiUpdate(strSinFai);
 
     /// shared_prefに保存
     StateManagerClass().setCalcData(ref);

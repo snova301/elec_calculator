@@ -119,9 +119,10 @@ node_modules/
 .vscode/
 firebase.json
 .firebaserc
-assets/fonts/
+assets/fonts/*
 .metadata
 lib/firebase_options.dart
 android/app/google-services.json
 ios/firebase_app_id_file.json
 *.freezed.dart
+lib/src/data/*
