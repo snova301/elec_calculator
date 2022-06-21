@@ -227,6 +227,26 @@ class CableDesignOutNotifier extends StateNotifier<CableDesignOutData> {
   //   // state = {...state};
   //   state.cableSize = '1';
   // }
+
+  /// ケーブルサイズの変更
+  void cableSizeUpdate(String cableSize) {
+    state = state.copyWith(cableSize: cableSize);
+  }
+
+  /// 電流の変更
+  void currentUpdate(String current) {
+    state = state.copyWith(current: current);
+  }
+
+  /// 電圧降下の変更
+  void voltDropUpdate(String voltDrop) {
+    state = state.copyWith(voltDrop: voltDrop);
+  }
+
+  /// 電力損失の変更
+  void powerLossUpdate(String powerLoss) {
+    state = state.copyWith(powerLoss: powerLoss);
+  }
 }
 
 /// ケーブル設計出力のProviderデータの定義

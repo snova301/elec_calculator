@@ -41,10 +41,7 @@ class CalcLogic {
     Map cableData = {}; // ケーブルのインピーダンスと許容電流のマップデータ
 
     // Textfieldのテキスト取り出し
-    // String strElecOut = ref.read(cableDesignElecOutProvider).text;
-    // String strCosFai = ref.read(cableDesignCosFaiProvider).text;
-    // String strVolt = ref.read(cableDesignVoltProvider).text;
-    // String strLen = ref.read(cableDesignCableLenProvider).text;
+    String strCableType = ref.read(cableDesignPhaseProvider);
     String strElecOut = ref.read(cableDesignInProvider).elecOut.text;
     String strCosFai = ref.read(cableDesignInProvider).cosfai.text;
     String strVolt = ref.read(cableDesignInProvider).volt.text;
@@ -60,14 +57,14 @@ class CalcLogic {
     double dSinFai = sqrt(1 - pow(dCosFai, 2));
 
     // 相ごとの計算(単相)
-    if ((ref.read(cableDesignPhaseProvider) == '単相') && (dCosFai <= 1)) {
+    if ((strCableType == '単相') && (dCosFai <= 1)) {
       // 単相の電流計算と計算係数設定
       dCurrentVal = dElecOut / (dVolt * dCosFai);
       dK1Val = 1;
       dK2Val = 2;
     }
     // 相ごとの計算(三相)
-    else if ((ref.read(cableDesignPhaseProvider) == '三相') && (dCosFai <= 1)) {
+    else if ((strCableType == '三相') && (dCosFai <= 1)) {
       // 三相の電流計算と計算係数設定
       dCurrentVal = dElecOut / (sqrt(3) * dVolt * dCosFai);
       dK1Val = sqrt(3);
@@ -88,7 +85,6 @@ class CalcLogic {
     });
 
     /// 許容電流が満たせない場合は'規格なし'を返す。
-    /// ケーブルサイズをproviderに書き込み
     String cableSize = '';
     if (cableAnswerList.isEmpty) {
       cableSize = '規格なし';
@@ -98,22 +94,27 @@ class CalcLogic {
       dRVal = cableAnswerList[0][1];
       dXVal = cableAnswerList[0][2];
     }
-    ref.read(cableDesignCableSizeProvider.state).state = cableSize;
 
-    // 電流値小数点の長さ固定して文字列に変換
-    ref.read(cableDesignCurrentProvider.state).state =
-        dCurrentVal.toStringAsFixed(1);
+    /// ケーブルサイズをproviderに書き込み
+    ref.read(cableDesignOutProvider.notifier).cableSizeUpdate(cableSize);
 
-    // ケーブル電圧降下計算
+    /// 電流値小数点の長さ固定して文字列に変換
+    /// providerに書込み
+    String strCurrentVal = dCurrentVal.toStringAsFixed(1);
+    ref.read(cableDesignOutProvider.notifier).currentUpdate(strCurrentVal);
+
+    /// ケーブル電圧降下計算
+    /// providerに書込み
     double dVoltDrop =
         dK1Val * dCurrentVal * dLen * (dRVal * dCosFai + dXVal * dSinFai);
-    ref.read(cableDesignVoltDropProvider.state).state =
-        dVoltDrop.toStringAsFixed(1);
+    String strVoltDrop = dVoltDrop.toStringAsFixed(1);
+    ref.read(cableDesignOutProvider.notifier).voltDropUpdate(strVoltDrop);
 
-    // ケーブル電力損失計算
+    /// ケーブル電力損失計算
+    /// providerに書込み
     double dPowLoss = dK2Val * dRVal * dCurrentVal * dCurrentVal * dLen;
-    ref.read(cableDesignPowerLossProvider.state).state =
-        dPowLoss.toStringAsFixed(1);
+    String strPowLoss = dPowLoss.toStringAsFixed(1);
+    ref.read(cableDesignOutProvider.notifier).powerLossUpdate(strPowLoss);
 
     /// shared_prefに保存
     StateManagerClass().setCalcData(ref);

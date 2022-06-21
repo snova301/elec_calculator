@@ -15,32 +15,43 @@ class ListViewCableDesign extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print(ref.watch(cableDesignInProvider).elecOut);
     return ListView(
       padding: EdgeInsets.fromLTRB(listViewPadding, 10, listViewPadding, 10),
       children: <Widget>[
         /// 入力表示
         const SeparateText(title: '計算条件'),
+
+        /// 相選択
         PhaseSelectCard(provider: cableDesignPhaseProvider),
+
+        /// ケーブル種類選択
         const CableDeignSelectCableType(),
+
+        /// 電気容量入力
         InputTextCard(
           title: '電気容量',
           unit: 'W',
           message: '整数のみ',
           controller: ref.watch(cableDesignInProvider).elecOut,
         ),
+
+        /// 線間電圧入力
         InputTextCard(
           title: '線間電圧',
           unit: 'V',
           message: '整数のみ',
           controller: ref.watch(cableDesignInProvider).volt,
         ),
+
+        /// 力率入力
         InputTextCard(
           title: '力率',
           unit: '%',
           message: '整数のみ',
           controller: ref.watch(cableDesignInProvider).cosfai,
         ),
+
+        /// ケーブル長入力
         InputTextCard(
           title: 'ケーブル長',
           unit: 'm',
@@ -52,30 +63,36 @@ class ListViewCableDesign extends ConsumerWidget {
         RunElevatedButton(
             paddingSize: blockWidth,
             provider: ref.watch(cableDesignInProvider).cosfai),
-        // paddingSize: blockWidth, provider: cableDesignCosFaiProvider),
 
         /// 結果表示
         const SeparateText(title: '計算結果'),
+
+        /// 電流表示
         OutputTextCard(
           title: '電流',
           unit: 'A',
-          provider: cableDesignCurrentProvider,
+          result: ref.watch(cableDesignOutProvider).current,
         ),
+
+        /// ケーブルサイズ表示
         OutputTextCard(
           title: ref.watch(cableDesignCableTypeProvider),
           unit: 'mm2',
-          provider: cableDesignCableSizeProvider,
+          result: ref.watch(cableDesignOutProvider).cableSize,
         ),
 
+        /// 電圧降下表示
         OutputTextCard(
           title: '電圧降下',
           unit: 'V',
-          provider: cableDesignVoltDropProvider,
+          result: ref.watch(cableDesignOutProvider).voltDrop,
         ),
+
+        /// 電力損失表示
         OutputTextCard(
           title: '電力損失',
           unit: 'W',
-          provider: cableDesignPowerLossProvider,
+          result: ref.watch(cableDesignOutProvider).powerLoss,
         ),
       ],
     );

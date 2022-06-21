@@ -268,7 +268,6 @@ class InputTextCard extends ConsumerWidget {
 class RunElevatedButton extends ConsumerWidget {
   final double paddingSize;
   final TextEditingController provider;
-  // final StateProvider<TextEditingController> provider;
 
   const RunElevatedButton({
     Key? key,
@@ -315,13 +314,13 @@ class RunElevatedButton extends ConsumerWidget {
 class OutputTextCard extends ConsumerWidget {
   final String title;
   final String unit;
-  final StateProvider<String> provider;
+  final String result;
 
   const OutputTextCard({
     Key? key,
     required this.title,
     required this.unit,
-    required this.provider,
+    required this.result,
   }) : super(key: key);
 
   @override
@@ -341,7 +340,8 @@ class OutputTextCard extends ConsumerWidget {
             ),
           ),
           ListTile(
-            trailing: ref.watch(provider) == '要相談'
+            title: Text(result, textAlign: TextAlign.right),
+            trailing: result == '規格なし'
                 ? const Text('')
                 : Text(
                     unit,
@@ -349,7 +349,6 @@ class OutputTextCard extends ConsumerWidget {
                       fontSize: 13,
                     ),
                   ),
-            title: Text(ref.watch(provider), textAlign: TextAlign.right),
           ),
         ],
       ),
