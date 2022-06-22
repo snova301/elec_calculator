@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:elec_facility_calc/main.dart';
-import 'package:elec_facility_calc/src/data/cable_conduit_data_class.dart';
+import 'package:elec_facility_calc/src/data/cable_data.dart';
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 
 /// 各計算のロジック部分
@@ -29,7 +29,7 @@ class CalcLogic {
     double dXVal = 0;
     double dK1Val = 1; // 電圧降下計算の係数
     double dK2Val = 2; // 電力損失計算の係数
-    Map cableData = {}; // ケーブルのインピーダンスと許容電流のマップデータ
+    Map cableDataMap = {}; // ケーブルのインピーダンスと許容電流のマップデータ
 
     // Textfieldのテキスト取り出し
     String strPhase = ref.read(cableDesignProvider).phase;
@@ -64,12 +64,12 @@ class CalcLogic {
     }
 
     /// ケーブル種類からデータを取得
-    cableData = CableConduitDataClass().selectCableData(strCableType);
+    cableDataMap = CableData().selectCableData(strCableType);
 
     /// ケーブル許容電流から600V CV-3Cケーブルの太さを選定
     /// 許容電流を満たすケーブルサイズをリストに追加
     List cableAnswerList = [];
-    cableData.forEach((key, value) {
+    cableDataMap.forEach((key, value) {
       if (value[2] >= dCurrentVal) {
         cableAnswerList.add([key, value[0], value[1]]); // [ケーブルサイズ, 抵抗, リアクタンス]
       }
@@ -113,147 +113,102 @@ class CalcLogic {
 
   /// 電線管設計でケーブルカードのケーブル種別を変更するメソッド。
   void conduitCardSelectType(int index, String? value) {
-    /// ケーブル種類の変更
-    ref.read(conduitListItemProvider.state).state[index]['type'] = value!;
+    // /// ケーブル種類の変更
+    // ref.read(conduitListItemProvider.state).state[index]['type'] = value!;
 
-    /// ケーブルサイズの変更
-    Map cableData = CableConduitDataClass().selectCableData(value);
-    ref.read(conduitListItemProvider.state).state[index]['size'] =
-        cableData.keys.toList()[0].toString();
+    // /// ケーブルサイズの変更
+    // Map cableData = CableConduitDataClass().selectCableData(value);
+    // ref.read(conduitListItemProvider.state).state[index]['size'] =
+    //     cableData.keys.toList()[0].toString();
 
-    /// ケーブル外径の変更
-    ref.read(conduitListItemProvider.state).state[index]['radius'] =
-        cableData.values.toList()[0][3];
+    // /// ケーブル外径の変更
+    // ref.read(conduitListItemProvider.state).state[index]['radius'] =
+    //     cableData.values.toList()[0][3];
 
-    /// ケーブルサイズリストの更新
-    ref.read(conduitCableSizeListProvider.state).state[index] =
-        cableData.keys.toList();
+    // /// ケーブルサイズリストの更新
+    // ref.read(conduitCableSizeListProvider.state).state[index] =
+    //     cableData.keys.toList();
 
-    /// 各Listの更新
-    ref.read(conduitListItemProvider.state).state = [
-      ...ref.read(conduitListItemProvider)
-    ];
-    ref.read(conduitCableSizeListProvider.state).state = [
-      ...ref.read(conduitCableSizeListProvider)
-    ];
+    // /// 各Listの更新
+    // ref.read(conduitListItemProvider.state).state = [
+    //   ...ref.read(conduitListItemProvider)
+    // ];
+    // ref.read(conduitCableSizeListProvider.state).state = [
+    //   ...ref.read(conduitCableSizeListProvider)
+    // ];
 
-    /// 電線管設計実行
-    conduitCalcRun();
+    // /// 電線管設計実行
+    // conduitCalcRun();
   }
 
   /// 電線管設計でケーブルカードのケーブルサイズを変更するメソッド。
   void conduitCardSelectSize(int index, String? value) {
-    /// ケーブルサイズの変更
-    ref.read(conduitListItemProvider.state).state[index]['size'] = value;
+    // /// ケーブルサイズの変更
+    // ref.read(conduitListItemProvider.state).state[index]['size'] = value;
 
-    /// ケーブル外径の変更
-    Map cableData = CableConduitDataClass().selectCableData(
-        ref.read(conduitListItemProvider.state).state[index]['type']);
-    ref.read(conduitListItemProvider.state).state[index]['radius'] =
-        cableData[value][3];
+    // /// ケーブル外径の変更
+    // Map cableData = CableConduitDataClass().selectCableData(
+    //     ref.read(conduitListItemProvider.state).state[index]['type']);
+    // ref.read(conduitListItemProvider.state).state[index]['radius'] =
+    //     cableData[value][3];
 
-    /// Listの更新
-    ref.read(conduitListItemProvider.state).state = [
-      ...ref.read(conduitListItemProvider)
-    ];
+    // /// Listの更新
+    // ref.read(conduitListItemProvider.state).state = [
+    //   ...ref.read(conduitListItemProvider)
+    // ];
 
-    /// 電線管設計実行
-    conduitCalcRun();
+    // /// 電線管設計実行
+    // conduitCalcRun();
   }
 
-  /// 電線管設計でケーブルカードのケーブルサイズを変更するメソッド。
+  /// 電線管設計でケーブルカードを追加するメソッド。
   void conduitCableAddRun() {
-    /// ケーブル種類とサイズを追加
-    /// 追加は固定で、600V CV-2C 2sq
-    ref
-        .read(conduitListItemProvider)
-        .add({'type': '600V CV-2C', 'size': '2', 'radius': 10.5});
-    ref.read(conduitListItemProvider.state).state = [
-      ...ref.read(conduitListItemProvider)
-    ];
+    // /// ケーブル種類とサイズを追加
+    // /// 追加は固定で、600V CV-2C 2sq
+    // ref
+    //     .read(conduitListItemProvider)
+    //     .add({'type': '600V CV-2C', 'size': '2', 'radius': 10.5});
+    // ref.read(conduitListItemProvider.state).state = [
+    //   ...ref.read(conduitListItemProvider)
+    // ];
 
-    /// ケーブル種類からデータを取得
-    Map cableData = CableConduitDataClass().selectCableData('600V CV-2C');
+    // /// ケーブル種類からデータを取得
+    // Map cableData = CableConduitDataClass().selectCableData('600V CV-2C');
 
-    /// ケーブルサイズリストを変更
-    ref.read(conduitCableSizeListProvider).add(cableData.keys.toList());
-    ref.read(conduitCableSizeListProvider.state).state = [
-      ...ref.read(conduitCableSizeListProvider)
-    ];
+    // /// ケーブルサイズリストを変更
+    // ref.read(conduitCableSizeListProvider).add(cableData.keys.toList());
+    // ref.read(conduitCableSizeListProvider.state).state = [
+    //   ...ref.read(conduitCableSizeListProvider)
+    // ];
 
-    /// 電線管設計実行
-    conduitCalcRun();
+    // /// 電線管設計実行
+    // conduitCalcRun();
   }
 
   /// 電線管設計でケーブルカードを削除するメソッド
   void conduitCableRemove(index) {
-    /// リストから削除
-    ref.read(conduitListItemProvider).removeAt(index);
-    ref.read(conduitListItemProvider.state).state = [
-      ...ref.read(conduitListItemProvider)
-    ];
+    //   /// リストから削除
+    //   ref.read(conduitListItemProvider).removeAt(index);
+    //   ref.read(conduitListItemProvider.state).state = [
+    //     ...ref.read(conduitListItemProvider)
+    //   ];
 
-    /// ケーブルサイズから削除
-    ref.read(conduitCableSizeListProvider).removeAt(index);
+    //   /// ケーブルサイズから削除
+    //   ref.read(conduitCableSizeListProvider).removeAt(index);
 
-    /// 電線管設計実行
-    conduitCalcRun();
+    //   /// 電線管設計実行
+    //   conduitCalcRun();
 
-    /// shared_prefに保存
-    StateManagerClass().setCalcData(ref);
+    //   /// shared_prefに保存
+    //   StateManagerClass().setCalcData(ref);
   }
 
   /// 電線管設計の電線管種類変更
   void conduitTypeChange(String? value) {
-    ref.read(conduitConduitTypeProvider.state).state = value!;
+    // ref.read(conduitConduitTypeProvider.state).state = value!;
 
-    /// 電線管設計実行
-    conduitCalcRun();
-  }
-
-  /// 電線管設計実行
-  void conduitCalcRun() {
-    // print(ref.read(conduitListItemProvider));
-
-    /// conduitListItemProvider内の直径からケーブル面積を計算
-    List cableAreaList = ref
-        .watch(conduitListItemProvider)
-        .map((e) => {'type': e['type'], 'area': pow(e['radius'] / 2, 2) * pi})
-        .toList();
-
-    /// CVTケーブルなら面積を3倍にし、ケーブルの直径のListからケーブル面積の合計を計算
-    double cableArea = 0;
-    for (var i in cableAreaList) {
-      cableArea += i['type'] == '600V CVT' ? i['area'] * 3 : i['area'];
-    }
-
-    /// 電線管の直径を抽出
-    Map conduitRadiusMap = CableConduitDataClass()
-        .selectConduitData(ref.watch(conduitConduitTypeProvider));
-
-    /// 電線管の直径のListから電線管の断面積を計算と比較
-    List conduitArea32List = [];
-    List conduitArea48List = [];
-    double conduitArea;
-    conduitRadiusMap.forEach((key, value) {
-      conduitArea = pow(value / 2, 2) * pi;
-      if (conduitArea * 0.32 > cableArea) {
-        conduitArea32List.add(key);
-      }
-      if (conduitArea * 0.48 > cableArea) {
-        conduitArea48List.add(key);
-      }
-    });
-
-    /// conduitConduitSizeProviderの変更
-    /// emptyなら'規格なし'を返す
-    ref.read(conduitConduitSize32Provider.state).state =
-        conduitArea32List.isNotEmpty ? conduitArea32List[0] : '規格なし';
-    ref.read(conduitConduitSize48Provider.state).state =
-        conduitArea48List.isNotEmpty ? conduitArea48List[0] : '規格なし';
-
-    /// shared_prefに保存
-    StateManagerClass().setCalcData(ref);
+    // /// 電線管設計実行
+    // conduitCalcRun();
   }
 
   /// 電力計算のロジック部分

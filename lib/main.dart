@@ -58,11 +58,11 @@ final bottomNaviSelectProvider = StateProvider((ref) => 0);
 // final cableDesignPowerLossProvider = StateProvider((ref) => '0');
 
 /// initiallize provider for conduit design
-final conduitListItemProvider = StateProvider((ref) => []);
-final conduitCableSizeListProvider = StateProvider((ref) => []);
-final conduitConduitTypeProvider = StateProvider((ref) => 'PF管');
-final conduitConduitSize32Provider = StateProvider((ref) => '');
-final conduitConduitSize48Provider = StateProvider((ref) => '');
+// final conduitListItemProvider = StateProvider((ref) => []);
+// final conduitCableSizeListProvider = StateProvider((ref) => []);
+// final conduitConduitTypeProvider = StateProvider((ref) => 'PF管');
+// final conduitConduitSize32Provider = StateProvider((ref) => '');
+// final conduitConduitSize48Provider = StateProvider((ref) => '');
 
 /// initiallize provider for elecpower
 // var elecPowerVoltProvider = StateProvider((ref) {

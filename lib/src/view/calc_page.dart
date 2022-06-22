@@ -1,9 +1,9 @@
-import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:elec_facility_calc/main.dart';
+import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:elec_facility_calc/src/view/home_page.dart';
 import 'package:elec_facility_calc/src/viewmodel/calc_logic.dart';
 import 'package:elec_facility_calc/src/view/calc_cable_design_page.dart';
@@ -95,8 +95,10 @@ class CalcPageState extends ConsumerState<CalcPage> {
               tooltip: 'ケーブル追加',
               child: const Icon(Icons.add),
               onPressed: () {
-                if (ref.read(conduitListItemProvider).length < maxNumCable) {
-                  CalcLogic(ref).conduitCableAddRun();
+                if (ref.read(conduitCalcProvider).items.length < maxNumCable) {
+                  // CalcLogic(ref).conduitCableAddRun();
+                  ref.read(conduitCalcProvider.notifier).addCable();
+                  ref.read(conduitCalcProvider.notifier).calcCableArea();
                 }
               },
             )

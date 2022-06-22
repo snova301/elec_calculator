@@ -1,3 +1,4 @@
+import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/main.dart';
@@ -18,6 +19,7 @@ class ListViewConduit extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    print(ref.watch(conduitCalcProvider));
     return Column(
       children: [
         /// 情報画面
@@ -33,7 +35,7 @@ class ListViewConduit extends ConsumerWidget {
           child: ListView.builder(
             padding:
                 EdgeInsets.fromLTRB(listViewPadding, 10, listViewPadding, 10),
-            itemCount: ref.watch(conduitListItemProvider).length,
+            itemCount: ref.watch(conduitCalcProvider).items.length,
             itemBuilder: (context, index) {
               return ConduitCableCard(index: index);
             },
@@ -45,9 +47,9 @@ class ListViewConduit extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ConduitConduitSizeCard(
-                title: '32', provider: conduitConduitSize32Provider),
+                title: '32', result: ref.watch(conduitOccupancy32Provider)),
             ConduitConduitSizeCard(
-                title: '48', provider: conduitConduitSize48Provider),
+                title: '48', result: ref.watch(conduitOccupancy48Provider)),
           ],
         ),
       ],
@@ -70,7 +72,7 @@ class ConduitConduitTypeCard extends ConsumerWidget {
           ),
         ),
         title: DropdownButton(
-          value: ref.watch(conduitConduitTypeProvider),
+          value: ref.watch(conduitCalcProvider).conduitType,
           items: <String>['PF管', 'C管(薄鋼)', 'G管(厚鋼)', 'FEP管']
               .map<DropdownMenuItem<String>>(
             (String value) {
@@ -90,55 +92,7 @@ class ConduitConduitTypeCard extends ConsumerWidget {
   }
 }
 
-/// 電線管設計電線管のサイズwidget
-class ConduitConduitSizeCard extends ConsumerWidget {
-  final String title;
-  final StateProvider<String> provider;
-
-  const ConduitConduitSizeCard({
-    Key? key,
-    required this.title,
-    required this.provider,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Card(
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            /// FEP管はJISで占有率の規定がないので参考値
-            ref.watch(conduitConduitTypeProvider) == 'FEP管'
-                ? Text(
-                    '電線管サイズ\n占有率 $title %(参考値)',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 12,
-                    ),
-                  )
-                : Text(
-                    '電線管サイズ\n占有率 $title %',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
-            Text(
-              ref.watch(provider),
-              style: const TextStyle(
-                fontSize: 20,
-                color: Colors.redAccent,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
+/// 電線管設計ケーブルのカード
 class ConduitCableCard extends ConsumerWidget {
   final int index;
 
@@ -149,8 +103,12 @@ class ConduitCableCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    String cableType = ref.watch(conduitListItemProvider)[index]['type'];
-    String cableSize = ref.watch(conduitListItemProvider)[index]['size'];
+    // String cableType = '600V CV-2C';
+    // String cableSize = '2';
+    String cableType = ref.watch(conduitCalcProvider).items[index].cableType;
+    String cableSize = ref.watch(conduitCalcProvider).items[index].cableSize;
+    // String cableType = ref.watch(conduitCalcProvider).items[index]['type'];
+    // String cableSize = ref.watch(conduitCalcProvider).items[index]['size'];
 
     return Card(
       child: ListTile(
@@ -168,7 +126,7 @@ class ConduitCableCard extends ConsumerWidget {
                   ),
                 ),
                 DropdownButton(
-                  value: cableType.toString(),
+                  value: cableType,
                   items: <String>['600V CV-2C', '600V CV-3C', '600V CVT', 'IV']
                       .map<DropdownMenuItem<String>>(
                     (String value) {
@@ -196,23 +154,28 @@ class ConduitCableCard extends ConsumerWidget {
                     ),
                   ),
                 ),
-                DropdownButton(
-                  value: cableSize.toString(),
-                  items: ref
-                      .watch(conduitCableSizeListProvider)[index]
-                      .map<DropdownMenuItem<String>>(
-                    (value) {
-                      return DropdownMenuItem<String>(
-                        alignment: AlignmentDirectional.centerStart,
-                        value: value.toString(),
-                        child: Text(value.toString()),
-                      );
-                    },
-                  ).toList(),
-                  onChanged: (String? value) {
-                    CalcLogic(ref).conduitCardSelectSize(index, value);
-                  },
-                ),
+                // DropdownButton(
+                //   value: cableSize,
+                //   // items: ref
+                //   //     .watch(conduitCalcProvider)
+                //   //     .cableSizeList[index]
+                //   items: ref
+                //       .watch(conduitCableSizeListProvider)[index]
+                //       .map<DropdownMenuItem<String>>(
+                //     (value) {
+                //       return DropdownMenuItem<String>(
+                //         alignment: AlignmentDirectional.centerStart,
+                //         value: value.toString(),
+                //         child: Text(value.toString()),
+                //       );
+                //     },
+                //   ).toList(),
+                //   onChanged: (String? value) {
+                //     CalcLogic(ref).conduitCardSelectSize(index, value);
+                //   },
+                // ),
+
+                /// 単位
                 Container(
                   padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                   child: const Text(
@@ -236,6 +199,58 @@ class ConduitCableCard extends ConsumerWidget {
           onPressed: () {
             CalcLogic(ref).conduitCableRemove(index);
           },
+        ),
+      ),
+    );
+  }
+}
+
+/// 電線管設計電線管のサイズwidget
+class ConduitConduitSizeCard extends ConsumerWidget {
+  final String title;
+  final String result;
+  // final StateProvider<String> provider;
+
+  const ConduitConduitSizeCard({
+    Key? key,
+    required this.title,
+    required this.result,
+    // required this.provider,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Card(
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            /// FEP管はJISで占有率の規定がないので参考値
+            ref.watch(conduitCalcProvider).conduitType == 'FEP管'
+                ? Text(
+                    '電線管サイズ\n占有率 $title %(参考値)',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 12,
+                    ),
+                  )
+                : Text(
+                    '電線管サイズ\n占有率 $title %',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 12,
+                    ),
+                  ),
+            Text(
+              result,
+              // ref.watch(provider),
+              style: const TextStyle(
+                fontSize: 20,
+                color: Colors.redAccent,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
     );

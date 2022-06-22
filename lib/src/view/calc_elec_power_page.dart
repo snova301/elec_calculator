@@ -1,8 +1,8 @@
-import 'package:elec_facility_calc/src/viewmodel/calc_logic.dart';
-import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/main.dart';
+import 'package:elec_facility_calc/src/viewmodel/calc_logic.dart';
+import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:elec_facility_calc/src/view/calc_page.dart';
 
 /// 電力計算のListView Widget

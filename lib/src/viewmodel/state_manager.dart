@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:math';
+import 'package:elec_facility_calc/src/data/cable_data.dart';
+import 'package:elec_facility_calc/src/data/conduit_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:elec_facility_calc/main.dart';
-import 'package:elec_facility_calc/src/model/cable_design_data_class.dart';
+import 'package:elec_facility_calc/src/model/data_class.dart';
 
 class StateManagerClass {
   /// shared_preferenceで保存するためのMap
@@ -22,11 +25,11 @@ class StateManagerClass {
         // 'cable design power loss': ref.watch(cableDesignPowerLossProvider),
 
         /// shared_preferenceで電線管設計を保存するためのMap
-        'conduit list': ref.watch(conduitListItemProvider),
-        'conduit cable size list': ref.watch(conduitCableSizeListProvider),
-        'conduit select cable type': ref.watch(conduitConduitTypeProvider),
-        'conduit select cable size32': ref.watch(conduitConduitSize32Provider),
-        'conduit select cable size48': ref.watch(conduitConduitSize48Provider),
+        // 'conduit list': ref.watch(conduitListItemProvider),
+        // 'conduit cable size list': ref.watch(conduitCableSizeListProvider),
+        // 'conduit select cable type': ref.watch(conduitConduitTypeProvider),
+        // 'conduit select cable size32': ref.watch(conduitConduitSize32Provider),
+        // 'conduit select cable size48': ref.watch(conduitConduitSize48Provider),
 
         /// shared_preferenceで電力計算を保存するためのMap
         // 'elec power phase': ref.watch(elecPowerPhaseProvider),
@@ -87,16 +90,16 @@ class StateManagerClass {
       //     getDataMap['cable design power loss'];
 
       /// 電線管設計
-      ref.watch(conduitListItemProvider.state).state =
-          getDataMap['conduit list'];
-      ref.watch(conduitCableSizeListProvider.state).state =
-          getDataMap['conduit cable size list'];
-      ref.watch(conduitConduitTypeProvider.state).state =
-          getDataMap['conduit select cable type'];
-      ref.watch(conduitConduitSize32Provider.state).state =
-          getDataMap['conduit select cable size32'];
-      ref.watch(conduitConduitSize48Provider.state).state =
-          getDataMap['conduit select cable size48'];
+      // ref.watch(conduitListItemProvider.state).state =
+      //     getDataMap['conduit list'];
+      // ref.watch(conduitCableSizeListProvider.state).state =
+      //     getDataMap['conduit cable size list'];
+      // ref.watch(conduitConduitTypeProvider.state).state =
+      //     getDataMap['conduit select cable type'];
+      // ref.watch(conduitConduitSize32Provider.state).state =
+      //     getDataMap['conduit select cable size32'];
+      // ref.watch(conduitConduitSize48Provider.state).state =
+      //     getDataMap['conduit select cable size48'];
 
       /// 電力計算
       // ref.watch(elecPowerPhaseProvider.state).state =
@@ -143,11 +146,11 @@ class StateManagerClass {
     // ref.read(cableDesignPowerLossProvider.state).state = '0';
 
     /// 電線管設計
-    ref.read(conduitListItemProvider.state).state = [];
-    ref.read(conduitCableSizeListProvider.state).state = [];
-    ref.read(conduitConduitTypeProvider.state).state = 'PF管';
-    ref.read(conduitConduitSize32Provider.state).state = '';
-    ref.read(conduitConduitSize48Provider.state).state = '';
+    // ref.read(conduitListItemProvider.state).state = [];
+    // ref.read(conduitCableSizeListProvider.state).state = [];
+    // ref.read(conduitConduitTypeProvider.state).state = 'PF管';
+    // ref.read(conduitConduitSize32Provider.state).state = '';
+    // ref.read(conduitConduitSize48Provider.state).state = '';
 
     /// 電力計算
     // ref.read(elecPowerApparentPowerProvider.state).state = '0';
@@ -211,7 +214,7 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
   }
 }
 
-/// ケーブル設計の結果のProviderの定義
+/// 電力計算のProviderの定義
 final elecPowerProvider =
     StateNotifierProvider<ElecPowerNotifier, ElecPowerData>((ref) {
   return ElecPowerNotifier();
@@ -265,3 +268,118 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
     state = state.copyWith(sinFai: sinFai);
   }
 }
+
+/// 電力計算のProviderの定義
+final conduitCalcProvider =
+    StateNotifierProvider<ConduitCalcNotifier, ConduitCalcDataClass>((ref) {
+  return ConduitCalcNotifier();
+});
+
+/// StateNotifierの中身を定義
+class ConduitCalcNotifier extends StateNotifier<ConduitCalcDataClass> {
+  // 空のデータとして初期化
+  ConduitCalcNotifier()
+      : super(
+          const ConduitCalcDataClass(
+            items: <ConduitCalcCableDataClass>[],
+            conduitType: 'PF管',
+          ),
+        );
+
+  /// ケーブル面積の計算
+  double calcCableArea() {
+    /// ケーブルのリストを抜き出す
+    final List<ConduitCalcCableDataClass> cableItems = state.items;
+
+    /// ケーブルの種類と半径を抜き出し、それぞれのケーブル断面積を計算
+    /// このとき、CVTケーブルなら面積を3倍にする
+    /// reduce計算でケーブルの面積の合計を計算
+    /// cableItemに何も入っていない場合エラーになるので強制的に0を入力
+    double cableArea;
+    if (cableItems.isEmpty) {
+      cableArea = 0;
+    } else {
+      cableArea = cableItems
+          .map((e) => e.cableType == '600V CVT'
+              ? 3 * pow(e.cableRadius / 2, 2) * pi
+              : pow(e.cableRadius / 2, 2) * pi)
+          .reduce((value, element) => value + element);
+    }
+
+    return cableArea;
+  }
+
+  /// 計算実行
+  // void run() {
+  //   // state = {...state};
+  //   state.cableSize = '1';
+  // }
+
+  /// ケーブルの追加
+  void addCable() {
+    /// ケーブル種類、サイズ、仕上外径を追加
+    /// 追加は固定で、600V CV-2C 2sq
+    final cableData = ConduitCalcCableDataClass(
+      cableType: '600V CV-2C',
+      cableSize: '2',
+      cableRadius: 10.5,
+    );
+
+    /// 値を追加
+    /// immutableなので一度コピーして追加
+    List<ConduitCalcCableDataClass> temp = [...state.items];
+    temp.add(cableData);
+    state = state.copyWith(items: temp);
+  }
+}
+
+/// 32%占有率
+final conduitOccupancy32Provider = StateProvider<String>((ref) {
+  /// ケーブル断面積の計算
+  final cableArea = ref.watch(conduitCalcProvider.notifier).calcCableArea();
+
+  /// 電線管の直径を抽出
+  Map conduitRadiusMap = ConduitData()
+      .selectConduitData(ref.watch(conduitCalcProvider).conduitType);
+
+  /// 電線管の直径のListから電線管の断面積を計算と比較
+  List conduitAreaList = [];
+  double conduitArea;
+  conduitRadiusMap.forEach((key, value) {
+    conduitArea = pow(value / 2, 2) * pi;
+    if (cableArea < conduitArea * 0.32) {
+      conduitAreaList.add(key);
+    }
+  });
+
+  /// emptyなら'規格なし'を返す
+  return conduitAreaList.isEmpty ? '規格なし' : conduitAreaList[0];
+});
+
+/// 48%占有率
+final conduitOccupancy48Provider = StateProvider<String>((ref) {
+  /// ケーブル断面積の計算
+  final cableArea = ref.watch(conduitCalcProvider.notifier).calcCableArea();
+
+  /// 電線管の直径を抽出
+  Map conduitRadiusMap = ConduitData()
+      .selectConduitData(ref.watch(conduitCalcProvider).conduitType);
+
+  /// 電線管の直径のListから電線管の断面積を計算と比較
+  List conduitAreaList = [];
+  double conduitArea;
+  conduitRadiusMap.forEach((key, value) {
+    conduitArea = pow(value / 2, 2) * pi;
+    if (cableArea < conduitArea * 0.48) {
+      conduitAreaList.add(key);
+    }
+  });
+
+  /// emptyなら'規格なし'を返す
+  return conduitAreaList.isEmpty ? '規格なし' : conduitAreaList[0];
+});
+
+/// ケーブルサイズを変更するためのリスト
+final conduitCableSizeListProvider = StateProvider.autoDispose<List>((ref) {
+  return [];
+});

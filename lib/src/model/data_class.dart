@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'cable_design_data_class.freezed.dart';
+part 'data_class.freezed.dart';
 
 /// ケーブル設計入力のProvider入力データの定義
 @freezed
@@ -43,8 +43,33 @@ class ElecPowerData with _$ElecPowerData {
     required String sinFai, // sinφ
   }) = _ElecPowerData;
 
-  // factory CableDesignOutData.fromJson(Map<String, Object?> json) =>
-  //     _$CableDesignOutDataFromJson(json);
+  // factory ElecPowerData.fromJson(Map<String, Object?> json) =>
+  //     _$ElecPowerData(json);
+}
+
+/// 電線管設計のProviderデータの定義
+@freezed
+class ConduitCalcDataClass with _$ConduitCalcDataClass {
+  const factory ConduitCalcDataClass({
+    required List<ConduitCalcCableDataClass> items, // リスト内のアイテム
+    required String conduitType, // 電線管の種類
+  }) = _ConduitCalcDataClass;
+
+  // factory ConduitCalcDataClass.fromJson(Map<String, Object?> json) =>
+  //     _$ConduitCalcDataClassFromJson(json);
+}
+
+/// 電線管設計のListItemデータの定義
+class ConduitCalcCableDataClass {
+  String cableType; // ケーブル種類
+  String cableSize; // ケーブルサイズ
+  double cableRadius; // ケーブル半径
+
+  ConduitCalcCableDataClass({
+    required this.cableType,
+    required this.cableSize,
+    required this.cableRadius,
+  });
 }
 
 
