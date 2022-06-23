@@ -237,12 +237,6 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
           ),
         );
 
-  /// 計算実行
-  // void run() {
-  //   // state = {...state};
-  //   state.cableSize = '1';
-  // }
-
   /// 相の変更
   void phaseUpdate(String phase) {
     state = state.copyWith(phase: phase);
@@ -289,7 +283,7 @@ class ConduitCalcNotifier extends StateNotifier<ConduitCalcDataClass> {
   /// ケーブル面積の計算
   double calcCableArea() {
     /// ケーブルのリストを抜き出す
-    final List<ConduitCalcCableDataClass> cableItems = state.items;
+    final cableItems = [...state.items];
 
     /// ケーブルの種類と半径を抜き出し、それぞれのケーブル断面積を計算
     /// このとき、CVTケーブルなら面積を3倍にする
@@ -309,11 +303,19 @@ class ConduitCalcNotifier extends StateNotifier<ConduitCalcDataClass> {
     return cableArea;
   }
 
-  /// 計算実行
-  // void run() {
-  //   // state = {...state};
-  //   state.cableSize = '1';
-  // }
+  /// ケーブルのサイズリストを返す
+  List cableSizeList(int index) {
+    /// ケーブルの種類を取得
+    String cableType = [...state.items][index].cableType;
+
+    /// ケーブルのデータを取得
+    Map cableData = CableData().selectCableData(cableType);
+
+    /// ケーブルサイズのリストを取得
+    List cableSizeList = cableData.keys.toList();
+
+    return cableSizeList;
+  }
 
   /// ケーブルの追加
   void addCable() {
@@ -326,14 +328,77 @@ class ConduitCalcNotifier extends StateNotifier<ConduitCalcDataClass> {
     );
 
     /// 値を追加
-    /// immutableなので一度コピーして追加
-    List<ConduitCalcCableDataClass> temp = [...state.items];
+    var temp = [...state.items];
     temp.add(cableData);
+    state = state.copyWith(items: temp);
+  }
+
+  /// ケーブルサイズの更新
+  void updateCableSize(int index, String newCableSize) {
+    /// ケーブルの種類を取得
+    String cableType = state.items[index].cableType;
+
+    /// ケーブルの種類からケーブルのデータを取得
+    Map newCableData = CableData().selectCableData(cableType);
+
+    /// ケーブルのデータからケーブルの外径を取得
+    double newCableRadius = newCableData[newCableSize][3];
+
+    /// ケーブルアイテムを更新
+    var temp = [...state.items];
+    temp[index] = ConduitCalcCableDataClass(
+      cableType: cableType,
+      cableSize: newCableSize,
+      cableRadius: newCableRadius,
+    );
+
+    /// 書込み
+    state = state.copyWith(items: temp);
+  }
+
+  /// ケーブル種類の更新
+  void updateCableType(int index, String newCableType) {
+    /// ケーブルの種類からケーブルのデータを取得
+    Map newCableData = CableData().selectCableData(newCableType);
+
+    /// ケーブルの種類からケーブルのデータを取得
+    String newCableSize = newCableData.keys.first;
+
+    /// ケーブルのデータからケーブルの外径を取得
+    double newCableRadius = newCableData[newCableSize][3];
+
+    /// ケーブルアイテムを更新
+    var temp = [...state.items];
+    temp[index] = ConduitCalcCableDataClass(
+      cableType: newCableType,
+      cableSize: newCableSize,
+      cableRadius: newCableRadius,
+    );
+
+    /// 書込み
+    state = state.copyWith(items: temp);
+  }
+
+  /// ケーブル種類の更新
+  void updateConduitType(String newConduitType) {
+    /// 書込み
+    state = state.copyWith(conduitType: newConduitType);
+  }
+
+  /// ケーブルカードの削除
+  void removeCable(int index) {
+    /// itemsの取得
+    var temp = [...state.items];
+
+    /// 削除
+    temp.removeAt(index);
+
+    /// 書込み
     state = state.copyWith(items: temp);
   }
 }
 
-/// 32%占有率
+/// 32%占有率の計算
 final conduitOccupancy32Provider = StateProvider<String>((ref) {
   /// ケーブル断面積の計算
   final cableArea = ref.watch(conduitCalcProvider.notifier).calcCableArea();
@@ -356,7 +421,7 @@ final conduitOccupancy32Provider = StateProvider<String>((ref) {
   return conduitAreaList.isEmpty ? '規格なし' : conduitAreaList[0];
 });
 
-/// 48%占有率
+/// 48%占有率の計算
 final conduitOccupancy48Provider = StateProvider<String>((ref) {
   /// ケーブル断面積の計算
   final cableArea = ref.watch(conduitCalcProvider.notifier).calcCableArea();
@@ -377,9 +442,4 @@ final conduitOccupancy48Provider = StateProvider<String>((ref) {
 
   /// emptyなら'規格なし'を返す
   return conduitAreaList.isEmpty ? '規格なし' : conduitAreaList[0];
-});
-
-/// ケーブルサイズを変更するためのリスト
-final conduitCableSizeListProvider = StateProvider.autoDispose<List>((ref) {
-  return [];
 });

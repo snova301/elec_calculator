@@ -176,7 +176,7 @@ class ElecPowerRunButton extends ConsumerWidget {
               : showDialog<void>(
                   context: context,
                   builder: (BuildContext context) {
-                    return CosFaiAlertDialog(context);
+                    return const CosFaiAlertDialog();
                   },
                 );
         },

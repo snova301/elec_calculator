@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/main.dart';
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:elec_facility_calc/src/view/home_page.dart';
-import 'package:elec_facility_calc/src/viewmodel/calc_logic.dart';
 import 'package:elec_facility_calc/src/view/calc_cable_design_page.dart';
 import 'package:elec_facility_calc/src/view/calc_conduit_page.dart';
 import 'package:elec_facility_calc/src/view/calc_elec_power_page.dart';
@@ -65,7 +64,7 @@ class CalcPageState extends ConsumerState<CalcPage> {
         ),
       ][ref.read(bottomNaviSelectProvider)],
 
-      drawer: DrawerContents(context),
+      drawer: const DrawerContents(),
 
       /// bottomNavigationBar
       bottomNavigationBar: BottomNavigationBar(
@@ -96,9 +95,12 @@ class CalcPageState extends ConsumerState<CalcPage> {
               child: const Icon(Icons.add),
               onPressed: () {
                 if (ref.read(conduitCalcProvider).items.length < maxNumCable) {
-                  // CalcLogic(ref).conduitCableAddRun();
                   ref.read(conduitCalcProvider.notifier).addCable();
                   ref.read(conduitCalcProvider.notifier).calcCableArea();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBarAlert(title: 'これ以上追加できません'),
+                  );
                 }
               },
             )
@@ -238,24 +240,28 @@ class OutputTextCard extends ConsumerWidget {
 }
 
 /// 力率が0-100%の範囲内にない場合、ポップアップ表示で警告
-class CosFaiAlertDialog extends AlertDialog {
-  CosFaiAlertDialog(BuildContext context)
-      : super(
-          title: const Text('力率数値異常'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('力率は1-100の間で設定してください。'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
+class CosFaiAlertDialog extends StatelessWidget {
+  const CosFaiAlertDialog({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('力率数値異常'),
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: const <Widget>[
+            Text('力率は1-100の間で設定してください。'),
           ],
-        );
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('OK'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+  }
 }
