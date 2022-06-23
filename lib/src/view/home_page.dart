@@ -144,7 +144,7 @@ class DrawerContents extends StatelessWidget {
             leading: const Icon(Icons.architecture),
             trailing: const Icon(Icons.open_in_browser),
             onTap: () {
-              launch_url(
+              openUrl(
                   'https://snova301.github.io/AppService/elec_calculator/method.html');
             },
           ),
@@ -185,7 +185,7 @@ class SnackBarAlert extends SnackBar {
         );
 }
 
-void launch_url(urlname) async {
+void openUrl(urlname) async {
   final Uri url = Uri.parse(urlname);
   if (!await launchUrl(url)) throw 'Could not launch $url';
 }

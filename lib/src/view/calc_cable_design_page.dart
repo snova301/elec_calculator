@@ -1,3 +1,4 @@
+import 'package:elec_facility_calc/src/data/cable_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -127,7 +128,8 @@ class CableDeignSelectCableType extends ConsumerWidget {
             alignment: Alignment.center,
             child: DropdownButton(
               value: ref.watch(cableDesignProvider).cableType,
-              items: <String>['600V CV-2C', '600V CV-3C', '600V CVT', 'IV']
+              items: CableData()
+                  .cableTypeList
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   alignment: AlignmentDirectional.centerStart,

@@ -111,10 +111,6 @@ class MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
     final isDarkmode = ref.watch(isDarkmodeProvider.state).state;
-    // print(ref.watch(cableDesignOutProvider).cableSize);
-    // ref.read(cableDesignOutProvider.notifier).run();
-    // print(ref.watch(cableDesignOutProvider).cableSize);
-    // print('phase : ${ref.watch(cableDesignInProvider).phase}');
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,

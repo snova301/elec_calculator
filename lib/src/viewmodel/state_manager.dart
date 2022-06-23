@@ -222,17 +222,19 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
     double rVal = 0;
     double xVal = 0;
     String cableType = state.cableType;
-    Map cableDataMap = {}; // ケーブルのインピーダンスと許容電流のマップデータ
 
     /// ケーブル種類からデータを取得
-    cableDataMap = CableData().selectCableData(cableType);
+    /// ケーブルのインピーダンスと許容電流のマップデータ
+    Map<String, CableDataClass> cableDataMap =
+        CableData().selectCableData(cableType);
 
     /// ケーブル許容電流からケーブルの太さを選定
     /// 許容電流を満たすケーブルサイズをリストに追加
     List cableAnswerList = [];
     cableDataMap.forEach((key, value) {
-      if (value[2] >= current) {
-        cableAnswerList.add([key, value[0], value[1]]); // [ケーブルサイズ, 抵抗, リアクタンス]
+      if (value.current >= current) {
+        cableAnswerList
+            .add([key, value.rVal, value.xVal]); // [ケーブルサイズ, 抵抗, リアクタンス]
       }
     });
 
@@ -446,7 +448,7 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
   }
 }
 
-/// 電力計算のProviderの定義
+/// 電線管設計のProviderの定義
 final conduitCalcProvider =
     StateNotifierProvider<ConduitCalcNotifier, ConduitCalcDataClass>((ref) {
   return ConduitCalcNotifier();
@@ -492,7 +494,8 @@ class ConduitCalcNotifier extends StateNotifier<ConduitCalcDataClass> {
     String cableType = [...state.items][index].cableType;
 
     /// ケーブルのデータを取得
-    Map cableData = CableData().selectCableData(cableType);
+    Map<String, CableDataClass> cableData =
+        CableData().selectCableData(cableType);
 
     /// ケーブルサイズのリストを取得
     List cableSizeList = cableData.keys.toList();
@@ -522,10 +525,11 @@ class ConduitCalcNotifier extends StateNotifier<ConduitCalcDataClass> {
     String cableType = state.items[index].cableType;
 
     /// ケーブルの種類からケーブルのデータを取得
-    Map newCableData = CableData().selectCableData(cableType);
+    Map<String, CableDataClass> newCableData =
+        CableData().selectCableData(cableType);
 
     /// ケーブルのデータからケーブルの外径を取得
-    double newCableRadius = newCableData[newCableSize][3];
+    double newCableRadius = newCableData[newCableSize]!.diameter;
 
     /// ケーブルアイテムを更新
     var temp = [...state.items];
@@ -542,13 +546,14 @@ class ConduitCalcNotifier extends StateNotifier<ConduitCalcDataClass> {
   /// ケーブル種類の更新
   void updateCableType(int index, String newCableType) {
     /// ケーブルの種類からケーブルのデータを取得
-    Map newCableData = CableData().selectCableData(newCableType);
+    Map<String, CableDataClass> newCableData =
+        CableData().selectCableData(newCableType);
 
     /// ケーブルの種類からケーブルのデータを取得
     String newCableSize = newCableData.keys.first;
 
     /// ケーブルのデータからケーブルの外径を取得
-    double newCableRadius = newCableData[newCableSize][3];
+    double newCableRadius = newCableData[newCableSize]!.diameter;
 
     /// ケーブルアイテムを更新
     var temp = [...state.items];

@@ -49,8 +49,7 @@ class _LinkCard extends StatelessWidget {
         title: Text(urlTitle),
         subtitle: Text('$urlTitle のwebページへ移動します。'),
         contentPadding: const EdgeInsets.all(10),
-        onTap: () =>
-            launch_url('https://snova301.github.io/AppService/$urlName'),
+        onTap: () => openUrl('https://snova301.github.io/AppService/$urlName'),
         trailing: const Icon(Icons.open_in_browser),
       ),
     );
