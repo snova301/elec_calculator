@@ -184,33 +184,158 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
         ));
 
   /// 相の変更
-  void phaseUpdate(String phase) {
+  void updatePhase(String phase) {
     state = state.copyWith(phase: phase);
   }
 
   /// ケーブル種類の変更
-  void cableTypeUpdate(String cableType) {
+  void updateCableType(String cableType) {
     state = state.copyWith(cableType: cableType);
   }
 
-  /// ケーブルサイズの変更
-  void cableSizeUpdate(String cableSize) {
-    state = state.copyWith(cableSize: cableSize);
+  /// 電流の変更
+  double updateCurrent(
+      String phase, double elecOut, double volt, double cosFai) {
+    double current = 0;
+
+    /// 相ごとの計算
+    if ((phase == '単相') && (cosFai <= 1)) {
+      // 単相の電流計算と計算係数設定
+      current = elecOut / (volt * cosFai);
+    } else if ((phase == '三相') && (cosFai <= 1)) {
+      // 三相の電流計算と計算係数設定
+      current = elecOut / (sqrt(3) * volt * cosFai);
+    }
+
+    /// 小数点2桁以下を四捨五入してString型に
+    String strCurrent = current.toStringAsFixed(1);
+
+    /// 書込み
+    state = state.copyWith(current: strCurrent);
+
+    return current;
   }
 
-  /// 電流の変更
-  void currentUpdate(String current) {
-    state = state.copyWith(current: current);
+  /// ケーブルサイズの変更
+  Map updateCableSize(double current) {
+    /// 計算用変数初期化
+    double rVal = 0;
+    double xVal = 0;
+    String cableType = state.cableType;
+    Map cableDataMap = {}; // ケーブルのインピーダンスと許容電流のマップデータ
+
+    /// ケーブル種類からデータを取得
+    cableDataMap = CableData().selectCableData(cableType);
+
+    /// ケーブル許容電流からケーブルの太さを選定
+    /// 許容電流を満たすケーブルサイズをリストに追加
+    List cableAnswerList = [];
+    cableDataMap.forEach((key, value) {
+      if (value[2] >= current) {
+        cableAnswerList.add([key, value[0], value[1]]); // [ケーブルサイズ, 抵抗, リアクタンス]
+      }
+    });
+
+    /// 許容電流が満たせない場合は'規格なし'を返す。
+    String cableSize = '';
+    if (cableAnswerList.isEmpty) {
+      cableSize = '規格なし';
+      rVal = xVal = 0;
+    } else {
+      cableSize = cableAnswerList[0][0];
+      rVal = cableAnswerList[0][1];
+      xVal = cableAnswerList[0][2];
+    }
+
+    /// 書込み
+    state = state.copyWith(cableSize: cableSize);
+
+    return {'cableSize': cableSize, 'rVal': rVal, 'xVal': xVal};
   }
 
   /// 電圧降下の変更
-  void voltDropUpdate(String voltDrop) {
-    state = state.copyWith(voltDrop: voltDrop);
+  void updateVoltDrop(
+    String phase,
+    double current,
+    double cableLength,
+    double rVal,
+    double xVal,
+    double cosFai,
+    double sinFai,
+  ) {
+    /// 電圧降下計算の係数
+    double kVal = 1;
+
+    /// 相ごとの電圧降下計算の係数設定
+    if (phase == '単相') {
+      kVal = 2;
+    } else if (phase == '三相') {
+      kVal = sqrt(3);
+    }
+
+    /// 電圧降下の計算
+    double dVoltDrop =
+        kVal * current * cableLength * (rVal * cosFai + xVal * sinFai);
+
+    /// 小数点2桁以下を四捨五入してString型に
+    String strVoltDrop = dVoltDrop.toStringAsFixed(1);
+
+    /// 書込み
+    state = state.copyWith(voltDrop: strVoltDrop);
   }
 
   /// 電力損失の変更
-  void powerLossUpdate(String powerLoss) {
-    state = state.copyWith(powerLoss: powerLoss);
+  void updatePowerLoss(
+    String phase,
+    double current,
+    double rVal,
+    double cableLength,
+  ) {
+    /// 電力損失計算の係数
+    double kVal = 2;
+
+    /// 相ごとの電力損失計算の係数設定
+    if (phase == '単相') {
+      kVal = 2;
+    } else if (phase == '三相') {
+      kVal = 3;
+    }
+
+    /// 電力損失計算
+    double dPowLoss = kVal * rVal * current * current * cableLength;
+
+    /// 小数点2桁以下を四捨五入してString型に
+    String strPowLoss = dPowLoss.toStringAsFixed(1);
+
+    /// 書込み
+    state = state.copyWith(powerLoss: strPowLoss);
+  }
+
+  /// 計算実行
+  void run() {
+    /// Textfieldのテキスト取り出し、
+    String phase = state.phase;
+    double elecOut = double.parse(state.elecOut.text);
+    double cosFai = double.parse(state.cosfai.text) / 100;
+    double volt = double.parse(state.volt.text);
+    double cableLength = double.parse(state.cableLength.text) / 1000;
+
+    /// cosφからsinφを算出
+    double sinFai = sqrt(1 - pow(cosFai, 2));
+
+    /// 電流値の計算
+    double current = updateCurrent(phase, elecOut, volt, cosFai);
+
+    /// ケーブルサイズ計算
+    Map temp = updateCableSize(current);
+    double rVal = temp['rVal'];
+    double xVal = temp['xVal'];
+
+    /// ケーブル電圧降下計算
+    updateVoltDrop(phase, current, cableLength, rVal, xVal, cosFai, sinFai);
+
+    /// ケーブル電力損失計算
+    updatePowerLoss(phase, current, rVal, cableLength);
   }
 }
 
@@ -238,28 +363,86 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
         );
 
   /// 相の変更
-  void phaseUpdate(String phase) {
+  void updatePhase(String phase) {
     state = state.copyWith(phase: phase);
   }
 
   /// 皮相電力の変更
-  void apparentPowerUpdate(String power) {
-    state = state.copyWith(apparentPower: power);
+  double updateApparentPower(String phase, double volt, double current) {
+    double appaPower = 0;
+    if (phase == '単相') {
+      /// 単相電力計算
+      appaPower = volt * current;
+    } else if (phase == '三相') {
+      /// 3相電力計算
+      appaPower = sqrt(3) * volt * current;
+    }
+
+    /// 小数点2桁以下を四捨五入してString型に
+    String strAppaPow = (appaPower / 1000).toStringAsFixed(2);
+
+    /// 書込み
+    state = state.copyWith(apparentPower: strAppaPow);
+    return appaPower;
   }
 
   /// 有効電力の変更
-  void activePowerUpdate(String power) {
-    state = state.copyWith(activePower: power);
+  void updateActivePower(double appaPower, double cosFai) {
+    /// 計算
+    double actPower = appaPower * cosFai;
+
+    /// 小数点2桁以下を四捨五入してString型に
+    String strActPower = (actPower / 1000).toStringAsFixed(2);
+
+    /// 書込み
+    state = state.copyWith(activePower: strActPower);
   }
 
   /// 無効電力の変更
-  void reactivePowerUpdate(String power) {
-    state = state.copyWith(reactivePower: power);
+  void updateReactivePower(double appaPower, double sinFai) {
+    /// 計算
+    double reactPower = appaPower * sinFai;
+
+    /// 小数点2桁以下を四捨五入してString型に
+    String strReactPower = (reactPower / 1000).toStringAsFixed(2);
+
+    /// 書込み
+    state = state.copyWith(reactivePower: strReactPower);
   }
 
   /// sinφの変更
-  void sinFaiUpdate(String sinFai) {
-    state = state.copyWith(sinFai: sinFai);
+  double updateSinFai(double cosFai) {
+    /// cosφからsinφを算出
+    double sinFai = sqrt(1 - pow(cosFai, 2));
+
+    /// 小数点1桁以下を四捨五入してString型に
+    String strSinFai = (sinFai * 100).toStringAsFixed(1);
+
+    /// sinφを書込み
+    state = state.copyWith(sinFai: strSinFai);
+
+    return sinFai;
+  }
+
+  /// 計算実行
+  void run() {
+    /// Textfieldのテキストから取得し、電圧、電流、力率double型へ変換
+    String phase = state.phase;
+    double volt = double.parse(state.volt.text);
+    double current = double.parse(state.current.text);
+    double cosFai = double.parse(state.cosFai.text) / 100;
+
+    /// 皮相電力を計算
+    double appaPower = updateApparentPower(phase, volt, current);
+
+    /// sinφを計算
+    double sinFai = updateSinFai(cosFai);
+
+    /// 有効電力の計算
+    updateActivePower(appaPower, cosFai);
+
+    /// 無効電力の計算
+    updateReactivePower(appaPower, sinFai);
   }
 }
 

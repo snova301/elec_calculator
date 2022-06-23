@@ -136,7 +136,7 @@ class CableDeignSelectCableType extends ConsumerWidget {
                 );
               }).toList(),
               onChanged: (String? value) {
-                ref.read(cableDesignProvider.notifier).cableTypeUpdate(value!);
+                ref.read(cableDesignProvider.notifier).updateCableType(value!);
               },
             ),
           ),
@@ -175,7 +175,7 @@ class CalcDesignPhaseSelectCard extends ConsumerWidget {
                 margin: const EdgeInsets.all(8),
                 child: ElevatedButton(
                   onPressed: () {
-                    ref.read(cableDesignProvider.notifier).phaseUpdate('単相');
+                    ref.read(cableDesignProvider.notifier).updatePhase('単相');
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
@@ -193,7 +193,7 @@ class CalcDesignPhaseSelectCard extends ConsumerWidget {
                 margin: const EdgeInsets.all(8),
                 child: ElevatedButton(
                   onPressed: () {
-                    ref.read(cableDesignProvider.notifier).phaseUpdate('三相');
+                    ref.read(cableDesignProvider.notifier).updatePhase('三相');
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
@@ -226,14 +226,14 @@ class CableDesignRunButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cosFai = ref.watch(cableDesignProvider).cosfai.text;
     return Container(
       padding: const EdgeInsets.all(10),
       margin: EdgeInsets.fromLTRB(paddingSize, 0, paddingSize, 0),
       child: ElevatedButton(
         onPressed: () {
-          CalcLogic(ref).isCosFaiCorrect(cosFai)
-              ? CalcLogic(ref).cableDesignCalcRun()
+          final cosFai = ref.watch(cableDesignProvider).cosfai.text;
+          CalcLogic().isCosFaiCorrect(cosFai)
+              ? ref.read(cableDesignProvider.notifier).run()
               : showDialog<void>(
                   context: context,
                   builder: (BuildContext context) {

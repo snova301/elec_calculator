@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:elec_facility_calc/main.dart';
 import 'package:elec_facility_calc/src/viewmodel/calc_logic.dart';
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:elec_facility_calc/src/view/calc_page.dart';
@@ -30,7 +29,6 @@ class ListViewElecPower extends ConsumerWidget {
           unit: 'V',
           message: '整数のみ',
           controller: ref.watch(elecPowerProvider).volt,
-          // provider: elecPowerVoltProvider,
         ),
 
         /// 電流値入力
@@ -39,7 +37,6 @@ class ListViewElecPower extends ConsumerWidget {
           unit: 'A',
           message: '整数のみ',
           controller: ref.watch(elecPowerProvider).current,
-          // provider: elecPowerCurrentProvider,
         ),
 
         /// 力率入力
@@ -48,7 +45,6 @@ class ListViewElecPower extends ConsumerWidget {
           unit: '%',
           message: '1-100%の整数のみ',
           controller: ref.watch(elecPowerProvider).cosFai,
-          // provider: elecPowerCosFaiProvider,
         ),
 
         /// 計算実行ボタン
@@ -60,25 +56,21 @@ class ListViewElecPower extends ConsumerWidget {
           title: '皮相電力',
           unit: 'kVA',
           result: ref.watch(elecPowerProvider).apparentPower,
-          // provider: elecPowerApparentPowerProvider,
         ),
         OutputTextCard(
           title: '有効電力',
           unit: 'kW',
           result: ref.watch(elecPowerProvider).activePower,
-          // provider: elecPowerActivePowerProvider,
         ),
         OutputTextCard(
           title: '無効電力',
           unit: 'kVar',
           result: ref.watch(elecPowerProvider).reactivePower,
-          // provider: elecPowerReactivePowerProvider,
         ),
         OutputTextCard(
           title: 'sinφ',
           unit: '%',
           result: ref.watch(elecPowerProvider).sinFai,
-          // provider: elecPowerSinFaiProvider,
         ),
       ],
     );
@@ -114,14 +106,13 @@ class ElecPowerPhaseSelectCard extends ConsumerWidget {
                 margin: const EdgeInsets.all(8),
                 child: ElevatedButton(
                   onPressed: () {
-                    ref.read(elecPowerProvider.notifier).phaseUpdate('単相');
+                    ref.read(elecPowerProvider.notifier).updatePhase('単相');
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
                         ref.watch(elecPowerProvider).phase == '単相'
                             ? null
                             : Colors.grey),
-                    // ref.watch(provider) == '単相' ? null : Colors.grey),
                     padding:
                         MaterialStateProperty.all(const EdgeInsets.all(20)),
                   ),
@@ -132,14 +123,13 @@ class ElecPowerPhaseSelectCard extends ConsumerWidget {
                 margin: const EdgeInsets.all(8),
                 child: ElevatedButton(
                   onPressed: () {
-                    ref.read(elecPowerProvider.notifier).phaseUpdate('三相');
+                    ref.read(elecPowerProvider.notifier).updatePhase('三相');
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
                         ref.watch(elecPowerProvider).phase == '三相'
                             ? null
                             : Colors.grey),
-                    // ref.watch(provider) == '三相' ? null : Colors.grey),
                     padding:
                         MaterialStateProperty.all(const EdgeInsets.all(20.0)),
                   ),
@@ -165,14 +155,14 @@ class ElecPowerRunButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cosFai = ref.watch(elecPowerProvider).cosFai.text;
     return Container(
       padding: const EdgeInsets.all(10),
       margin: EdgeInsets.fromLTRB(paddingSize, 0, paddingSize, 0),
       child: ElevatedButton(
         onPressed: () {
-          CalcLogic(ref).isCosFaiCorrect(cosFai)
-              ? CalcLogic(ref).elecPowerCalcRun()
+          final cosFai = ref.watch(elecPowerProvider).cosFai.text;
+          CalcLogic().isCosFaiCorrect(cosFai)
+              ? ref.watch(elecPowerProvider.notifier).run()
               : showDialog<void>(
                   context: context,
                   builder: (BuildContext context) {
