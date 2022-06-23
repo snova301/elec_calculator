@@ -1,10 +1,8 @@
-import 'package:elec_facility_calc/src/data/cable_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:elec_facility_calc/src/data/cable_data.dart';
 import 'package:elec_facility_calc/src/view/calc_page.dart';
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
-import 'package:elec_facility_calc/src/viewmodel/calc_logic.dart';
 
 /// ケーブル設計のListView Widget
 class ListViewCableDesign extends ConsumerWidget {
@@ -50,7 +48,7 @@ class ListViewCableDesign extends ConsumerWidget {
           title: '力率',
           unit: '%',
           message: '整数のみ',
-          controller: ref.watch(cableDesignProvider).cosfai,
+          controller: ref.watch(cableDesignProvider).cosFai,
         ),
 
         /// ケーブル長入力
@@ -233,15 +231,25 @@ class CableDesignRunButton extends ConsumerWidget {
       margin: EdgeInsets.fromLTRB(paddingSize, 0, paddingSize, 0),
       child: ElevatedButton(
         onPressed: () {
-          final cosFai = ref.watch(cableDesignProvider).cosfai.text;
-          CalcLogic().isCosFaiCorrect(cosFai)
-              ? ref.read(cableDesignProvider.notifier).run()
-              : showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return const CosFaiAlertDialog();
-                  },
-                );
+          // final cosFai = ref.watch(cableDesignProvider).cosfai.text;
+          // CalcLogic().isCosFaiCorrect(cosFai)
+          //     ? ref.read(cableDesignProvider.notifier).run()
+          //     : showDialog<void>(
+          //         context: context,
+          //         builder: (BuildContext context) {
+          //           return const CosFaiAlertDialog();
+          //         },
+          //       );
+          if (ref.read(cableDesignProvider.notifier).isRunCheck()) {
+            ref.read(cableDesignProvider.notifier).run();
+          } else {
+            showDialog<void>(
+              context: context,
+              builder: (BuildContext context) {
+                return const CorrectAlertDialog();
+              },
+            );
+          }
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.redAccent),

@@ -12,7 +12,7 @@ class CableDesignData with _$CableDesignData {
     required String cableType, // ケーブル種類
     required TextEditingController elecOut, // 電気出力
     required TextEditingController volt, // 電圧
-    required TextEditingController cosfai, // 力率
+    required TextEditingController cosFai, // 力率
     required TextEditingController cableLength, // ケーブル長さ
 
     // 出力
@@ -61,9 +61,14 @@ class ConduitCalcDataClass with _$ConduitCalcDataClass {
 
 /// 電線管設計のListItemデータの定義
 class ConduitCalcCableDataClass {
-  String cableType; // ケーブル種類
-  String cableSize; // ケーブルサイズ
-  double cableRadius; // ケーブル半径
+  /// ケーブル種類
+  String cableType;
+
+  /// ケーブルサイズ
+  String cableSize;
+
+  /// ケーブル半径
+  double cableRadius;
 
   ConduitCalcCableDataClass({
     required this.cableType,

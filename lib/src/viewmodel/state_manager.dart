@@ -175,7 +175,7 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
           cableType: '600V CV-2C',
           elecOut: TextEditingController(text: '1500'),
           volt: TextEditingController(text: '200'),
-          cosfai: TextEditingController(text: '80'),
+          cosFai: TextEditingController(text: '80'),
           cableLength: TextEditingController(text: '10'),
           current: '0',
           cableSize: '0',
@@ -315,10 +315,10 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
 
   /// 計算実行
   void run() {
-    /// Textfieldのテキスト取り出し、
+    /// Textfieldのテキストを取得し、doubleに変換
     String phase = state.phase;
     double elecOut = double.parse(state.elecOut.text);
-    double cosFai = double.parse(state.cosfai.text) / 100;
+    double cosFai = double.parse(state.cosFai.text) / 100;
     double volt = double.parse(state.volt.text);
     double cableLength = double.parse(state.cableLength.text) / 1000;
 
@@ -338,6 +338,42 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
 
     /// ケーブル電力損失計算
     updatePowerLoss(phase, current, rVal, cableLength);
+  }
+
+  /// runメソッドが実行できるか確認するメソッド
+  bool isRunCheck() {
+    try {
+      /// 数値に変換できるか確認
+      double elecOut = double.parse(state.elecOut.text);
+      double cosFai = double.parse(state.cosFai.text);
+      double volt = double.parse(state.volt.text);
+      double cableLength = double.parse(state.cableLength.text);
+
+      /// 力率が0-100%以外ならfalseを返す
+      if (cosFai < 0 || cosFai > 100) {
+        return false;
+      }
+
+      /// 入力した数値を整形してTextEditingControllerに入れる
+      state = state.copyWith(
+        elecOut: TextEditingController(text: elecOut.toString()),
+      );
+      state = state.copyWith(
+        volt: TextEditingController(text: volt.toString()),
+      );
+      state = state.copyWith(
+        cosFai: TextEditingController(text: cosFai.toString()),
+      );
+      state = state.copyWith(
+        cableLength: TextEditingController(text: cableLength.toString()),
+      );
+    } catch (e) {
+      /// 数値変換や整形に失敗した場合、falseを返す
+      return false;
+    }
+
+    /// すべてクリアだった場合trueを返す
+    return true;
   }
 }
 
@@ -445,6 +481,38 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
 
     /// 無効電力の計算
     updateReactivePower(appaPower, sinFai);
+  }
+
+  /// runメソッドが実行できるか確認するメソッド
+  bool isRunCheck() {
+    try {
+      /// 数値に変換できるか確認
+      double volt = double.parse(state.volt.text);
+      double current = double.parse(state.current.text);
+      double cosFai = double.parse(state.cosFai.text);
+
+      /// 力率が0-100%以外ならfalseを返す
+      if (cosFai < 0 || cosFai > 100) {
+        return false;
+      }
+
+      /// 入力した数値を整形してTextEditingControllerに入れる
+      state = state.copyWith(
+        volt: TextEditingController(text: volt.toString()),
+      );
+      state = state.copyWith(
+        current: TextEditingController(text: current.toString()),
+      );
+      state = state.copyWith(
+        cosFai: TextEditingController(text: cosFai.toString()),
+      );
+    } catch (e) {
+      /// 数値変換や整形に失敗した場合、falseを返す
+      return false;
+    }
+
+    /// すべてクリアだった場合trueを返す
+    return true;
   }
 }
 

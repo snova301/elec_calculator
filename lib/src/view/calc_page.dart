@@ -184,7 +184,10 @@ class InputTextCard extends ConsumerWidget {
               controller: controller,
               textAlign: TextAlign.right,
               keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                LengthLimitingTextInputFormatter(10),
+              ],
             ),
           ),
         ],
@@ -239,18 +242,18 @@ class OutputTextCard extends ConsumerWidget {
   }
 }
 
-/// 力率が0-100%の範囲内にない場合、ポップアップ表示で警告
-class CosFaiAlertDialog extends StatelessWidget {
-  const CosFaiAlertDialog({Key? key}) : super(key: key);
+/// 数値が以上の場合エラーダイアログを出す
+class CorrectAlertDialog extends StatelessWidget {
+  const CorrectAlertDialog({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('力率数値異常'),
+      title: const Text('入力数値異常'),
       content: SingleChildScrollView(
         child: ListBody(
           children: const <Widget>[
-            Text('力率は1-100の間で設定してください。'),
+            Text('入力した数値を確認してください。'),
           ],
         ),
       ),

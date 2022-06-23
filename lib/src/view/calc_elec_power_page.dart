@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:elec_facility_calc/src/viewmodel/calc_logic.dart';
+
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:elec_facility_calc/src/view/calc_page.dart';
 
@@ -160,15 +160,25 @@ class ElecPowerRunButton extends ConsumerWidget {
       margin: EdgeInsets.fromLTRB(paddingSize, 0, paddingSize, 0),
       child: ElevatedButton(
         onPressed: () {
-          final cosFai = ref.watch(elecPowerProvider).cosFai.text;
-          CalcLogic().isCosFaiCorrect(cosFai)
-              ? ref.watch(elecPowerProvider.notifier).run()
-              : showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return const CosFaiAlertDialog();
-                  },
-                );
+          // final cosFai = ref.watch(elecPowerProvider).cosFai.text;
+          // CalcLogic().isCosFaiCorrect(cosFai)
+          //     ? ref.watch(elecPowerProvider.notifier).run()
+          //     : showDialog<void>(
+          //         context: context,
+          //         builder: (BuildContext context) {
+          //           return const CorrectAlertDialog();
+          //         },
+          //       );
+          if (ref.read(elecPowerProvider.notifier).isRunCheck()) {
+            ref.watch(elecPowerProvider.notifier).run();
+          } else {
+            showDialog<void>(
+              context: context,
+              builder: (BuildContext context) {
+                return const CorrectAlertDialog();
+              },
+            );
+          }
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.redAccent),

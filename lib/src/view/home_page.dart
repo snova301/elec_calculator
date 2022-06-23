@@ -162,15 +162,6 @@ class DrawerContents extends StatelessWidget {
 }
 
 /// snackbarで注意喚起を行うWidget
-// class SnackBarAlert extends StatelessWidget {
-//   final String title;
-
-//   const SnackBarAlert({Key? key, required this.title}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return SnackBar(
-
 class SnackBarAlert extends SnackBar {
   final String title;
   SnackBarAlert({Key? key, required this.title})
