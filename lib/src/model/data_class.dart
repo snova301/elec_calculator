@@ -100,6 +100,111 @@ class CableDataClass {
   });
 }
 
+/// ケーブルリストのデータ定義
+// @freezed
+// class WiringListDataClass with _$WiringListDataClass {
+//   const factory WiringListDataClass({
+//     /// ケーブル名称
+//     required String name,
+
+//     /// 出発点
+//     required String startPoint,
+
+//     /// 到着点
+//     required String endPoint,
+
+//     /// ケーブル種類
+//     required String cableType,
+
+//     /// 備考
+//     required String remarks,
+
+//     /// 備考
+//   }) = _WiringListDataClass;
+
+//   // factory WiringListDataClass.fromJson(Map<String, Object?> json) =>
+//   //     _$WiringListDataClassFromJson(json);
+// }
+
+class WiringListDataClass {
+  /// ケーブル名称
+  String name;
+
+  /// 出発点
+  String startPoint;
+
+  /// 到着点
+  String endPoint;
+
+  /// ケーブル種類
+  String cableType;
+
+  /// 備考
+  String remarks;
+
+  WiringListDataClass({
+    required this.name,
+    required this.startPoint,
+    required this.endPoint,
+    required this.cableType,
+    required this.remarks,
+  });
+}
+
+/// WiringListページ間の設定クラス
+class WiringListSettingDataClass {
+  /// 新規作成ページか編集ページか
+  bool isCreate;
+
+  /// ID
+  String id;
+
+  /// ケーブル名称
+  TextEditingController nameController;
+
+  /// ケーブル種類
+  String cableType;
+
+  /// 出発点
+  TextEditingController startPointController;
+
+  /// 到着点
+  TextEditingController endPointController;
+
+  /// 備考
+  TextEditingController remarksController;
+
+  WiringListSettingDataClass({
+    required this.isCreate,
+    required this.id,
+    required this.nameController,
+    required this.cableType,
+    required this.startPointController,
+    required this.endPointController,
+    required this.remarksController,
+  });
+}
+
+/// WiringListページ間の設定クラス
+class WiringListSearchDataClass {
+  /// ケーブル種類検索用
+  String dropDownCableType;
+
+  WiringListSearchDataClass({
+    required this.dropDownCableType,
+  });
+}
+
+enum WiringListSearchEnum {
+  cableData('ケーブル種類'),
+  start('出発点'),
+  end('到着点');
+
+  final String name;
+  const WiringListSearchEnum(this.name);
+}
+
+
 
 // /// データモデルの定義
 // class CableDesignOutData {
@@ -130,38 +235,4 @@ class CableDataClass {
 //         cableSize = json['cableSize'],
 //         voltDrop = json['voltDrop'],
 //         powerLoss = json['powerLoss'];
-// }
-
-// /// データモデルの定義
-// class ElecPowerData {
-//   String phase; // 相
-//   String apparentPower; // 皮相電力
-//   String activePower; // 有効電力
-//   String reactivePower; // 無効電力
-//   String sinFai; // sinφ
-
-//   ElecPowerData(
-//     this.phase,
-//     this.apparentPower,
-//     this.activePower,
-//     this.reactivePower,
-//     this.sinFai,
-//   );
-
-//   /// Map型に変換
-//   Map toJson() => {
-//         'phase': phase,
-//         'apparentPower': apparentPower,
-//         'activePower': activePower,
-//         'reactivePower': reactivePower,
-//         'sinFai': sinFai,
-//       };
-
-//   /// JSONオブジェクトを代入
-//   ElecPowerData.fromJson(Map json)
-//       : phase = json['phase'],
-//         apparentPower = json['apparentPower'],
-//         activePower = json['activePower'],
-//         reactivePower = json['reactivePower'],
-//         sinFai = json['sinFai'];
 // }

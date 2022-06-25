@@ -1,3 +1,4 @@
+import 'package:elec_facility_calc/src/view/wiring_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -24,6 +25,11 @@ class MyHomePage extends ConsumerWidget {
                 _HomePagePush(
                   title: '計算画面へ',
                   pagepush: CalcPage(),
+                  isCulcPage: true,
+                ),
+                _HomePagePush(
+                  title: 'ケーブルリスト',
+                  pagepush: WiringListPage(),
                   isCulcPage: true,
                 ),
                 _HomePagePush(
