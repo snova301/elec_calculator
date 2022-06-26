@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/src/data/cable_data.dart';
 import 'package:elec_facility_calc/src/view/calc_page.dart';
-import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
+import 'package:elec_facility_calc/src/viewmodel/calc_cable_design_state.dart';
 
 /// ケーブル設計のListView Widget
 class ListViewCableDesign extends ConsumerWidget {

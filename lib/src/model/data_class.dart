@@ -195,15 +195,40 @@ class WiringListSearchDataClass {
   });
 }
 
-enum WiringListSearchEnum {
-  cableData('ケーブル種類'),
-  start('出発点'),
-  end('到着点');
+/// なぜかできないenumの進化版
+// enum AuthException1 {
+//   invalidEmail('Invalid email'),
+//   emailAlreadyInUse('Email already in use'),
+//   weakPassword('Password is too weak'),
+//   wrongPassword('Wrong password');
 
-  final String name;
-  const WiringListSearchEnum(this.name);
+//   const AuthException1(this.message);
+//   final String message;
+// }
+
+// enum WiringListSearchEnum {
+//   cableData('ケーブル種類'),
+//   start('出発点'),
+//   end('到着点');
+
+//   const WiringListSearchEnum(this.name);
+//   final String name;
+// }
+
+enum WiringListSearchEnum { cableData, start, end }
+
+extension WiringListSearchEnumExt on WiringListSearchEnum {
+  String get name {
+    switch (this) {
+      case WiringListSearchEnum.cableData:
+        return 'ケーブル種類';
+      case WiringListSearchEnum.start:
+        return '出発点';
+      case WiringListSearchEnum.end:
+        return '到着点';
+    }
+  }
 }
-
 
 
 // /// データモデルの定義

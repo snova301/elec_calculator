@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:elec_facility_calc/src/view/home_page.dart';
+import 'package:elec_facility_calc/src/view/common_page.dart';
 
 /// 使い方やライセンスページをリンクするためのページ
 class AboutPage extends StatelessWidget {

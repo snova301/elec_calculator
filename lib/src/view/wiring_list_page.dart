@@ -1,11 +1,11 @@
-import 'package:elec_facility_calc/src/data/cable_data.dart';
-import 'package:elec_facility_calc/src/model/data_class.dart';
-import 'package:elec_facility_calc/src/view/home_page.dart';
-import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:elec_facility_calc/src/view/wiring_list_create_page.dart';
 import 'package:uuid/uuid.dart';
+import 'package:elec_facility_calc/src/view/common_page.dart';
+import 'package:elec_facility_calc/src/data/cable_data.dart';
+import 'package:elec_facility_calc/src/model/data_class.dart';
+import 'package:elec_facility_calc/src/viewmodel/wiring_list_state.dart';
+import 'package:elec_facility_calc/src/view/wiring_list_create_page.dart';
 
 class WiringListPage extends ConsumerStatefulWidget {
   const WiringListPage({Key? key}) : super(key: key);
@@ -55,6 +55,10 @@ class WiringSearchView extends ConsumerWidget {
     final cableTypeList = ref.watch(wiringListSearchCableTypeListProvider);
     final startPointList = ref.watch(wiringListSearchStartListProvider);
     final endPointList = ref.watch(wiringListSearchEndListProvider);
+    print('cableTypeList : $cableTypeList');
+    print('cableType : ${ref.watch(wiringListSearchCableTypeProvider)}');
+    print('startPointList : $startPointList');
+    print('startPoint : ${ref.watch(wiringListSearchStartProvider)}');
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:elec_facility_calc/main.dart';
-import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
-import 'package:elec_facility_calc/src/view/home_page.dart';
+import 'package:elec_facility_calc/src/view/common_page.dart';
 import 'package:elec_facility_calc/src/view/calc_cable_design_page.dart';
 import 'package:elec_facility_calc/src/view/calc_conduit_page.dart';
 import 'package:elec_facility_calc/src/view/calc_elec_power_page.dart';
+import 'package:elec_facility_calc/src/viewmodel/calc_conduit_state.dart';
 
 // import 'package:google_mobile_ads/google_mobile_ads.dart'; // 広告用
 

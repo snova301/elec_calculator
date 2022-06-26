@@ -1,8 +1,8 @@
+import 'package:elec_facility_calc/src/viewmodel/wiring_list_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:elec_facility_calc/src/view/home_page.dart';
+import 'package:elec_facility_calc/src/view/common_page.dart';
 import 'package:elec_facility_calc/src/data/cable_data.dart';
-import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 
 class WiringCreatePage extends ConsumerWidget {
   const WiringCreatePage({Key? key}) : super(key: key);

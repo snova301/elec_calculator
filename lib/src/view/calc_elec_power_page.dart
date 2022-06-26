@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:elec_facility_calc/src/view/calc_page.dart';
+import 'package:elec_facility_calc/src/viewmodel/calc_elec_power_state.dart';
 
 /// 電力計算のListView Widget
 class ListViewElecPower extends ConsumerWidget {
