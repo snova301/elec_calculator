@@ -51,21 +51,29 @@ class ListViewElecPower extends ConsumerWidget {
 
         /// 結果表示
         const SeparateText(title: '計算結果'),
+
+        /// 皮相電力
         OutputTextCard(
           title: '皮相電力',
           unit: 'kVA',
           result: ref.watch(elecPowerProvider).apparentPower,
         ),
+
+        /// 有効電力
         OutputTextCard(
           title: '有効電力',
           unit: 'kW',
           result: ref.watch(elecPowerProvider).activePower,
         ),
+
+        /// 無効電力
         OutputTextCard(
           title: '無効電力',
           unit: 'kVar',
           result: ref.watch(elecPowerProvider).reactivePower,
         ),
+
+        /// sinφ
         OutputTextCard(
           title: 'sinφ',
           unit: '%',
@@ -98,9 +106,12 @@ class ElecPowerPhaseSelectCard extends ConsumerWidget {
               ),
             ),
           ),
+
+          /// 単相 or 三相の選択row
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              /// 単相
               Container(
                 margin: const EdgeInsets.all(8),
                 child: ElevatedButton(
@@ -118,6 +129,8 @@ class ElecPowerPhaseSelectCard extends ConsumerWidget {
                   child: const Text('単相'),
                 ),
               ),
+
+              /// 三相
               Container(
                 margin: const EdgeInsets.all(8),
                 child: ElevatedButton(
@@ -159,15 +172,6 @@ class ElecPowerRunButton extends ConsumerWidget {
       margin: EdgeInsets.fromLTRB(paddingSize, 0, paddingSize, 0),
       child: ElevatedButton(
         onPressed: () {
-          // final cosFai = ref.watch(elecPowerProvider).cosFai.text;
-          // CalcLogic().isCosFaiCorrect(cosFai)
-          //     ? ref.watch(elecPowerProvider.notifier).run()
-          //     : showDialog<void>(
-          //         context: context,
-          //         builder: (BuildContext context) {
-          //           return const CorrectAlertDialog();
-          //         },
-          //       );
           if (ref.read(elecPowerProvider.notifier).isRunCheck()) {
             ref.watch(elecPowerProvider.notifier).run();
           } else {

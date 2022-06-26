@@ -231,18 +231,11 @@ class CableDesignRunButton extends ConsumerWidget {
       margin: EdgeInsets.fromLTRB(paddingSize, 0, paddingSize, 0),
       child: ElevatedButton(
         onPressed: () {
-          // final cosFai = ref.watch(cableDesignProvider).cosfai.text;
-          // CalcLogic().isCosFaiCorrect(cosFai)
-          //     ? ref.read(cableDesignProvider.notifier).run()
-          //     : showDialog<void>(
-          //         context: context,
-          //         builder: (BuildContext context) {
-          //           return const CosFaiAlertDialog();
-          //         },
-          //       );
+          /// 実行時に読み込み関係でエラーを吐き出さないか確認後実行
           if (ref.read(cableDesignProvider.notifier).isRunCheck()) {
             ref.read(cableDesignProvider.notifier).run();
           } else {
+            /// snackbarでエラー表示
             showDialog<void>(
               context: context,
               builder: (BuildContext context) {
@@ -262,7 +255,10 @@ class CableDesignRunButton extends ConsumerWidget {
         ),
         child: const Text(
           '計算実行',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
         ),
       ),
     );

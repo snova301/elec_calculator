@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/main.dart';
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 
+/// 設定ページ
 class SettingPage extends ConsumerWidget {
   const SettingPage({Key? key}) : super(key: key);
 
@@ -24,6 +25,7 @@ class SettingPage extends ConsumerWidget {
   }
 }
 
+/// ダークモード設定のwidget
 class _DarkmodeCard extends Card {
   _DarkmodeCard(BuildContext context, WidgetRef ref)
       : super(
@@ -40,6 +42,7 @@ class _DarkmodeCard extends Card {
         );
 }
 
+/// キャッシュデータ全削除のwidget
 class _DataRemoveCard extends Card {
   _DataRemoveCard(BuildContext context, WidgetRef ref)
       : super(
@@ -59,6 +62,7 @@ class _DataRemoveCard extends Card {
         );
 }
 
+/// キャッシュデータを削除する際のAlertDialog
 class _DataRemoveDialog extends AlertDialog {
   _DataRemoveDialog(BuildContext context, WidgetRef ref)
       : super(

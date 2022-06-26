@@ -15,11 +15,25 @@ class AboutPage extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         children: <Widget>[
           /// 各URLをオープン
+          /// 使い方ページ
           const _LinkCard(
-              urlTitle: '使い方', urlName: 'elec_calculator/howtouse.html'),
-          const _LinkCard(urlTitle: '利用規約', urlName: 'common/terms.html'),
+            urlTitle: '使い方',
+            urlName: 'elec_calculator/howtouse.html',
+          ),
+
+          /// 利用規約ページ
           const _LinkCard(
-              urlTitle: 'プライバシーポリシー', urlName: 'common/privacypolicy.html'),
+            urlTitle: '利用規約',
+            urlName: 'common/terms.html',
+          ),
+
+          /// プライバシーポリシーページ
+          const _LinkCard(
+            urlTitle: 'プライバシーポリシー',
+            urlName: 'common/privacypolicy.html',
+          ),
+
+          /// オープンソースライセンスの表示
           Card(
             child: ListTile(
               title: const Text('オープンソースライセンス'),

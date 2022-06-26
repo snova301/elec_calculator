@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:elec_facility_calc/src/view/about_page.dart';
 import 'package:elec_facility_calc/src/view/calc_page.dart';
@@ -15,6 +16,7 @@ class DrawerContents extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
+          /// メニューを閉じる
           ListTile(
             title: const Text('メニューを閉じる'),
             leading: const Icon(Icons.close),
@@ -23,7 +25,11 @@ class DrawerContents extends StatelessWidget {
             },
             contentPadding: const EdgeInsets.fromLTRB(16, 35, 16, 15),
           ),
+
+          /// 分割線
           const Divider(),
+
+          /// トップページへ
           ListTile(
             title: const Text('トップページ'),
             leading: const Icon(Icons.home_rounded),
@@ -32,6 +38,8 @@ class DrawerContents extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => const MyHomePage()));
             },
           ),
+
+          /// 計算画面へ
           ListTile(
             title: const Text('計算画面'),
             leading: const Icon(Icons.calculate),
@@ -40,6 +48,8 @@ class DrawerContents extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => const CalcPage()));
             },
           ),
+
+          /// 配線リスト画面へ
           ListTile(
             title: const Text('配線リスト画面'),
             leading: const Icon(Icons.calculate),
@@ -48,6 +58,8 @@ class DrawerContents extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => const CalcPage()));
             },
           ),
+
+          /// 設定画面へ
           ListTile(
             title: const Text('設定'),
             leading: const Icon(Icons.settings),
@@ -56,6 +68,8 @@ class DrawerContents extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => const SettingPage()));
             },
           ),
+
+          /// 計算方法リンク
           ListTile(
             title: const Text('計算方法'),
             leading: const Icon(Icons.architecture),
@@ -65,6 +79,8 @@ class DrawerContents extends StatelessWidget {
                   'https://snova301.github.io/AppService/elec_calculator/method.html');
             },
           ),
+
+          /// About
           ListTile(
             title: const Text('About'),
             onTap: () {
@@ -79,12 +95,42 @@ class DrawerContents extends StatelessWidget {
 }
 
 /// snackbarで注意喚起を行うWidget
+/// [使い方]
+/// ScaffoldMessenger.of(context).showSnackBar(
+///   SnackBarAlert(title: 'これ以上追加できません'),
+/// );
+
+// class SnackBarAlert extends ConsumerStatefulWidget {
+//   /// メッセージの内容
+//   final String message;
+
+//   const SnackBarAlert({Key? key, required this.message}) : super(key: key);
+
+//   @override
+//   SnackBarAlertState createState() => SnackBarAlertState();
+// }
+
+// class SnackBarAlertState extends ConsumerState<SnackBarAlert> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return SnackBar(
+//       key: widget.key,
+//       content: Text(widget.message),
+//       behavior: SnackBarBehavior.floating,
+//       shape: RoundedRectangleBorder(
+//         borderRadius: BorderRadius.circular(10.0),
+//       ),
+//       duration: const Duration(milliseconds: 2000),
+//     );
+//   }
+// }
+
 class SnackBarAlert extends SnackBar {
-  final String title;
-  SnackBarAlert({Key? key, required this.title})
+  final String message;
+  SnackBarAlert({Key? key, required this.message})
       : super(
           key: key,
-          content: Text(title),
+          content: Text(message),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),

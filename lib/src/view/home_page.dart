@@ -27,7 +27,7 @@ class MyHomePage extends ConsumerWidget {
                   isCulcPage: true,
                 ),
                 _PagePush(
-                  title: 'ケーブルリスト',
+                  title: '配線管理リスト',
                   pagepush: WiringListPage(),
                   isCulcPage: true,
                 ),

@@ -7,6 +7,7 @@ import 'package:elec_facility_calc/src/model/data_class.dart';
 import 'package:elec_facility_calc/src/viewmodel/wiring_list_state.dart';
 import 'package:elec_facility_calc/src/view/wiring_list_create_page.dart';
 
+/// 配線管理リストのページ
 class WiringListPage extends ConsumerStatefulWidget {
   const WiringListPage({Key? key}) : super(key: key);
 
@@ -18,31 +19,31 @@ class WiringListPageState extends ConsumerState<WiringListPage> {
   @override
   Widget build(BuildContext context) {
     /// 画面情報取得
-    final mediaQueryData = MediaQuery.of(context);
-    final screenWidth = mediaQueryData.size.width;
-    final listViewPadding = screenWidth / 20;
+    // final mediaQueryData = MediaQuery.of(context);
+    // final screenWidth = mediaQueryData.size.width;
 
-    final wiringMapLength = ref.watch(wiringListProvider).length;
     const maxNum = 3;
-    print(ref.watch(wiringListProvider));
 
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('配線管理リスト'),
+      appBar: AppBar(
+        title: const Tooltip(
+          message: '配線管理リストの項目は $maxNum 個まで',
+          child: Text('配線管理リスト'),
         ),
-        body: Column(
-          children: const <Widget>[
-            Text('配線管理リストの項目は $maxNum まで'),
-            WiringSearchView(),
-            Expanded(
-              child: WiringView(),
-            ),
-          ],
-        ),
-        floatingActionButton: WiringAddFAB(
-          maxNum: maxNum,
-          wiringMapLength: wiringMapLength,
-        ));
+      ),
+      body: Column(
+        children: const <Widget>[
+          /// 絞り込み用widget
+          WiringSearchView(),
+
+          /// リスト
+          Expanded(
+            child: WiringView(),
+          ),
+        ],
+      ),
+      floatingActionButton: const WiringAddFAB(maxNum: maxNum),
+    );
   }
 }
 
@@ -52,14 +53,6 @@ class WiringSearchView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cableTypeList = ref.watch(wiringListSearchCableTypeListProvider);
-    final startPointList = ref.watch(wiringListSearchStartListProvider);
-    final endPointList = ref.watch(wiringListSearchEndListProvider);
-    print('cableTypeList : $cableTypeList');
-    print('cableType : ${ref.watch(wiringListSearchCableTypeProvider)}');
-    print('startPointList : $startPointList');
-    print('startPoint : ${ref.watch(wiringListSearchStartProvider)}');
-
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.all(10),
@@ -68,108 +61,70 @@ class WiringSearchView extends ConsumerWidget {
           // const Text('絞り込み'),
 
           /// ケーブル種類の絞り込み
-          Card(
-            // shape: RoundedRectangleBorder(
-            //   borderRadius: BorderRadius.circular(30),
-            // ),
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: DropdownButton(
-                alignment: AlignmentDirectional.center,
-                menuMaxHeight: 200,
-                value: ref.watch(wiringListSearchCableTypeProvider),
-                items: ref
-                    .watch(wiringListSearchCableTypeListProvider)
-                    .map<DropdownMenuItem<String>>(
-                  // items: cableTypeList.map<DropdownMenuItem<String>>(
-                  (String value) {
-                    return DropdownMenuItem<String>(
-                      alignment: AlignmentDirectional.centerStart,
-                      value: value,
-                      child: Text(
-                        value,
-                        style: const TextStyle(
-                            // fontSize: 12,
-                            ),
-                      ),
-                    );
-                  },
-                ).toList(),
-                onChanged: (String? value) {
-                  /// 変更
-                  ref.read(wiringListSearchCableTypeProvider.state).state =
-                      value!;
-                },
-              ),
-            ),
+          WiringListSearchCard(
+            providerStr: wiringListSearchCableTypeProvider,
+            providerList: wiringListSearchCableTypeListProvider,
           ),
 
-          /// ケーブル出発点の絞り込み
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: DropdownButton(
-                alignment: AlignmentDirectional.center,
-                menuMaxHeight: 200,
-                value: ref.watch(wiringListSearchStartProvider),
-                items: ref
-                    .watch(wiringListSearchStartListProvider)
-                    .map<DropdownMenuItem<String>>(
-                  // items: startPointList.map<DropdownMenuItem<String>>(
-                  (String value) {
-                    return DropdownMenuItem<String>(
-                      alignment: AlignmentDirectional.centerStart,
-                      value: value,
-                      child: Text(
-                        value,
-                        style: const TextStyle(
-                            // fontSize: 12,
-                            ),
-                      ),
-                    );
-                  },
-                ).toList(),
-                onChanged: (String? value) {
-                  /// 変更
-                  ref.read(wiringListSearchStartProvider.state).state = value!;
-                },
-              ),
-            ),
+          /// 出発点の絞り込み
+          WiringListSearchCard(
+            providerStr: wiringListSearchStartProvider,
+            providerList: wiringListSearchStartListProvider,
           ),
 
-          /// ケーブル到着点の絞り込み
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: DropdownButton(
-                alignment: AlignmentDirectional.center,
-                menuMaxHeight: 200,
-                value: ref.watch(wiringListSearchEndProvider),
-                items: ref
-                    .watch(wiringListSearchEndListProvider)
-                    .map<DropdownMenuItem<String>>(
-                  // items: endPointList.map<DropdownMenuItem<String>>(
-                  (String value) {
-                    return DropdownMenuItem<String>(
-                      alignment: AlignmentDirectional.centerStart,
-                      value: value,
-                      child: Text(
-                        value,
-                        style: const TextStyle(
-                            // fontSize: 12,
-                            ),
-                      ),
-                    );
-                  },
-                ).toList(),
-                onChanged: (String? value) {
-                  /// 変更
-                  ref.read(wiringListSearchEndProvider.state).state = value!;
-                },
-              ),
-            ),
+          /// 到着点の絞り込み
+          WiringListSearchCard(
+            providerStr: wiringListSearchEndProvider,
+            providerList: wiringListSearchEndListProvider,
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// 絞り込みwidget
+class WiringListSearchCard extends ConsumerWidget {
+  final StateProvider<String> providerStr;
+  final StateProvider<List<String>> providerList;
+
+  const WiringListSearchCard({
+    Key? key,
+    required this.providerStr,
+    required this.providerList,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Card(
+      // shape: RoundedRectangleBorder(
+      //   borderRadius: BorderRadius.circular(30),
+      // ),
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: DropdownButton(
+          alignment: AlignmentDirectional.center,
+          menuMaxHeight: 200,
+          value: ref.watch(providerStr),
+          items: ref.watch(providerList).map<DropdownMenuItem<String>>(
+            (String value) {
+              return DropdownMenuItem<String>(
+                alignment: AlignmentDirectional.centerStart,
+                value: value,
+                child: Text(
+                  value,
+                  style: const TextStyle(
+                      // fontSize: 12,
+                      ),
+                ),
+              );
+            },
+          ).toList(),
+          onChanged: (String? value) {
+            /// 変更
+            ref.read(providerStr.state).state = value!;
+          },
+        ),
       ),
     );
   }
@@ -181,6 +136,7 @@ class WiringView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    /// 定義
     final wiringMap = ref.watch(wiringListShowProvider);
     final wiringMapKeyList = wiringMap.keys.toList();
     final wiringMapValueList = wiringMap.values.toList();
@@ -256,15 +212,13 @@ class WiringView extends ConsumerWidget {
   }
 }
 
-/// FAB
+/// 追加用FAB
 class WiringAddFAB extends ConsumerWidget {
   final int maxNum;
-  final int wiringMapLength;
 
   const WiringAddFAB({
     Key? key,
     required this.maxNum,
-    required this.wiringMapLength,
   }) : super(key: key);
 
   @override
@@ -272,14 +226,14 @@ class WiringAddFAB extends ConsumerWidget {
     return FloatingActionButton(
       child: const Icon(Icons.add),
       onPressed: () {
-        if (wiringMapLength < maxNum) {
+        if (ref.watch(wiringListProvider).length < maxNum) {
           /// データ更新
           ref.read(wiringListSettingProvider.state).state =
               WiringListSettingDataClass(
             isCreate: true,
             id: const Uuid().v4(),
             nameController: TextEditingController(text: ''),
-            cableType: CableData().cableTypeList.first,
+            cableType: CableTypeEnum.cv2c600v.cableType,
             startPointController: TextEditingController(text: ''),
             endPointController: TextEditingController(text: ''),
             remarksController: TextEditingController(text: ''),
@@ -295,7 +249,7 @@ class WiringAddFAB extends ConsumerWidget {
         } else {
           /// 数がオーバーしたらSnackbarで警告
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBarAlert(title: 'これ以上追加できません'),
+            SnackBarAlert(message: 'これ以上追加できません'),
           );
         }
       },

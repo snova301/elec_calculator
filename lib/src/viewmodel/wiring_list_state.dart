@@ -10,7 +10,7 @@ final wiringListProvider =
   return WiringListNotifier();
 });
 
-/// ケーブル設計のNotifierの定義
+/// 配線リスト入力のNotifierの定義
 class WiringListNotifier
     extends StateNotifier<Map<String, WiringListDataClass>> {
   // 空のデータとして初期化
@@ -55,7 +55,7 @@ final wiringListSettingProvider = StateProvider((ref) {
     isCreate: true,
     id: '',
     nameController: TextEditingController(text: ''),
-    cableType: CableData().cableTypeList.first,
+    cableType: CableTypeEnum.cv2c600v.cableType,
     startPointController: TextEditingController(text: ''),
     endPointController: TextEditingController(text: ''),
     remarksController: TextEditingController(text: ''),
@@ -78,7 +78,8 @@ final wiringListShowProvider = StateProvider((ref) {
   Map<String, WiringListDataClass> endMap = {};
 
   /// ケーブル種類の選別
-  if (originalMap.isEmpty || cableType == WiringListSearchEnum.cableData.name) {
+  if (originalMap.isEmpty ||
+      cableType == WiringListSearchEnum.cableData.message) {
     cableTypeMap = originalMap;
   } else {
     originalMap.forEach((key, value) {
@@ -89,7 +90,8 @@ final wiringListShowProvider = StateProvider((ref) {
   }
 
   /// 出発点の選別
-  if (cableTypeMap.isEmpty || startPoint == WiringListSearchEnum.start.name) {
+  if (cableTypeMap.isEmpty ||
+      startPoint == WiringListSearchEnum.start.message) {
     startMap = cableTypeMap;
   } else {
     cableTypeMap.forEach((key, value) {
@@ -100,7 +102,7 @@ final wiringListShowProvider = StateProvider((ref) {
   }
 
   /// 到着点の選別
-  if (startMap.isEmpty || endPoint == WiringListSearchEnum.end.name) {
+  if (startMap.isEmpty || endPoint == WiringListSearchEnum.end.message) {
     endMap = startMap;
   } else {
     startMap.forEach((key, value) {
@@ -110,21 +112,25 @@ final wiringListShowProvider = StateProvider((ref) {
     });
   }
 
-  print(endMap);
   return endMap;
 });
 
-/// WiringListページの検索のProvider初期化
+/// ケーブル種類絞り込みの検索単語のProvider初期化
 final wiringListSearchCableTypeProvider = StateProvider((ref) {
-  return WiringListSearchEnum.cableData.name;
+  if (ref.watch(wiringListProvider).isEmpty) {
+    return WiringListSearchEnum.cableData.message;
+  }
+  return WiringListSearchEnum.cableData.message;
 });
 
-/// ケーブル種類絞り込み用リスト
+/// ケーブル種類絞り込み用リストのProvider初期化
 final wiringListSearchCableTypeListProvider = StateProvider((ref) {
-  // final originalMap = ref.watch(wiringListShowProvider);
+  /// 配線リストの取得
   final originalMap = ref.watch(wiringListProvider);
+  // final originalMap = ref.watch(wiringListShowProvider);
 
-  List<String> cableTypeList = [WiringListSearchEnum.cableData.name];
+  /// 一致したデータをリストに格納
+  List<String> cableTypeList = [WiringListSearchEnum.cableData.message];
   originalMap.forEach((key, value) {
     if (!cableTypeList.contains(value.cableType)) {
       cableTypeList.add(value.cableType);
@@ -134,17 +140,22 @@ final wiringListSearchCableTypeListProvider = StateProvider((ref) {
   return cableTypeList;
 });
 
-/// WiringListページの検索のProvider初期化
+/// 出発点絞り込みの検索単語のProvider初期化
 final wiringListSearchStartProvider = StateProvider((ref) {
-  return WiringListSearchEnum.start.name;
+  if (ref.watch(wiringListProvider).isEmpty) {
+    return WiringListSearchEnum.start.message;
+  }
+  return WiringListSearchEnum.start.message;
 });
 
-/// ケーブル種類絞り込み用リスト
+/// 出発点絞り込み用リストのProvider初期化
 final wiringListSearchStartListProvider = StateProvider((ref) {
-  // final originalMap = ref.watch(wiringListShowProvider);
+  /// 配線リストの取得
   final originalMap = ref.watch(wiringListProvider);
+  // final originalMap = ref.watch(wiringListShowProvider);
 
-  List<String> startList = [WiringListSearchEnum.start.name];
+  /// 一致したデータをリストに格納
+  List<String> startList = [WiringListSearchEnum.start.message];
   originalMap.forEach((key, value) {
     if (!startList.contains(value.startPoint)) {
       startList.add(value.startPoint);
@@ -154,17 +165,22 @@ final wiringListSearchStartListProvider = StateProvider((ref) {
   return startList;
 });
 
-/// WiringListページの検索のProvider初期化
+/// 到着点絞り込みの検索単語のProvider初期化
 final wiringListSearchEndProvider = StateProvider((ref) {
-  return WiringListSearchEnum.end.name;
+  if (ref.watch(wiringListProvider).isEmpty) {
+    return WiringListSearchEnum.end.message;
+  }
+  return WiringListSearchEnum.end.message;
 });
 
-/// ケーブル種類絞り込み用リスト
+/// 到着点絞り込み用リストのProvider初期化
 final wiringListSearchEndListProvider = StateProvider((ref) {
-  // final originalMap = ref.watch(wiringListShowProvider);
+  /// 配線リストの取得
   final originalMap = ref.watch(wiringListProvider);
+  // final originalMap = ref.watch(wiringListShowProvider);
 
-  List<String> endList = [WiringListSearchEnum.end.name];
+  /// 一致したデータをリストに格納
+  List<String> endList = [WiringListSearchEnum.end.message];
   originalMap.forEach((key, value) {
     if (!endList.contains(value.endPoint)) {
       endList.add(value.endPoint);

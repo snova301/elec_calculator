@@ -7,19 +7,37 @@ part 'data_class.freezed.dart';
 @freezed
 class CableDesignData with _$CableDesignData {
   const factory CableDesignData({
-    // 入力
-    required String phase, // 相
-    required String cableType, // ケーブル種類
-    required TextEditingController elecOut, // 電気出力
-    required TextEditingController volt, // 電圧
-    required TextEditingController cosFai, // 力率
-    required TextEditingController cableLength, // ケーブル長さ
+    /// 入力
+    /// 相
+    required String phase,
 
-    // 出力
-    required String current, // 電流
-    required String cableSize, // ケーブルサイズ
-    required String voltDrop, // 電圧降下
-    required String powerLoss, // 電力損失
+    /// ケーブル種類
+    required String cableType,
+
+    /// 電気出力
+    required TextEditingController elecOut,
+
+    /// 電圧
+    required TextEditingController volt,
+
+    /// 力率
+    required TextEditingController cosFai,
+
+    /// ケーブル長さ
+    required TextEditingController cableLength,
+
+    /// 出力
+    /// 電流
+    required String current,
+
+    /// ケーブルサイズ
+    required String cableSize,
+
+    /// 電圧降下
+    required String voltDrop,
+
+    /// 電力損失
+    required String powerLoss,
   }) = _CableDesignData;
 
   // factory CableDesignData.fromJson(Map<String, Object?> json) =>
@@ -30,17 +48,31 @@ class CableDesignData with _$CableDesignData {
 @freezed
 class ElecPowerData with _$ElecPowerData {
   const factory ElecPowerData({
-    // 入力
-    required String phase, // 相
-    required TextEditingController volt, // 電圧
-    required TextEditingController current, // 電流
-    required TextEditingController cosFai, // 力率
+    /// 入力
+    /// 相
+    required String phase,
 
-    // 出力
-    required String apparentPower, // 皮相電力
-    required String activePower, // 有効電力
-    required String reactivePower, // 無効電力
-    required String sinFai, // sinφ
+    /// 電圧
+    required TextEditingController volt,
+
+    /// 電流
+    required TextEditingController current,
+
+    /// 力率
+    required TextEditingController cosFai,
+
+    /// 出力
+    /// 皮相電力
+    required String apparentPower,
+
+    /// 有効電力
+    required String activePower,
+
+    /// 無効電力
+    required String reactivePower,
+
+    /// sinφ
+    required String sinFai,
   }) = _ElecPowerData;
 
   // factory ElecPowerData.fromJson(Map<String, Object?> json) =>
@@ -51,8 +83,11 @@ class ElecPowerData with _$ElecPowerData {
 @freezed
 class ConduitCalcDataClass with _$ConduitCalcDataClass {
   const factory ConduitCalcDataClass({
-    required List<ConduitCalcCableDataClass> items, // リスト内のアイテム
-    required String conduitType, // 電線管の種類
+    /// リスト内のアイテム
+    required List<ConduitCalcCableDataClass> items,
+
+    /// 電線管の種類
+    required String conduitType,
   }) = _ConduitCalcDataClass;
 
   // factory ConduitCalcDataClass.fromJson(Map<String, Object?> json) =>
@@ -99,32 +134,6 @@ class CableDataClass {
     required this.diameter,
   });
 }
-
-/// ケーブルリストのデータ定義
-// @freezed
-// class WiringListDataClass with _$WiringListDataClass {
-//   const factory WiringListDataClass({
-//     /// ケーブル名称
-//     required String name,
-
-//     /// 出発点
-//     required String startPoint,
-
-//     /// 到着点
-//     required String endPoint,
-
-//     /// ケーブル種類
-//     required String cableType,
-
-//     /// 備考
-//     required String remarks,
-
-//     /// 備考
-//   }) = _WiringListDataClass;
-
-//   // factory WiringListDataClass.fromJson(Map<String, Object?> json) =>
-//   //     _$WiringListDataClassFromJson(json);
-// }
 
 class WiringListDataClass {
   /// ケーブル名称
@@ -215,10 +224,12 @@ class WiringListSearchDataClass {
 //   final String name;
 // }
 
+/// 配線リストの検索用enum
 enum WiringListSearchEnum { cableData, start, end }
 
+/// 配線リストの検索用enumのextension
 extension WiringListSearchEnumExt on WiringListSearchEnum {
-  String get name {
+  String get message {
     switch (this) {
       case WiringListSearchEnum.cableData:
         return 'ケーブル種類';

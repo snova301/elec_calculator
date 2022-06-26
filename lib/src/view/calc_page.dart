@@ -10,6 +10,7 @@ import 'package:elec_facility_calc/src/viewmodel/calc_conduit_state.dart';
 
 // import 'package:google_mobile_ads/google_mobile_ads.dart'; // 広告用
 
+/// 計算ページ
 class CalcPage extends ConsumerStatefulWidget {
   const CalcPage({Key? key}) : super(key: key);
 
@@ -33,8 +34,6 @@ class CalcPageState extends ConsumerState<CalcPage> {
     final screenWidth = mediaQueryData.size.width;
     final blockWidth = screenWidth / 100 * 20;
     final listViewPadding = screenWidth / 20;
-    // final screenHeight = mediaQueryData.size.height;
-    // final blockSizeVertical = screenHeight / 100;
 
     /// 電線管設計用
     int maxNumCable = 10;
@@ -63,6 +62,7 @@ class CalcPageState extends ConsumerState<CalcPage> {
         ),
       ][ref.read(bottomNaviSelectProvider)],
 
+      /// drawer
       drawer: const DrawerContents(),
 
       /// bottomNavigationBar
@@ -98,7 +98,7 @@ class CalcPageState extends ConsumerState<CalcPage> {
                   ref.read(conduitCalcProvider.notifier).calcCableArea();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBarAlert(title: 'これ以上追加できません'),
+                    SnackBarAlert(message: 'これ以上追加できません'),
                   );
                 }
               },
@@ -119,7 +119,7 @@ class CalcPageState extends ConsumerState<CalcPage> {
 
 /// 計算条件や計算結果の文字表示widget
 class SeparateText extends ConsumerWidget {
-  final String title;
+  final String title; // 入力文字列
 
   const SeparateText({Key? key, required this.title}) : super(key: key);
 
@@ -140,10 +140,10 @@ class SeparateText extends ConsumerWidget {
 
 /// 入力用のwidget
 class InputTextCard extends ConsumerWidget {
-  final String title;
-  final String unit;
-  final String message;
-  final TextEditingController controller;
+  final String title; // タイトル
+  final String unit; // 単位
+  final String message; // tooltip用メッセージ
+  final TextEditingController controller; // TextEditingController
 
   const InputTextCard({
     Key? key,
@@ -159,6 +159,7 @@ class InputTextCard extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          /// タイトル
           Container(
             // padding: const EdgeInsets.all(8),
             margin: const EdgeInsets.fromLTRB(8, 8, 0, 0),
@@ -172,13 +173,9 @@ class InputTextCard extends ConsumerWidget {
               ),
             ),
           ),
+
+          /// 表示
           ListTile(
-            trailing: Text(
-              unit,
-              style: const TextStyle(
-                fontSize: 13,
-              ),
-            ),
             title: TextField(
               controller: controller,
               textAlign: TextAlign.right,
@@ -187,6 +184,12 @@ class InputTextCard extends ConsumerWidget {
                 FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                 LengthLimitingTextInputFormatter(10),
               ],
+            ),
+            trailing: Text(
+              unit,
+              style: const TextStyle(
+                fontSize: 13,
+              ),
             ),
           ),
         ],
@@ -197,9 +200,9 @@ class InputTextCard extends ConsumerWidget {
 
 /// 結果用のwidget
 class OutputTextCard extends ConsumerWidget {
-  final String title;
-  final String unit;
-  final String result;
+  final String title; // 出力タイトル
+  final String unit; // 単位
+  final String result; // 出力結果
 
   const OutputTextCard({
     Key? key,
@@ -214,6 +217,7 @@ class OutputTextCard extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          /// タイトル
           Container(
             // padding: const EdgeInsets.all(8),
             margin: const EdgeInsets.fromLTRB(8, 8, 0, 0),
@@ -224,6 +228,8 @@ class OutputTextCard extends ConsumerWidget {
               ),
             ),
           ),
+
+          /// 結果表示
           ListTile(
             title: Text(result, textAlign: TextAlign.right),
             trailing: result == '規格なし'
@@ -241,7 +247,14 @@ class OutputTextCard extends ConsumerWidget {
   }
 }
 
-/// 数値が以上の場合エラーダイアログを出す
+/// 数値が異常の場合、エラーダイアログを出す
+/// [使い方]
+/// showDialog<void>(
+///   context: context,
+///   builder: (BuildContext context) {
+///     return const CorrectAlertDialog();
+///   },
+/// );
 class CorrectAlertDialog extends StatelessWidget {
   const CorrectAlertDialog({Key? key}) : super(key: key);
 

@@ -112,8 +112,10 @@ class ConduitCableCard extends ConsumerWidget {
       child: ListTile(
         subtitle: Column(
           children: [
+            /// ケーブル種類を表示するためのrow
             Row(
               children: [
+                /// ケーブル種類の表示
                 Container(
                   padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                   child: const Text(
@@ -146,8 +148,11 @@ class ConduitCableCard extends ConsumerWidget {
                 ),
               ],
             ),
+
+            /// ケーブルサイズを表示するためのrow
             Row(
               children: <Widget>[
+                /// ケーブルサイズの表示
                 Container(
                   padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                   child: const Text(
@@ -181,7 +186,7 @@ class ConduitCableCard extends ConsumerWidget {
                   },
                 ),
 
-                /// 単位
+                /// 単位表示
                 Container(
                   padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                   child: const Text(
@@ -211,9 +216,12 @@ class ConduitCableCard extends ConsumerWidget {
   }
 }
 
-/// 電線管設計電線管のサイズwidget
+/// 電線管設計電線管のサイズを表示するwidget
 class ConduitConduitSizeCard extends ConsumerWidget {
+  /// 32%または48%の表示
   final String title;
+
+  /// 計算後の電線管サイズ
   final String result;
 
   const ConduitConduitSizeCard({
@@ -229,7 +237,7 @@ class ConduitConduitSizeCard extends ConsumerWidget {
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
-            /// FEP管はJISで占有率の規定がないので参考値
+            /// FEP管はJISで占有率の規定がないので参考値の表示をつける
             ref.watch(conduitCalcProvider).conduitType == 'FEP管'
                 ? Text(
                     '電線管サイズ\n占有率 $title %(参考値)',

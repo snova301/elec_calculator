@@ -10,14 +10,14 @@ final conduitCalcProvider =
   return ConduitCalcNotifier();
 });
 
-/// StateNotifierの中身を定義
+/// 電線管設計のStateNotifierを定義
 class ConduitCalcNotifier extends StateNotifier<ConduitCalcDataClass> {
   // 空のデータとして初期化
   ConduitCalcNotifier()
       : super(
-          const ConduitCalcDataClass(
+          ConduitCalcDataClass(
             items: <ConduitCalcCableDataClass>[],
-            conduitType: 'PF管',
+            conduitType: ConduitTypeEnum.pf.conduitType,
           ),
         );
 
@@ -35,7 +35,8 @@ class ConduitCalcNotifier extends StateNotifier<ConduitCalcDataClass> {
       cableArea = 0;
     } else {
       cableArea = cableItems
-          .map((e) => e.cableType == '600V CVT'
+          .map((e) => e.cableType == CableTypeEnum.cvt600v.cableType
+              // .map((e) => e.cableType == '600V CVT'
               ? 3 * pow(e.cableRadius / 2, 2) * pi
               : pow(e.cableRadius / 2, 2) * pi)
           .reduce((value, element) => value + element);
@@ -64,7 +65,8 @@ class ConduitCalcNotifier extends StateNotifier<ConduitCalcDataClass> {
     /// ケーブル種類、サイズ、仕上外径を追加
     /// 追加は固定で、600V CV-2C 2sq
     final cableData = ConduitCalcCableDataClass(
-      cableType: '600V CV-2C',
+      cableType: CableTypeEnum.cv2c600v.cableType,
+      // cableType: '600V CV-2C',
       cableSize: '2',
       cableRadius: 10.5,
     );
