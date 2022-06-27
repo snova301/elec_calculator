@@ -26,6 +26,11 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
           ),
         );
 
+  /// 全データの更新(shaerd_prefで使用)
+  void updateAll(ElecPowerData allData) {
+    state = allData;
+  }
+
   /// 相の変更
   void updatePhase(String phase) {
     state = state.copyWith(phase: phase);

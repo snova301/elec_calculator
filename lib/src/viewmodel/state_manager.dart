@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:elec_facility_calc/src/model/data_class.dart';
+import 'package:elec_facility_calc/src/viewmodel/calc_cable_design_state.dart';
 import 'package:elec_facility_calc/src/viewmodel/calc_elec_power_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,26 +46,41 @@ class StateManagerClass {
 
   /// shared_preferencesの読込み
   void getSettingPref(WidgetRef ref) async {
+    /// 初期化
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var getData = prefs.getString(SharedPrefEnum.setting.name);
 
-    print(getData);
-    if (getData != null) {
-      print(json.decode(getData));
-      print(json.decode(getData) is Map);
-      var getData1 = ElecPowerData.fromJson(json.decode(getData));
-      print(getData1);
+    /// ケーブル設計のデータ読み込み
+    var getCableDesign = prefs.getString(SharedPrefEnum.calcCableDesign.name);
+    // print(getCableDesign);
+    /// データがない場合、nullになるので、null以外の場合でデコードする
+    if (getCableDesign != null) {
+      var getCableDesignData =
+          CableDesignData.fromJson(jsonDecode(getCableDesign));
+      print(getCableDesignData);
+      ref.read(cableDesignProvider.notifier).updateAll(getCableDesignData);
     }
 
-    // ref.watch(settingProvider.state).state = prefs.getBool() ?? true;
+    /// 電力計算のデータ読み込み
+    var getElecPower = prefs.getString(SharedPrefEnum.calcPower.name);
+    // print(getElecPower);
+    /// データがない場合、nullになるので、null以外の場合でデコードする
+    if (getElecPower != null) {
+      var getElecPowerData = ElecPowerData.fromJson(jsonDecode(getElecPower));
+      print(getElecPowerData);
+      ref.read(elecPowerProvider.notifier).updateAll(getElecPowerData);
+    }
   }
 
   /// shared_preferencesの読込み
   void setSettingPref(WidgetRef ref) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var setData = jsonEncode(ref.read(elecPowerProvider).toJson());
-    print(setData);
-    prefs.setString(SharedPrefEnum.setting.name, setData);
+    var setCableDesign = jsonEncode(ref.read(cableDesignProvider).toJson());
+    print(setCableDesign);
+    prefs.setString(SharedPrefEnum.calcCableDesign.name, setCableDesign);
+
+    var setElecPower = jsonEncode(ref.read(elecPowerProvider).toJson());
+    print(setElecPower);
+    prefs.setString(SharedPrefEnum.calcPower.name, setElecPower);
   }
 }
 

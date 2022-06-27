@@ -27,6 +27,11 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
           powerLoss: '0',
         ));
 
+  /// 全データの更新(shaerd_prefで使用)
+  void updateAll(CableDesignData allData) {
+    state = allData;
+  }
+
   /// 相の変更
   void updatePhase(String phase) {
     state = state.copyWith(phase: phase);

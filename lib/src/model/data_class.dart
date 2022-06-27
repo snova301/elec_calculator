@@ -47,7 +47,7 @@ class CableDesignData with _$CableDesignData {
   }) = _CableDesignData;
 
   /// from Json
-  factory CableDesignData.fromJson(Map<String, Object?> json) =>
+  factory CableDesignData.fromJson(Map<String, dynamic> json) =>
       _$CableDesignDataFromJson(json);
 }
 
@@ -148,6 +148,7 @@ class CableDataClass {
   });
 }
 
+/// 配線リストのデータクラス
 class WiringListDataClass {
   /// ケーブル名称
   String name;
@@ -171,6 +172,23 @@ class WiringListDataClass {
     required this.cableType,
     required this.remarks,
   });
+
+  /// Map型に変換
+  Map toMap() => {
+        'name': name,
+        'startPoint': startPoint,
+        'endPoint': endPoint,
+        'cableType': cableType,
+        'remarks': remarks,
+      };
+
+  /// JSONオブジェクトからMapへ
+  WiringListDataClass.fromJson(Map json)
+      : name = json['name'],
+        startPoint = json['startPoint'],
+        endPoint = json['endPoint'],
+        cableType = json['cableType'],
+        remarks = json['remarks'];
 }
 
 /// WiringListページ間の設定クラス
@@ -207,7 +225,7 @@ class WiringListSettingDataClass {
   });
 }
 
-/// WiringListページ間の設定クラス
+/// WiringListの検索設定クラス
 class WiringListSearchDataClass {
   /// ケーブル種類検索用
   String dropDownCableType;
