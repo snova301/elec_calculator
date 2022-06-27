@@ -14,11 +14,11 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
   // 空のマップとして初期化
   ElecPowerNotifier()
       : super(
-          ElecPowerData(
+          const ElecPowerData(
             phase: '単相',
-            volt: TextEditingController(text: '100'),
-            current: TextEditingController(text: '10'),
-            cosFai: TextEditingController(text: '80'),
+            volt: '100',
+            current: '10',
+            cosFai: '80',
             apparentPower: '0',
             activePower: '0',
             reactivePower: '0',
@@ -89,12 +89,12 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
   }
 
   /// 計算実行
-  void run() {
+  void run(String strVolt, String strCurrent, String strCosFai) {
     /// Textfieldのテキストから取得し、電圧、電流、力率double型へ変換
     String phase = state.phase;
-    double volt = double.parse(state.volt.text);
-    double current = double.parse(state.current.text);
-    double cosFai = double.parse(state.cosFai.text) / 100;
+    double volt = double.parse(strVolt);
+    double current = double.parse(strCurrent);
+    double cosFai = double.parse(strCosFai) / 100;
 
     /// 皮相電力を計算
     double appaPower = updateApparentPower(phase, volt, current);
@@ -110,12 +110,12 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
   }
 
   /// runメソッドが実行できるか確認するメソッド
-  bool isRunCheck() {
+  bool isRunCheck(String strVolt, String strCurrent, String strCosFai) {
     try {
       /// 数値に変換できるか確認
-      double volt = double.parse(state.volt.text);
-      double current = double.parse(state.current.text);
-      double cosFai = double.parse(state.cosFai.text);
+      double volt = double.parse(strVolt);
+      double current = double.parse(strCurrent);
+      double cosFai = double.parse(strCosFai);
 
       /// 力率が0-100%以外ならfalseを返す
       if (cosFai < 0 || cosFai > 100) {
@@ -124,13 +124,13 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
 
       /// 入力した数値を整形してTextEditingControllerに入れる
       state = state.copyWith(
-        volt: TextEditingController(text: volt.toString()),
+        volt: volt.toString(),
       );
       state = state.copyWith(
-        current: TextEditingController(text: current.toString()),
+        current: current.toString(),
       );
       state = state.copyWith(
-        cosFai: TextEditingController(text: cosFai.toString()),
+        cosFai: cosFai.toString(),
       );
     } catch (e) {
       /// 数値変換や整形に失敗した場合、falseを返す
@@ -141,3 +141,14 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
     return true;
   }
 }
+
+/// texteditingcontrollerの定義
+final elecPowerTxtCtrVoltProvider = StateProvider((ref) {
+  return TextEditingController(text: ref.watch(elecPowerProvider).volt);
+});
+final elecPowerTxtCtrCurrentProvider = StateProvider((ref) {
+  return TextEditingController(text: ref.watch(elecPowerProvider).current);
+});
+final elecPowerTxtCtrCosFaiProvider = StateProvider((ref) {
+  return TextEditingController(text: ref.watch(elecPowerProvider).cosFai);
+});

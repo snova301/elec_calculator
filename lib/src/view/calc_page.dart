@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:elec_facility_calc/main.dart';
+import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:elec_facility_calc/src/view/common_page.dart';
 import 'package:elec_facility_calc/src/view/calc_cable_design_page.dart';
 import 'package:elec_facility_calc/src/view/calc_conduit_page.dart';
@@ -35,13 +35,15 @@ class CalcPageState extends ConsumerState<CalcPage> {
     final blockWidth = screenWidth / 100 * 20;
     final listViewPadding = screenWidth / 20;
 
+    /// bottomNavigatorの選択された数値
+    final selectedBottomNavi = ref.watch(bottomNaviSelectProvider);
+
     /// 電線管設計用
     int maxNumCable = 10;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-            ['ケーブル設計', '電力計算', '電線管設計'][ref.watch(bottomNaviSelectProvider)]),
+        title: Text(['ケーブル設計', '電力計算', '電線管設計'][selectedBottomNavi]),
       ),
 
       /// bottomNavigationBarで選択されたitemについて
@@ -60,7 +62,7 @@ class CalcPageState extends ConsumerState<CalcPage> {
           blockWidth: blockWidth,
           maxNumCable: maxNumCable,
         ),
-      ][ref.read(bottomNaviSelectProvider)],
+      ][selectedBottomNavi],
 
       /// drawer
       drawer: const DrawerContents(),
@@ -81,14 +83,14 @@ class CalcPageState extends ConsumerState<CalcPage> {
             label: '電線管設計',
           ),
         ],
-        currentIndex: ref.read(bottomNaviSelectProvider),
+        currentIndex: selectedBottomNavi,
         onTap: (index) {
           ref.read(bottomNaviSelectProvider.state).state = index;
         },
       ),
 
       /// 電線管設計のときのみケーブル選択のためfloatingActionButtonを設置
-      floatingActionButton: ref.watch(bottomNaviSelectProvider) == 2
+      floatingActionButton: selectedBottomNavi == 2
           ? FloatingActionButton(
               tooltip: 'ケーブル追加',
               child: const Icon(Icons.add),
@@ -97,9 +99,8 @@ class CalcPageState extends ConsumerState<CalcPage> {
                   ref.read(conduitCalcProvider.notifier).addCable();
                   ref.read(conduitCalcProvider.notifier).calcCableArea();
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBarAlert(message: 'これ以上追加できません'),
-                  );
+                  /// snackbarで警告
+                  SnackBarAlert(context: context).snackbar('これ以上追加できません');
                 }
               },
             )

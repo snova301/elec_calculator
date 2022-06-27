@@ -37,7 +37,9 @@ dependencies:
   shared_preferences: ^2.0.15
   url_launcher: ^6.1.3
   freezed_annotation: ^2.0.3
+
   uuid: ^3.0.6
+  json_annotation: ^4.5.0
 
   firebase_core: ^1.18.0
   firebase_analytics: ^9.1.8
@@ -64,7 +66,7 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   build_runner: ^2.1.11
   freezed: ^2.0.3+1
-
+  json_serializable: ^6.2.0
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

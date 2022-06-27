@@ -14,13 +14,13 @@ final cableDesignProvider =
 class CableDesignNotifier extends StateNotifier<CableDesignData> {
   // 空のデータとして初期化
   CableDesignNotifier()
-      : super(CableDesignData(
+      : super(const CableDesignData(
           phase: '単相',
           cableType: '600V CV-2C',
-          elecOut: TextEditingController(text: '1500'),
-          volt: TextEditingController(text: '200'),
-          cosFai: TextEditingController(text: '80'),
-          cableLength: TextEditingController(text: '10'),
+          elecOut: '1500',
+          volt: '200',
+          cosFai: '80',
+          cableLength: '10',
           current: '0',
           cableSize: '0',
           voltDrop: '0',
@@ -158,13 +158,18 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
   }
 
   /// 計算実行
-  void run() {
+  void run(
+    String strElecOut,
+    String strVolt,
+    String strCosFai,
+    String strCableLength,
+  ) {
     /// Textfieldのテキストを取得し、doubleに変換
     String phase = state.phase;
-    double elecOut = double.parse(state.elecOut.text);
-    double cosFai = double.parse(state.cosFai.text) / 100;
-    double volt = double.parse(state.volt.text);
-    double cableLength = double.parse(state.cableLength.text) / 1000;
+    double elecOut = double.parse(strElecOut);
+    double volt = double.parse(strVolt);
+    double cosFai = double.parse(strCosFai) / 100;
+    double cableLength = double.parse(strCableLength) / 1000;
 
     /// cosφからsinφを算出
     double sinFai = sqrt(1 - pow(cosFai, 2));
@@ -185,13 +190,18 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
   }
 
   /// runメソッドが実行できるか確認するメソッド
-  bool isRunCheck() {
+  bool isRunCheck(
+    String strElecOut,
+    String strVolt,
+    String strCosFai,
+    String strCableLength,
+  ) {
     try {
       /// 数値に変換できるか確認
-      double elecOut = double.parse(state.elecOut.text);
-      double cosFai = double.parse(state.cosFai.text);
-      double volt = double.parse(state.volt.text);
-      double cableLength = double.parse(state.cableLength.text);
+      double elecOut = double.parse(strElecOut);
+      double volt = double.parse(strVolt);
+      double cosFai = double.parse(strCosFai);
+      double cableLength = double.parse(strCableLength);
 
       /// 力率が0-100%以外ならfalseを返す
       if (cosFai < 0 || cosFai > 100) {
@@ -200,16 +210,16 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
 
       /// 入力した数値を整形してTextEditingControllerに入れる
       state = state.copyWith(
-        elecOut: TextEditingController(text: elecOut.toString()),
+        elecOut: elecOut.toString(),
       );
       state = state.copyWith(
-        volt: TextEditingController(text: volt.toString()),
+        volt: volt.toString(),
       );
       state = state.copyWith(
-        cosFai: TextEditingController(text: cosFai.toString()),
+        cosFai: cosFai.toString(),
       );
       state = state.copyWith(
-        cableLength: TextEditingController(text: cableLength.toString()),
+        cableLength: cableLength.toString(),
       );
     } catch (e) {
       /// 数値変換や整形に失敗した場合、falseを返す
@@ -220,3 +230,18 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
     return true;
   }
 }
+
+/// texteditingcontrollerの定義
+final cableDesignTxtCtrElecOutProvider = StateProvider((ref) {
+  return TextEditingController(text: ref.watch(cableDesignProvider).elecOut);
+});
+final cableDesignTxtCtrVoltProvider = StateProvider((ref) {
+  return TextEditingController(text: ref.watch(cableDesignProvider).volt);
+});
+final cableDesignTxtCtrCosFaiProvider = StateProvider((ref) {
+  return TextEditingController(text: ref.watch(cableDesignProvider).cosFai);
+});
+final cableDesignTxtCtrLengthProvider = StateProvider((ref) {
+  return TextEditingController(
+      text: ref.watch(cableDesignProvider).cableLength);
+});

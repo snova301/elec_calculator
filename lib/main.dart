@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -33,53 +34,6 @@ void main() async {
           FirebaseCrashlytics.instance.recordError(error, stack, fatal: true));
 }
 
-/// initiallize provider for setteings
-final isDarkmodeProvider = StateProvider((ref) => true);
-final bottomNaviSelectProvider = StateProvider((ref) => 0);
-
-/// initiallize provider for cableDesign
-// var cableDesignElecOutProvider = StateProvider((ref) {
-//   return TextEditingController(text: '1500');
-// });
-// var cableDesignCosFaiProvider = StateProvider((ref) {
-//   return TextEditingController(text: '80');
-// });
-// var cableDesignVoltProvider = StateProvider((ref) {
-//   return TextEditingController(text: '200');
-// });
-// var cableDesignCableLenProvider = StateProvider((ref) {
-//   return TextEditingController(text: '10');
-// });
-// final cableDesignPhaseProvider = StateProvider((ref) => '単相');
-// final cableDesignCableTypeProvider = StateProvider((ref) => '600V CV-2C');
-// final cableDesignCurrentProvider = StateProvider((ref) => '0');
-// final cableDesignCableSizeProvider = StateProvider((ref) => '0');
-// final cableDesignVoltDropProvider = StateProvider((ref) => '0');
-// final cableDesignPowerLossProvider = StateProvider((ref) => '0');
-
-/// initiallize provider for conduit design
-// final conduitListItemProvider = StateProvider((ref) => []);
-// final conduitCableSizeListProvider = StateProvider((ref) => []);
-// final conduitConduitTypeProvider = StateProvider((ref) => 'PF管');
-// final conduitConduitSize32Provider = StateProvider((ref) => '');
-// final conduitConduitSize48Provider = StateProvider((ref) => '');
-
-/// initiallize provider for elecpower
-// var elecPowerVoltProvider = StateProvider((ref) {
-//   return TextEditingController(text: '100');
-// });
-// var elecPowerCurrentProvider = StateProvider((ref) {
-//   return TextEditingController(text: '10');
-// });
-// var elecPowerCosFaiProvider = StateProvider((ref) {
-//   return TextEditingController(text: '80');
-// });
-// final elecPowerPhaseProvider = StateProvider((ref) => '単相');
-// final elecPowerApparentPowerProvider = StateProvider((ref) => '0');
-// final elecPowerActivePowerProvider = StateProvider((ref) => '0');
-// final elecPowerReactivePowerProvider = StateProvider((ref) => '0');
-// final elecPowerSinFaiProvider = StateProvider((ref) => '0');
-
 /// App settings
 class MyApp extends ConsumerStatefulWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -94,23 +48,25 @@ class MyAppState extends ConsumerState<MyApp> {
     super.initState();
 
     /// ダークモードの設定読込
-    try {
-      StateManagerClass().getDarkmodeVal(ref);
-    } catch (e) {
-      print('getDarkmodeVal Error');
-    }
+    // try {
+    //   StateManagerClass().getDarkmodeVal(ref);
+    // } catch (e) {
+    //   print('getDarkmodeVal Error');
+    // }
 
     /// 前回の計算データ読込
-    try {
-      StateManagerClass().getCalcData(ref);
-    } catch (e) {
-      print('getCalcData Error');
-    }
+    // try {
+    //   StateManagerClass().getCalcData(ref);
+    // } catch (e) {
+    //   print('getCalcData Error');
+    // }
   }
 
   @override
   Widget build(BuildContext context) {
     final isDarkmode = ref.watch(isDarkmodeProvider.state).state;
+
+    StateManagerClass().getSettingPref(ref);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:elec_facility_calc/main.dart';
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 
 /// 設定ページ
@@ -10,6 +8,8 @@ class SettingPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    StateManagerClass().setSettingPref(ref);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('設定'),

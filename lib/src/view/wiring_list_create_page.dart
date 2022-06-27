@@ -193,9 +193,7 @@ class WiringCreateRunButton extends ConsumerWidget {
           Navigator.pop(context);
         } else {
           /// 未入力項目がある場合はSnackbarで警告
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBarAlert(message: '未入力項目があります'),
-          );
+          SnackBarAlert(context: context).snackbar('未入力項目があります');
         }
       },
       style: const ButtonStyle(

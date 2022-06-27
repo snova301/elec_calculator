@@ -248,9 +248,7 @@ class WiringAddFAB extends ConsumerWidget {
           );
         } else {
           /// 数がオーバーしたらSnackbarで警告
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBarAlert(message: 'これ以上追加できません'),
-          );
+          SnackBarAlert(context: context).snackbar('これ以上追加できません');
         }
       },
     );

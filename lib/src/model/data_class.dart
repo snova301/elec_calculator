@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/foundation.dart';
 
 part 'data_class.freezed.dart';
+part 'data_class.g.dart';
 
 /// ケーブル設計入力のProvider入力データの定義
 @freezed
@@ -15,16 +17,20 @@ class CableDesignData with _$CableDesignData {
     required String cableType,
 
     /// 電気出力
-    required TextEditingController elecOut,
+    required String elecOut,
+    // required TextEditingController elecOut,
 
     /// 電圧
-    required TextEditingController volt,
+    required String volt,
+    // required TextEditingController volt,
 
     /// 力率
-    required TextEditingController cosFai,
+    required String cosFai,
+    // required TextEditingController cosFai,
 
     /// ケーブル長さ
-    required TextEditingController cableLength,
+    required String cableLength,
+    // required TextEditingController cableLength,
 
     /// 出力
     /// 電流
@@ -40,8 +46,9 @@ class CableDesignData with _$CableDesignData {
     required String powerLoss,
   }) = _CableDesignData;
 
-  // factory CableDesignData.fromJson(Map<String, Object?> json) =>
-  //     _$CableDesignDataFromJson(json);
+  /// from Json
+  factory CableDesignData.fromJson(Map<String, Object?> json) =>
+      _$CableDesignDataFromJson(json);
 }
 
 /// 電力計算のProviderデータの定義
@@ -53,13 +60,16 @@ class ElecPowerData with _$ElecPowerData {
     required String phase,
 
     /// 電圧
-    required TextEditingController volt,
+    required String volt,
+    // required TextEditingController volt,
 
     /// 電流
-    required TextEditingController current,
+    required String current,
+    // required TextEditingController current,
 
     /// 力率
-    required TextEditingController cosFai,
+    required String cosFai,
+    // required TextEditingController cosFai,
 
     /// 出力
     /// 皮相電力
@@ -75,13 +85,15 @@ class ElecPowerData with _$ElecPowerData {
     required String sinFai,
   }) = _ElecPowerData;
 
-  // factory ElecPowerData.fromJson(Map<String, Object?> json) =>
-  //     _$ElecPowerData(json);
+  /// from Json
+  factory ElecPowerData.fromJson(Map<String, dynamic> json) =>
+      _$ElecPowerDataFromJson(json);
 }
 
 /// 電線管設計のProviderデータの定義
 @freezed
 class ConduitCalcDataClass with _$ConduitCalcDataClass {
+  // @JsonSerializable(explicitToJson: true)
   const factory ConduitCalcDataClass({
     /// リスト内のアイテム
     required List<ConduitCalcCableDataClass> items,
@@ -90,6 +102,7 @@ class ConduitCalcDataClass with _$ConduitCalcDataClass {
     required String conduitType,
   }) = _ConduitCalcDataClass;
 
+  /// from Json
   // factory ConduitCalcDataClass.fromJson(Map<String, Object?> json) =>
   //     _$ConduitCalcDataClassFromJson(json);
 }
@@ -239,6 +252,16 @@ extension WiringListSearchEnumExt on WiringListSearchEnum {
         return '到着点';
     }
   }
+}
+
+/// 設定用のデータクラス
+class SettingDataClass {
+  /// ダークモード
+  bool isDarkMode;
+
+  SettingDataClass({
+    required this.isDarkMode,
+  });
 }
 
 

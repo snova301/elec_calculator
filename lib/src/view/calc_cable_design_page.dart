@@ -32,7 +32,7 @@ class ListViewCableDesign extends ConsumerWidget {
           title: '電気容量',
           unit: 'W',
           message: '整数のみ',
-          controller: ref.watch(cableDesignProvider).elecOut,
+          controller: ref.watch(cableDesignTxtCtrElecOutProvider),
         ),
 
         /// 線間電圧入力
@@ -40,7 +40,7 @@ class ListViewCableDesign extends ConsumerWidget {
           title: '線間電圧',
           unit: 'V',
           message: '整数のみ',
-          controller: ref.watch(cableDesignProvider).volt,
+          controller: ref.watch(cableDesignTxtCtrVoltProvider),
         ),
 
         /// 力率入力
@@ -48,7 +48,7 @@ class ListViewCableDesign extends ConsumerWidget {
           title: '力率',
           unit: '%',
           message: '整数のみ',
-          controller: ref.watch(cableDesignProvider).cosFai,
+          controller: ref.watch(cableDesignTxtCtrCosFaiProvider),
         ),
 
         /// ケーブル長入力
@@ -56,7 +56,7 @@ class ListViewCableDesign extends ConsumerWidget {
           title: 'ケーブル長',
           unit: 'm',
           message: '整数のみ',
-          controller: ref.watch(cableDesignProvider).cableLength,
+          controller: ref.watch(cableDesignTxtCtrLengthProvider),
         ),
 
         /// 計算実行ボタン
@@ -231,9 +231,23 @@ class CableDesignRunButton extends ConsumerWidget {
       margin: EdgeInsets.fromLTRB(paddingSize, 0, paddingSize, 0),
       child: ElevatedButton(
         onPressed: () {
+          /// textcontrollerのデータを取得
+          final strElecOut = ref.watch(cableDesignTxtCtrElecOutProvider).text;
+          final strVolt = ref.watch(cableDesignTxtCtrVoltProvider).text;
+          final strCosFai = ref.watch(cableDesignTxtCtrCosFaiProvider).text;
+          final strCableLength =
+              ref.watch(cableDesignTxtCtrLengthProvider).text;
+
           /// 実行時に読み込み関係でエラーを吐き出さないか確認後実行
-          if (ref.read(cableDesignProvider.notifier).isRunCheck()) {
-            ref.read(cableDesignProvider.notifier).run();
+          if (ref.read(cableDesignProvider.notifier).isRunCheck(
+                strElecOut,
+                strVolt,
+                strCosFai,
+                strCableLength,
+              )) {
+            ref
+                .read(cableDesignProvider.notifier)
+                .run(strElecOut, strVolt, strCosFai, strCableLength);
           } else {
             /// snackbarでエラー表示
             showDialog<void>(

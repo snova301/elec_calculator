@@ -11,6 +11,7 @@ class ListViewElecPower extends ConsumerWidget {
   const ListViewElecPower(
       {Key? key, required this.listViewPadding, required this.blockWidth})
       : super(key: key);
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ListView(
@@ -27,7 +28,7 @@ class ListViewElecPower extends ConsumerWidget {
           title: '線間電圧',
           unit: 'V',
           message: '整数のみ',
-          controller: ref.watch(elecPowerProvider).volt,
+          controller: ref.watch(elecPowerTxtCtrVoltProvider),
         ),
 
         /// 電流値入力
@@ -35,7 +36,7 @@ class ListViewElecPower extends ConsumerWidget {
           title: '電流',
           unit: 'A',
           message: '整数のみ',
-          controller: ref.watch(elecPowerProvider).current,
+          controller: ref.watch(elecPowerTxtCtrCurrentProvider),
         ),
 
         /// 力率入力
@@ -43,7 +44,7 @@ class ListViewElecPower extends ConsumerWidget {
           title: '力率',
           unit: '%',
           message: '1-100%の整数のみ',
-          controller: ref.watch(elecPowerProvider).cosFai,
+          controller: ref.watch(elecPowerTxtCtrCosFaiProvider),
         ),
 
         /// 計算実行ボタン
@@ -172,8 +173,14 @@ class ElecPowerRunButton extends ConsumerWidget {
       margin: EdgeInsets.fromLTRB(paddingSize, 0, paddingSize, 0),
       child: ElevatedButton(
         onPressed: () {
-          if (ref.read(elecPowerProvider.notifier).isRunCheck()) {
-            ref.watch(elecPowerProvider.notifier).run();
+          /// textcontrollerのデータを取得
+          final volt = ref.watch(elecPowerTxtCtrVoltProvider).text;
+          final current = ref.watch(elecPowerTxtCtrCurrentProvider).text;
+          final cosFai = ref.watch(elecPowerTxtCtrCosFaiProvider).text;
+          if (ref
+              .read(elecPowerProvider.notifier)
+              .isRunCheck(volt, current, cosFai)) {
+            ref.watch(elecPowerProvider.notifier).run(volt, current, cosFai);
           } else {
             showDialog<void>(
               context: context,
