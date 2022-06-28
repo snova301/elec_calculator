@@ -5,6 +5,29 @@ import 'package:flutter/foundation.dart';
 part 'data_class.freezed.dart';
 part 'data_class.g.dart';
 
+/// ケーブルのMapデータの定義
+class CableDataClass {
+  /// 抵抗(Ω/km)
+  double rVal;
+
+  /// リアクタンス(Ω/km)
+  double xVal;
+
+  /// 許容電流(A)
+  double current;
+
+  /// 仕上外径(mm)
+  /// CVTケーブルの場合はケーブル1条あたりの外径
+  double diameter;
+
+  CableDataClass({
+    required this.rVal,
+    required this.xVal,
+    required this.current,
+    required this.diameter,
+  });
+}
+
 /// ケーブル設計入力のProvider入力データの定義
 @freezed
 class CableDesignData with _$CableDesignData {
@@ -18,19 +41,15 @@ class CableDesignData with _$CableDesignData {
 
     /// 電気出力
     required String elecOut,
-    // required TextEditingController elecOut,
 
     /// 電圧
     required String volt,
-    // required TextEditingController volt,
 
     /// 力率
     required String cosFai,
-    // required TextEditingController cosFai,
 
     /// ケーブル長さ
     required String cableLength,
-    // required TextEditingController cableLength,
 
     /// 出力
     /// 電流
@@ -61,15 +80,12 @@ class ElecPowerData with _$ElecPowerData {
 
     /// 電圧
     required String volt,
-    // required TextEditingController volt,
 
     /// 電流
     required String current,
-    // required TextEditingController current,
 
     /// 力率
     required String cosFai,
-    // required TextEditingController cosFai,
 
     /// 出力
     /// 皮相電力
@@ -93,102 +109,45 @@ class ElecPowerData with _$ElecPowerData {
 /// 電線管設計のProviderデータの定義
 @freezed
 class ConduitCalcDataClass with _$ConduitCalcDataClass {
-  // @JsonSerializable(explicitToJson: true)
   const factory ConduitCalcDataClass({
-    /// リスト内のアイテム
-    required List<ConduitCalcCableDataClass> items,
+    /// ケーブル種類
+    required String cableType,
 
-    /// 電線管の種類
-    required String conduitType,
+    /// ケーブルサイズ
+    required String cableSize,
+
+    /// ケーブル半径
+    required double cableRadius,
   }) = _ConduitCalcDataClass;
 
   /// from Json
-  // factory ConduitCalcDataClass.fromJson(Map<String, Object?> json) =>
-  //     _$ConduitCalcDataClassFromJson(json);
-}
-
-/// 電線管設計のListItemデータの定義
-class ConduitCalcCableDataClass {
-  /// ケーブル種類
-  String cableType;
-
-  /// ケーブルサイズ
-  String cableSize;
-
-  /// ケーブル半径
-  double cableRadius;
-
-  ConduitCalcCableDataClass({
-    required this.cableType,
-    required this.cableSize,
-    required this.cableRadius,
-  });
-}
-
-/// ケーブルのMapデータの定義
-class CableDataClass {
-  /// 抵抗(Ω/km)
-  double rVal;
-
-  /// リアクタンス(Ω/km)
-  double xVal;
-
-  /// 許容電流(A)
-  double current;
-
-  /// 仕上外径(mm)
-  /// CVTケーブルの場合はケーブル1条あたりの外径
-  double diameter;
-
-  CableDataClass({
-    required this.rVal,
-    required this.xVal,
-    required this.current,
-    required this.diameter,
-  });
+  factory ConduitCalcDataClass.fromJson(Map<String, dynamic> json) =>
+      _$ConduitCalcDataClassFromJson(json);
 }
 
 /// 配線リストのデータクラス
-class WiringListDataClass {
-  /// ケーブル名称
-  String name;
+@freezed
+class WiringListDataClass with _$WiringListDataClass {
+  const factory WiringListDataClass({
+    /// ケーブル名称
+    required String name,
 
-  /// 出発点
-  String startPoint;
+    /// 出発点
+    required String startPoint,
 
-  /// 到着点
-  String endPoint;
+    /// 到着点
+    required String endPoint,
 
-  /// ケーブル種類
-  String cableType;
+    /// ケーブル種類
+    required String cableType,
 
-  /// 備考
-  String remarks;
+    /// 備考
+    required String remarks,
+  }) = _WiringListDataClass;
 
-  WiringListDataClass({
-    required this.name,
-    required this.startPoint,
-    required this.endPoint,
-    required this.cableType,
-    required this.remarks,
-  });
-
-  /// Map型に変換
-  Map toMap() => {
-        'name': name,
-        'startPoint': startPoint,
-        'endPoint': endPoint,
-        'cableType': cableType,
-        'remarks': remarks,
-      };
-
-  /// JSONオブジェクトからMapへ
-  WiringListDataClass.fromJson(Map json)
-      : name = json['name'],
-        startPoint = json['startPoint'],
-        endPoint = json['endPoint'],
-        cableType = json['cableType'],
-        remarks = json['remarks'];
+  /// from Json
+  factory WiringListDataClass.fromJson(Map<String, dynamic> json) =>
+      _$WiringListDataClassFromJson(json);
 }
 
 /// WiringListページ間の設定クラス
@@ -273,14 +232,34 @@ extension WiringListSearchEnumExt on WiringListSearchEnum {
 }
 
 /// 設定用のデータクラス
-class SettingDataClass {
-  /// ダークモード
-  bool isDarkMode;
+@freezed
+class SettingDataClass with _$SettingDataClass {
+  const factory SettingDataClass({
+    /// ダークモード
+    required bool darkMode,
+  }) = _SettingDataClass;
 
-  SettingDataClass({
-    required this.isDarkMode,
-  });
+  /// from Json
+  factory SettingDataClass.fromJson(Map<String, dynamic> json) =>
+      _$SettingDataClassFromJson(json);
 }
+
+// class SettingDataClass {
+//   /// ダークモード
+//   bool darkMode;
+
+//   SettingDataClass({
+//     required this.darkMode,
+//   });
+
+//   /// Map型に変換
+//   Map toMap() => {
+//         'darkMode': darkMode,
+//       };
+
+//   /// JSONオブジェクトからの変換
+//   SettingDataClass.fromJson(Map json) : darkMode = json['darkMode'];
+// }
 
 
 // /// データモデルの定義

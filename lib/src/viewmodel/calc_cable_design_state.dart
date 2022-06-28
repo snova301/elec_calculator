@@ -10,22 +10,24 @@ final cableDesignProvider =
   return CableDesignNotifier();
 });
 
+/// 初期値
+const _initData = CableDesignData(
+  phase: '単相',
+  cableType: '600V CV-2C',
+  elecOut: '1500',
+  volt: '200',
+  cosFai: '80',
+  cableLength: '10',
+  current: '0',
+  cableSize: '0',
+  voltDrop: '0',
+  powerLoss: '0',
+);
+
 /// ケーブル設計のNotifierの定義
 class CableDesignNotifier extends StateNotifier<CableDesignData> {
-  // 空のデータとして初期化
-  CableDesignNotifier()
-      : super(const CableDesignData(
-          phase: '単相',
-          cableType: '600V CV-2C',
-          elecOut: '1500',
-          volt: '200',
-          cosFai: '80',
-          cableLength: '10',
-          current: '0',
-          cableSize: '0',
-          voltDrop: '0',
-          powerLoss: '0',
-        ));
+  /// 空のデータとして初期化
+  CableDesignNotifier() : super(_initData);
 
   /// 全データの更新(shaerd_prefで使用)
   void updateAll(CableDesignData allData) {
@@ -234,18 +236,26 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
     /// すべてクリアだった場合trueを返す
     return true;
   }
+
+  /// クリア
+  void removeAll() {
+    state = _initData;
+  }
 }
 
 /// texteditingcontrollerの定義
 final cableDesignTxtCtrElecOutProvider = StateProvider((ref) {
   return TextEditingController(text: ref.watch(cableDesignProvider).elecOut);
 });
+
 final cableDesignTxtCtrVoltProvider = StateProvider((ref) {
   return TextEditingController(text: ref.watch(cableDesignProvider).volt);
 });
+
 final cableDesignTxtCtrCosFaiProvider = StateProvider((ref) {
   return TextEditingController(text: ref.watch(cableDesignProvider).cosFai);
 });
+
 final cableDesignTxtCtrLengthProvider = StateProvider((ref) {
   return TextEditingController(
       text: ref.watch(cableDesignProvider).cableLength);

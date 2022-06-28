@@ -1,3 +1,4 @@
+import 'package:elec_facility_calc/src/view/wiring_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:elec_facility_calc/src/view/about_page.dart';
@@ -51,10 +52,12 @@ class DrawerContents extends StatelessWidget {
           /// 配線リスト画面へ
           ListTile(
             title: const Text('配線リスト画面'),
-            leading: const Icon(Icons.calculate),
+            leading: const Icon(Icons.list_alt),
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const CalcPage()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const WiringListPage()));
             },
           ),
 

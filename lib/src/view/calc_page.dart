@@ -41,6 +41,11 @@ class CalcPageState extends ConsumerState<CalcPage> {
     /// 電線管設計用
     int maxNumCable = 10;
 
+    /// shared_prefのデータ保存用非同期providerの読み込み
+    ref.watch(cableDesignSPSetProvider);
+    ref.watch(elecPowerSPSetProvider);
+    ref.watch(conduitSPSetProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(['ケーブル設計', '電力計算', '電線管設計'][selectedBottomNavi]),
@@ -95,7 +100,7 @@ class CalcPageState extends ConsumerState<CalcPage> {
               tooltip: 'ケーブル追加',
               child: const Icon(Icons.add),
               onPressed: () {
-                if (ref.read(conduitCalcProvider).items.length < maxNumCable) {
+                if (ref.read(conduitCalcProvider).length < maxNumCable) {
                   ref.read(conduitCalcProvider.notifier).addCable();
                   ref.read(conduitCalcProvider.notifier).calcCableArea();
                 } else {

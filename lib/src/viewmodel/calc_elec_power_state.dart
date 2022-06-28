@@ -9,22 +9,22 @@ final elecPowerProvider =
   return ElecPowerNotifier();
 });
 
+/// 初期データ
+const _initData = ElecPowerData(
+  phase: '単相',
+  volt: '100',
+  current: '10',
+  cosFai: '80',
+  apparentPower: '0',
+  activePower: '0',
+  reactivePower: '0',
+  sinFai: '0',
+);
+
 /// StateNotifierの中身を定義
 class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
   // 空のマップとして初期化
-  ElecPowerNotifier()
-      : super(
-          const ElecPowerData(
-            phase: '単相',
-            volt: '100',
-            current: '10',
-            cosFai: '80',
-            apparentPower: '0',
-            activePower: '0',
-            reactivePower: '0',
-            sinFai: '0',
-          ),
-        );
+  ElecPowerNotifier() : super(_initData);
 
   /// 全データの更新(shaerd_prefで使用)
   void updateAll(ElecPowerData allData) {
@@ -145,15 +145,22 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
     /// すべてクリアだった場合trueを返す
     return true;
   }
+
+  /// 削除
+  void removeAll() {
+    state = _initData;
+  }
 }
 
 /// texteditingcontrollerの定義
 final elecPowerTxtCtrVoltProvider = StateProvider((ref) {
   return TextEditingController(text: ref.watch(elecPowerProvider).volt);
 });
+
 final elecPowerTxtCtrCurrentProvider = StateProvider((ref) {
   return TextEditingController(text: ref.watch(elecPowerProvider).current);
 });
+
 final elecPowerTxtCtrCosFaiProvider = StateProvider((ref) {
   return TextEditingController(text: ref.watch(elecPowerProvider).cosFai);
 });

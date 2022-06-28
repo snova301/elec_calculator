@@ -34,7 +34,7 @@ class ListViewConduit extends ConsumerWidget {
           child: ListView.builder(
             padding:
                 EdgeInsets.fromLTRB(listViewPadding, 10, listViewPadding, 10),
-            itemCount: ref.watch(conduitCalcProvider).items.length,
+            itemCount: ref.watch(conduitCalcProvider).length,
             itemBuilder: (context, index) {
               return ConduitCableCard(index: index);
             },
@@ -73,7 +73,7 @@ class ConduitConduitTypeCard extends ConsumerWidget {
 
         /// 電線管の種類を変更するドロップダウンメニュー
         title: DropdownButton(
-          value: ref.watch(conduitCalcProvider).conduitType,
+          value: ref.watch(conduitConduitTypeProvider),
           items: ConduitData().conduitTypeList.map<DropdownMenuItem<String>>(
             (String value) {
               return DropdownMenuItem<String>(
@@ -85,7 +85,7 @@ class ConduitConduitTypeCard extends ConsumerWidget {
           ).toList(),
           onChanged: (String? value) {
             /// 電線管の種類変更
-            ref.watch(conduitCalcProvider.notifier).updateConduitType(value!);
+            ref.watch(conduitConduitTypeProvider.notifier).state = value!;
           },
         ),
       ),
@@ -105,8 +105,8 @@ class ConduitCableCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     /// 各値の取得
-    String cableType = ref.watch(conduitCalcProvider).items[index].cableType;
-    String cableSize = ref.watch(conduitCalcProvider).items[index].cableSize;
+    String cableType = ref.watch(conduitCalcProvider)[index].cableType;
+    String cableSize = ref.watch(conduitCalcProvider)[index].cableSize;
 
     return Card(
       child: ListTile(
@@ -238,7 +238,7 @@ class ConduitConduitSizeCard extends ConsumerWidget {
         child: Column(
           children: [
             /// FEP管はJISで占有率の規定がないので参考値の表示をつける
-            ref.watch(conduitCalcProvider).conduitType == 'FEP管'
+            ref.watch(conduitConduitTypeProvider) == 'FEP管'
                 ? Text(
                     '電線管サイズ\n占有率 $title %(参考値)',
                     textAlign: TextAlign.center,

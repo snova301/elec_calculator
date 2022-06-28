@@ -1,3 +1,4 @@
+import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -22,7 +23,11 @@ class WiringListPageState extends ConsumerState<WiringListPage> {
     // final mediaQueryData = MediaQuery.of(context);
     // final screenWidth = mediaQueryData.size.width;
 
+    /// 項目の最大数
     const maxNum = 3;
+
+    /// shared_prefのデータ保存用非同期providerの読み込み
+    ref.watch(wiringListSPSetProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -42,6 +47,7 @@ class WiringListPageState extends ConsumerState<WiringListPage> {
           ),
         ],
       ),
+      drawer: const DrawerContents(),
       floatingActionButton: const WiringAddFAB(maxNum: maxNum),
     );
   }

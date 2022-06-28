@@ -1,13 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-
 import 'package:elec_facility_calc/src/view/home_page.dart';
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 
@@ -47,33 +44,25 @@ class MyAppState extends ConsumerState<MyApp> {
   void initState() {
     super.initState();
 
-    /// ダークモードの設定読込
-    // try {
-    //   StateManagerClass().getDarkmodeVal(ref);
-    // } catch (e) {
-    //   print('getDarkmodeVal Error');
-    // }
-
-    /// 前回の計算データ読込
-    // try {
-    //   StateManagerClass().getCalcData(ref);
-    // } catch (e) {
-    //   print('getCalcData Error');
-    // }
+    /// shared_preferencesの設定読込
+    try {
+      StateManagerClass().getPrefs(ref);
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDarkmode = ref.watch(isDarkmodeProvider.state).state;
-
-    StateManagerClass().getSettingPref(ref);
+    final isDarkMode = ref.watch(settingProvider).darkMode;
+    // final isDarkmode = ref.watch(isDarkmodeProvider.state).state;
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: '電気設備計算アシスタント',
       home: const MyHomePage(),
       theme: ThemeData(
-        brightness: isDarkmode ? Brightness.dark : Brightness.light,
+        brightness: isDarkMode ? Brightness.dark : Brightness.light,
         primarySwatch: Colors.green,
         fontFamily: 'NotoSansJP',
         useMaterial3: true,

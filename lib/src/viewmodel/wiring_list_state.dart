@@ -40,12 +40,22 @@ class WiringListNotifier
     state = {...temp};
   }
 
+  /// 全データの更新
+  void updateAll(Map<String, WiringListDataClass> data) {
+    state = {...data};
+  }
+
   /// 削除
   void remove(String id) {
     /// 新規追加または変更
     Map temp = state;
     temp.remove(id);
     state = {...temp};
+  }
+
+  /// データを初期化
+  void removeAll() {
+    state = {};
   }
 }
 
