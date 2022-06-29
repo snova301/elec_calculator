@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/src/data/cable_data.dart';
 import 'package:elec_facility_calc/src/data/conduit_data.dart';
+import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:elec_facility_calc/src/viewmodel/calc_conduit_state.dart';
 
 /// 電線管設計のListView Widget
@@ -19,14 +20,38 @@ class ListViewConduit extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    /// shared_prefのデータ保存用非同期providerの読み込み
+    ref.watch(conduitSPSetProvider);
+
+    /// 情報カードの高さ
+    double infoHeight = 100;
+
     return Column(
       children: [
         /// 情報画面
-        Text('ケーブルは $maxNumCable 本まで設定できます。'),
-        Container(
-          padding:
-              EdgeInsets.fromLTRB(listViewPadding, 10, listViewPadding, 10),
-          child: const ConduitConduitTypeCard(),
+        Text(
+          'ケーブルは $maxNumCable 本まで設定できます。',
+          style: const TextStyle(
+            fontSize: 13,
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ConduitConduitTypeCard(
+              height: infoHeight,
+            ),
+            ConduitConduitSizeCard(
+              title: '32',
+              result: ref.watch(conduitOccupancy32Provider),
+              height: infoHeight,
+            ),
+            ConduitConduitSizeCard(
+              title: '48',
+              result: ref.watch(conduitOccupancy48Provider),
+              height: infoHeight,
+            ),
+          ],
         ),
 
         /// ケーブルの一覧
@@ -40,17 +65,6 @@ class ListViewConduit extends ConsumerWidget {
             },
           ),
         ),
-
-        /// 結果表示
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ConduitConduitSizeCard(
-                title: '32', result: ref.watch(conduitOccupancy32Provider)),
-            ConduitConduitSizeCard(
-                title: '48', result: ref.watch(conduitOccupancy48Provider)),
-          ],
-        ),
       ],
     );
   }
@@ -58,35 +72,105 @@ class ListViewConduit extends ConsumerWidget {
 
 /// 電線管設計電線管の種類widget
 class ConduitConduitTypeCard extends ConsumerWidget {
-  const ConduitConduitTypeCard({Key? key}) : super(key: key);
+  /// Cardの高さ
+  final double height;
+
+  const ConduitConduitTypeCard({
+    Key? key,
+    required this.height,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(
-      child: ListTile(
-        leading: const Text(
-          '電線管の種類',
-          style: TextStyle(
-            fontSize: 13,
-          ),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        height: height,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            const Text(
+              '電線管の種類',
+              style: TextStyle(
+                fontSize: 12,
+              ),
+            ),
+            DropdownButton(
+              value: ref.watch(conduitConduitTypeProvider),
+              items:
+                  ConduitData().conduitTypeList.map<DropdownMenuItem<String>>(
+                (String value) {
+                  return DropdownMenuItem<String>(
+                    alignment: AlignmentDirectional.centerStart,
+                    value: value,
+                    child: Text(value),
+                  );
+                },
+              ).toList(),
+              onChanged: (String? value) {
+                /// 電線管の種類変更
+                ref.watch(conduitConduitTypeProvider.notifier).state = value!;
+              },
+            ),
+          ],
         ),
+      ),
+    );
+  }
+}
 
-        /// 電線管の種類を変更するドロップダウンメニュー
-        title: DropdownButton(
-          value: ref.watch(conduitConduitTypeProvider),
-          items: ConduitData().conduitTypeList.map<DropdownMenuItem<String>>(
-            (String value) {
-              return DropdownMenuItem<String>(
-                alignment: AlignmentDirectional.centerStart,
-                value: value,
-                child: Text(value),
-              );
-            },
-          ).toList(),
-          onChanged: (String? value) {
-            /// 電線管の種類変更
-            ref.watch(conduitConduitTypeProvider.notifier).state = value!;
-          },
+/// 電線管設計電線管のサイズを表示するwidget
+class ConduitConduitSizeCard extends ConsumerWidget {
+  /// 32%または48%の表示
+  final String title;
+
+  /// 計算後の電線管サイズ
+  final String result;
+
+  /// Cardの高さ
+  final double height;
+
+  const ConduitConduitSizeCard({
+    Key? key,
+    required this.title,
+    required this.result,
+    required this.height,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Card(
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        height: height,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            /// FEP管はJISで占有率の規定がないので参考値の表示をつける
+            ref.watch(conduitConduitTypeProvider) == 'FEP管'
+                ? Text(
+                    '電線管サイズ\n占有率 $title %(参考値)',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 12,
+                    ),
+                  )
+                : Text(
+                    '電線管サイズ\n占有率 $title %',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 12,
+                    ),
+                  ),
+            Text(
+              result,
+              style: const TextStyle(
+                fontSize: 20,
+                color: Colors.redAccent,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -210,58 +294,6 @@ class ConduitCableCard extends ConsumerWidget {
           onPressed: () {
             ref.watch(conduitCalcProvider.notifier).removeCable(index);
           },
-        ),
-      ),
-    );
-  }
-}
-
-/// 電線管設計電線管のサイズを表示するwidget
-class ConduitConduitSizeCard extends ConsumerWidget {
-  /// 32%または48%の表示
-  final String title;
-
-  /// 計算後の電線管サイズ
-  final String result;
-
-  const ConduitConduitSizeCard({
-    Key? key,
-    required this.title,
-    required this.result,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Card(
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            /// FEP管はJISで占有率の規定がないので参考値の表示をつける
-            ref.watch(conduitConduitTypeProvider) == 'FEP管'
-                ? Text(
-                    '電線管サイズ\n占有率 $title %(参考値)',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 12,
-                    ),
-                  )
-                : Text(
-                    '電線管サイズ\n占有率 $title %',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
-            Text(
-              result,
-              style: const TextStyle(
-                fontSize: 20,
-                color: Colors.redAccent,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
         ),
       ),
     );

@@ -1,6 +1,8 @@
 import 'package:elec_facility_calc/src/model/data_class.dart';
 import 'package:elec_facility_calc/src/view/wiring_list_page.dart';
+import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:elec_facility_calc/src/view/about_page.dart';
 import 'package:elec_facility_calc/src/view/calc_page.dart';
@@ -8,11 +10,11 @@ import 'package:elec_facility_calc/src/view/home_page.dart';
 import 'package:elec_facility_calc/src/view/setting_page.dart';
 
 /// ドロワーの中身
-class DrawerContents extends StatelessWidget {
+class DrawerContents extends ConsumerWidget {
   const DrawerContents({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -33,49 +35,90 @@ class DrawerContents extends StatelessWidget {
           /// トップページへ
           ListTile(
             title: Text(PageNameEnum.toppage.title),
-            leading: const Icon(Icons.home_rounded),
+            leading: Icon(PageNameEnum.toppage.icon),
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const MyHomePage()));
             },
           ),
 
-          /// 計算画面へ
+          /// ケーブル設計画面へ
           ListTile(
-            title: Text(PageNameEnum.calc.title),
-            leading: const Icon(Icons.calculate),
+            title: Text(PageNameEnum.cableDesign.title),
+            leading: Icon(PageNameEnum.cableDesign.icon),
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const CalcPage()));
+              ref.read(bottomNaviSelectProvider.state).state = 0;
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CalcPage(),
+                ),
+              );
+            },
+          ),
+
+          /// 電力計算画面へ
+          ListTile(
+            title: Text(PageNameEnum.elecPower.title),
+            leading: Icon(PageNameEnum.elecPower.icon),
+            onTap: () {
+              ref.read(bottomNaviSelectProvider.state).state = 1;
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CalcPage(),
+                ),
+              );
+            },
+          ),
+
+          /// 電線管設計画面へ
+          ListTile(
+            title: Text(PageNameEnum.conduit.title),
+            leading: Icon(PageNameEnum.conduit.icon),
+            onTap: () {
+              ref.read(bottomNaviSelectProvider.state).state = 2;
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CalcPage(),
+                ),
+              );
             },
           ),
 
           /// 配線リスト画面へ
           ListTile(
             title: Text(PageNameEnum.wiring.title),
-            leading: const Icon(Icons.list_alt),
+            leading: Icon(PageNameEnum.wiring.icon),
             onTap: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const WiringListPage()));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const WiringListPage(),
+                ),
+              );
             },
           ),
 
           /// 設定画面へ
           ListTile(
             title: Text(PageNameEnum.setting.title),
-            leading: const Icon(Icons.settings),
+            leading: Icon(PageNameEnum.setting.icon),
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const SettingPage()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SettingPage(),
+                ),
+              );
             },
           ),
 
           /// 計算方法リンク
           ListTile(
             title: const Text('計算方法'),
-            leading: const Icon(Icons.architecture),
+            // leading: const Icon(Icons.architecture),
             trailing: const Icon(Icons.open_in_browser),
             onTap: () {
               openUrl(

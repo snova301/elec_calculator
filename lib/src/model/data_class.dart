@@ -43,6 +43,74 @@ extension PhaseNameEnumExt on PhaseNameEnum {
   }
 }
 
+/// ページ名enum
+enum PageNameEnum {
+  toppage,
+  cableDesign,
+  elecPower,
+  conduit,
+  wiring,
+  setting,
+  about,
+}
+
+/// ページ名enumのextension
+extension PageNameEnumExt on PageNameEnum {
+  String get title {
+    switch (this) {
+      case PageNameEnum.toppage:
+        return 'トップページ';
+      case PageNameEnum.cableDesign:
+        return 'ケーブル設計';
+      case PageNameEnum.elecPower:
+        return '電力計算';
+      case PageNameEnum.conduit:
+        return '電線管設計';
+      case PageNameEnum.wiring:
+        return '配線管理';
+      case PageNameEnum.setting:
+        return '設定';
+      case PageNameEnum.about:
+        return 'About';
+    }
+  }
+
+  IconData? get icon {
+    switch (this) {
+      case PageNameEnum.toppage:
+        return Icons.home_rounded;
+      case PageNameEnum.cableDesign:
+        return Icons.design_services;
+      case PageNameEnum.elecPower:
+        return Icons.calculate;
+      case PageNameEnum.conduit:
+        return Icons.gavel_rounded;
+      case PageNameEnum.wiring:
+        return Icons.list_alt;
+      case PageNameEnum.setting:
+        return Icons.settings;
+      case PageNameEnum.about:
+        return null;
+    }
+  }
+}
+
+// /// bottomNaviページ名称
+// enum CalcPageNameEnum { cableDesign, elecPower, conduit }
+
+// extension CalcPageNameEnumExt on CalcPageNameEnum {
+//   String get pageName {
+//     switch (this) {
+//       case CalcPageNameEnum.cableDesign:
+//         return 'ケーブル設計';
+//       case CalcPageNameEnum.elecPower:
+//         return '電力計算';
+//       case CalcPageNameEnum.conduit:
+//         return '電線管設計';
+//     }
+//   }
+// }
+
 /// ケーブル設計入力のProvider入力データの定義
 @freezed
 class CableDesignData with _$CableDesignData {
@@ -249,26 +317,7 @@ class SettingDataClass with _$SettingDataClass {
       _$SettingDataClassFromJson(json);
 }
 
-/// 配線リストの検索用enum
-enum PageNameEnum { toppage, calc, wiring, setting, about }
 
-/// 配線リストの検索用enumのextension
-extension PageNameEnumExt on PageNameEnum {
-  String get title {
-    switch (this) {
-      case PageNameEnum.toppage:
-        return 'トップページ';
-      case PageNameEnum.calc:
-        return '計算';
-      case PageNameEnum.wiring:
-        return '配線管理';
-      case PageNameEnum.setting:
-        return '設定';
-      case PageNameEnum.about:
-        return 'About';
-    }
-  }
-}
 
 // /// Map型に変換
 // Map toMap() => {

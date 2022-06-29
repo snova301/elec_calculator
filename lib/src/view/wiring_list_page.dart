@@ -24,20 +24,25 @@ class WiringListPageState extends ConsumerState<WiringListPage> {
     // final screenWidth = mediaQueryData.size.width;
 
     /// 項目の最大数
-    const maxNum = 3;
+    const maxNum = 10;
 
     /// shared_prefのデータ保存用非同期providerの読み込み
     ref.watch(wiringListSPSetProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: Tooltip(
-          message: '配線管理リストの項目は $maxNum 個まで',
-          child: Text(PageNameEnum.wiring.title),
-        ),
+        title: Text(PageNameEnum.wiring.title),
       ),
       body: Column(
         children: const <Widget>[
+          /// 情報画面
+          Text(
+            'ケーブルは $maxNum 本まで設定できます。',
+            style: TextStyle(
+              fontSize: 13,
+            ),
+          ),
+
           /// 絞り込み用widget
           WiringSearchView(),
 
@@ -53,7 +58,7 @@ class WiringListPageState extends ConsumerState<WiringListPage> {
   }
 }
 
-/// 絞り込み
+/// 絞り込みwidgetのrow
 class WiringSearchView extends ConsumerWidget {
   const WiringSearchView({Key? key}) : super(key: key);
 
@@ -89,7 +94,7 @@ class WiringSearchView extends ConsumerWidget {
   }
 }
 
-/// 絞り込みwidget
+/// 絞り込みwidget個別
 class WiringListSearchCard extends ConsumerWidget {
   final StateProvider<String> providerStr;
   final StateProvider<List<String>> providerList;
@@ -103,15 +108,19 @@ class WiringListSearchCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(
-      // shape: RoundedRectangleBorder(
-      //   borderRadius: BorderRadius.circular(30),
-      // ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
+        side: const BorderSide(
+          color: Colors.grey,
+        ),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
         child: DropdownButton(
           alignment: AlignmentDirectional.center,
           menuMaxHeight: 200,
           value: ref.watch(providerStr),
+          underline: Container(),
           items: ref.watch(providerList).map<DropdownMenuItem<String>>(
             (String value) {
               return DropdownMenuItem<String>(

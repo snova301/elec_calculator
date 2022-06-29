@@ -11,22 +11,6 @@ import 'package:elec_facility_calc/src/viewmodel/calc_conduit_state.dart';
 
 // import 'package:google_mobile_ads/google_mobile_ads.dart'; // 広告用
 
-/// bottomNaviページ名称
-enum CalcPageNameEnum { cableDesign, elecPower, conduit }
-
-extension CalcPageNameEnumExt on CalcPageNameEnum {
-  String get pageName {
-    switch (this) {
-      case CalcPageNameEnum.cableDesign:
-        return 'ケーブル設計';
-      case CalcPageNameEnum.elecPower:
-        return '電力計算';
-      case CalcPageNameEnum.conduit:
-        return '電線管設計';
-    }
-  }
-}
-
 /// 計算ページ
 class CalcPage extends ConsumerStatefulWidget {
   const CalcPage({Key? key}) : super(key: key);
@@ -45,12 +29,16 @@ class CalcPageState extends ConsumerState<CalcPage> {
   // )..load();
 
   /// ページ名の取得
-  List calcPageNameList = [];
+  List calcPageNameList = [
+    PageNameEnum.cableDesign.title,
+    PageNameEnum.elecPower.title,
+    PageNameEnum.conduit.title,
+  ];
 
   @override
   void initState() {
     super.initState();
-    calcPageNameList = CalcPageNameEnum.values.map((e) => e.pageName).toList();
+    // calcPageNameList = CalcPageNameEnum.values.map((e) => e.pageName).toList();
   }
 
   @override
@@ -65,12 +53,7 @@ class CalcPageState extends ConsumerState<CalcPage> {
     final selectedBottomNavi = ref.watch(bottomNaviSelectProvider);
 
     /// 電線管設計用
-    int maxNumCable = 10;
-
-    /// shared_prefのデータ保存用非同期providerの読み込み
-    ref.watch(cableDesignSPSetProvider);
-    ref.watch(elecPowerSPSetProvider);
-    ref.watch(conduitSPSetProvider);
+    int maxNumCable = 20;
 
     return Scaffold(
       appBar: AppBar(
@@ -102,16 +85,16 @@ class CalcPageState extends ConsumerState<CalcPage> {
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: const Icon(Icons.design_services),
-            label: CalcPageNameEnum.cableDesign.pageName,
+            icon: Icon(PageNameEnum.cableDesign.icon),
+            label: PageNameEnum.cableDesign.title,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.calculate),
-            label: CalcPageNameEnum.elecPower.pageName,
+            icon: Icon(PageNameEnum.elecPower.icon),
+            label: PageNameEnum.elecPower.title,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.gavel_rounded),
-            label: CalcPageNameEnum.conduit.pageName,
+            icon: Icon(PageNameEnum.conduit.icon),
+            label: PageNameEnum.conduit.title,
           ),
         ],
         currentIndex: selectedBottomNavi,
@@ -121,22 +104,22 @@ class CalcPageState extends ConsumerState<CalcPage> {
       ),
 
       /// 電線管設計のときのみケーブル選択のためfloatingActionButtonを設置
-      floatingActionButton: calcPageNameList[selectedBottomNavi] ==
-              CalcPageNameEnum.conduit.pageName
-          ? FloatingActionButton(
-              tooltip: 'ケーブル追加',
-              child: const Icon(Icons.add),
-              onPressed: () {
-                if (ref.read(conduitCalcProvider).length < maxNumCable) {
-                  ref.read(conduitCalcProvider.notifier).addCable();
-                  ref.read(conduitCalcProvider.notifier).calcCableArea();
-                } else {
-                  /// snackbarで警告
-                  SnackBarAlert(context: context).snackbar('これ以上追加できません');
-                }
-              },
-            )
-          : null,
+      floatingActionButton:
+          calcPageNameList[selectedBottomNavi] == PageNameEnum.conduit.title
+              ? FloatingActionButton(
+                  tooltip: 'ケーブル追加',
+                  child: const Icon(Icons.add),
+                  onPressed: () {
+                    if (ref.read(conduitCalcProvider).length < maxNumCable) {
+                      ref.read(conduitCalcProvider.notifier).addCable();
+                      ref.read(conduitCalcProvider.notifier).calcCableArea();
+                    } else {
+                      /// snackbarで警告
+                      SnackBarAlert(context: context).snackbar('これ以上追加できません');
+                    }
+                  },
+                )
+              : null,
 
       // 広告用のbottomnavigator
       // bottomNavigationBar: Container(
@@ -299,6 +282,9 @@ class InputTextCard extends ConsumerWidget {
             title: TextField(
               controller: controller,
               textAlign: TextAlign.right,
+              style: const TextStyle(
+                fontSize: 18,
+              ),
               keyboardType: TextInputType.number,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
@@ -351,7 +337,13 @@ class OutputTextCard extends ConsumerWidget {
 
           /// 結果表示
           ListTile(
-            title: Text(result, textAlign: TextAlign.right),
+            title: Text(
+              result,
+              textAlign: TextAlign.right,
+              style: const TextStyle(
+                fontSize: 18,
+              ),
+            ),
             trailing: result == '規格なし'
                 ? const Text('')
                 : Text(

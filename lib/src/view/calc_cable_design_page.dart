@@ -1,3 +1,4 @@
+import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/src/data/cable_data.dart';
@@ -15,6 +16,9 @@ class ListViewCableDesign extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    /// shared_prefのデータ保存用非同期providerの読み込み
+    ref.watch(cableDesignSPSetProvider);
+
     return ListView(
       padding: EdgeInsets.fromLTRB(listViewPadding, 10, listViewPadding, 10),
       children: <Widget>[

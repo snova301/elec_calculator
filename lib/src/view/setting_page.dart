@@ -18,9 +18,25 @@ class SettingPage extends ConsumerWidget {
       ),
       body: ListView(
         padding: const EdgeInsets.all(8),
-        children: const <Widget>[
-          _DarkmodeCard(),
-          _DataRemoveCard(),
+        children: <Widget>[
+          /// ダークモードの設定
+          const _DarkmodeCard(),
+
+          /// 電線管設計データの削除
+          _DataRemoveCard(
+            title: '電線管設計',
+            func: () {
+              StateManagerClass().removeConduitCalc(ref);
+            },
+          ),
+
+          /// 配線管理データの削除
+          _DataRemoveCard(
+            title: '配線管理',
+            func: () {
+              StateManagerClass().removeWiringList(ref);
+            },
+          ),
         ],
       ),
     );
@@ -47,56 +63,52 @@ class _DarkmodeCard extends ConsumerWidget {
   }
 }
 
-/// キャッシュデータ全削除のwidget
+/// 電線管設計キャッシュデータ削除のwidget
 class _DataRemoveCard extends ConsumerWidget {
-  const _DataRemoveCard({Key? key}) : super(key: key);
+  final String title;
+  final Function() func;
+  const _DataRemoveCard({
+    Key? key,
+    required this.title,
+    required this.func,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(
       child: ListTile(
-        title: const Text('計算データを削除'),
+        title: Text('$title データを削除'),
         textColor: Colors.red,
         iconColor: Colors.red,
         contentPadding: const EdgeInsets.all(10),
         leading: const Icon(Icons.delete_outline),
         onTap: () {
-          _DataRemoveDialog(context: context, ref: ref).removeAlert();
+          /// ダイアログ表示後削除
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('注意'),
+              content: Text('以前の $title データが削除されます。'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    /// shared_prefのデータを削除
+                    // StateManagerClass().removeCalc(ref);
+                    func();
+
+                    /// 戻る
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          );
         },
-      ),
-    );
-  }
-}
-
-/// キャッシュデータを削除する際のAlertDialog
-class _DataRemoveDialog {
-  BuildContext context;
-  WidgetRef ref;
-
-  _DataRemoveDialog({required this.context, required this.ref}) : super();
-
-  void removeAlert() {
-    showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text('注意'),
-        content: const Text('以前の計算データが削除されます。'),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.pop(context),
-          ),
-          TextButton(
-            child: const Text('OK'),
-            onPressed: () {
-              /// shared_prefのデータを削除
-              StateManagerClass().remove(ref);
-
-              /// 戻る
-              Navigator.pop(context);
-            },
-          ),
-        ],
       ),
     );
   }

@@ -83,9 +83,17 @@ class WiringCreateTextFieldMain extends ConsumerWidget {
         controller: controller,
         maxLength: 30,
         decoration: InputDecoration(
-          labelText: '$labelText ( 必須 )',
+          labelText: labelText,
           border: const OutlineInputBorder(),
+          helperText: '必須',
         ),
+        validator: (value) {
+          if (value!.isEmpty) {
+            return '空白です';
+          }
+          return null;
+        },
+        autovalidateMode: AutovalidateMode.onUserInteraction,
       ),
     );
   }

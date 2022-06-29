@@ -19,19 +19,37 @@ enum SharedPrefEnum {
 /// shared_preferencesのデータ読み込みや削除を行うクラス
 class StateManagerClass {
   /// 以前の計算データをshared_preferencesから削除
-  void remove(WidgetRef ref) async {
+  void removeCalc(WidgetRef ref) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     /// キャッシュ削除
     prefs.remove(SharedPrefEnum.calcCableDesign.name);
     prefs.remove(SharedPrefEnum.calcPower.name);
-    prefs.remove(SharedPrefEnum.calcConduit.name);
-    prefs.remove(SharedPrefEnum.calcWiringList.name);
 
     /// providerの中身を削除
     ref.read(cableDesignProvider.notifier).removeAll();
     ref.read(elecPowerProvider.notifier).removeAll();
+  }
+
+  /// 以前の電線管設計データをshared_preferencesから削除
+  void removeConduitCalc(WidgetRef ref) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    /// キャッシュ削除
+    prefs.remove(SharedPrefEnum.calcConduit.name);
+
+    /// providerの中身を削除
     ref.read(conduitCalcProvider.notifier).removeAll();
+  }
+
+  /// 以前の配線管理データをshared_preferencesから削除
+  void removeWiringList(WidgetRef ref) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    /// キャッシュ削除
+    prefs.remove(SharedPrefEnum.calcWiringList.name);
+
+    /// providerの中身を削除
     ref.read(wiringListProvider.notifier).removeAll();
   }
 

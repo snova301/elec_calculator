@@ -122,8 +122,11 @@ firebase.json
 assets/fonts/*
 .metadata
 lib/firebase_options.dart
+lib/ads_options.dart
 android/app/google-services.json
 ios/firebase_app_id_file.json
 *.freezed.dart
 *.g.dart
 lib/src/data/*
+android/
+ios/

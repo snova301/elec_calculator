@@ -1,6 +1,7 @@
-import 'package:elec_facility_calc/src/model/data_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:elec_facility_calc/src/model/data_class.dart';
+import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:elec_facility_calc/src/view/calc_page.dart';
 import 'package:elec_facility_calc/src/view/about_page.dart';
 import 'package:elec_facility_calc/src/view/setting_page.dart';
@@ -27,30 +28,47 @@ class MyHomePage extends ConsumerWidget {
               padding: EdgeInsets.all(screenWidth / 5),
               children: <Widget>[
                 _PagePush(
-                  title: PageNameEnum.calc.title,
+                  title: PageNameEnum.cableDesign.title,
                   pagepush: const CalcPage(),
                   backGroundColor: Colors.green,
                   textColor: Colors.white,
-                  icon: Icons.calculate,
+                  icon: PageNameEnum.cableDesign.icon,
+                  bottomNaviFunc: () =>
+                      ref.read(bottomNaviSelectProvider.state).state = 0,
+                ),
+                _PagePush(
+                  title: PageNameEnum.elecPower.title,
+                  pagepush: const CalcPage(),
+                  backGroundColor: Colors.green,
+                  textColor: Colors.white,
+                  icon: PageNameEnum.elecPower.icon,
+                  bottomNaviFunc: () =>
+                      ref.read(bottomNaviSelectProvider.state).state = 1,
+                ),
+                _PagePush(
+                  title: PageNameEnum.conduit.title,
+                  pagepush: const CalcPage(),
+                  backGroundColor: Colors.green,
+                  textColor: Colors.white,
+                  icon: PageNameEnum.conduit.icon,
+                  bottomNaviFunc: () =>
+                      ref.read(bottomNaviSelectProvider.state).state = 2,
                 ),
                 _PagePush(
                   title: PageNameEnum.wiring.title,
                   pagepush: const WiringListPage(),
                   backGroundColor: Colors.green,
                   textColor: Colors.white,
-                  icon: Icons.list_alt,
+                  icon: PageNameEnum.wiring.icon,
                 ),
                 _PagePush(
                   title: PageNameEnum.setting.title,
                   pagepush: const SettingPage(),
-                  // color: Colors.grey,
-                  icon: Icons.settings,
+                  icon: PageNameEnum.setting.icon,
                 ),
                 _PagePush(
                   title: PageNameEnum.about.title,
                   pagepush: const AboutPage(),
-                  // color: Colors.grey,
-                  // icon: Icons.calculate,
                 ),
               ],
             ),
@@ -72,6 +90,7 @@ class _PagePush extends ConsumerWidget {
   final Color? backGroundColor;
   final Color? textColor;
   final IconData? icon;
+  final Function? bottomNaviFunc;
 
   const _PagePush({
     Key? key,
@@ -80,6 +99,7 @@ class _PagePush extends ConsumerWidget {
     this.backGroundColor,
     this.textColor,
     this.icon,
+    this.bottomNaviFunc,
   }) : super(key: key);
 
   @override
@@ -89,6 +109,12 @@ class _PagePush extends ConsumerWidget {
       elevation: 2,
       child: InkWell(
         onTap: () {
+          /// bottomNaviの値を変更
+          if (bottomNaviFunc != null) {
+            bottomNaviFunc!();
+          }
+
+          /// ページ遷移
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => pagepush),
