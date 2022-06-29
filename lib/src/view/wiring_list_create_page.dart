@@ -196,9 +196,11 @@ class WiringCreateRunButton extends ConsumerWidget {
           SnackBarAlert(context: context).snackbar('未入力項目があります');
         }
       },
-      style: const ButtonStyle(
-          // backgroundColor: MaterialStateProperty.all(Colors.green),
-          ),
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.green),
+        foregroundColor: MaterialStateProperty.all(Colors.white),
+        padding: MaterialStateProperty.all(const EdgeInsets.all(20.0)),
+      ),
       child: Text(isCreate ? '新規保存' : '変更'),
     );
   }

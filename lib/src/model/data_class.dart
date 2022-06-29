@@ -28,6 +28,21 @@ class CableDataClass {
   });
 }
 
+/// 相選択のenum
+enum PhaseNameEnum { single, three }
+
+/// 相選択のenumのextension
+extension PhaseNameEnumExt on PhaseNameEnum {
+  String get phase {
+    switch (this) {
+      case PhaseNameEnum.single:
+        return '単相';
+      case PhaseNameEnum.three:
+        return '三相';
+    }
+  }
+}
+
 /// ケーブル設計入力のProvider入力データの定義
 @freezed
 class CableDesignData with _$CableDesignData {
@@ -195,16 +210,6 @@ class WiringListSearchDataClass {
 }
 
 /// なぜかできないenumの進化版
-// enum AuthException1 {
-//   invalidEmail('Invalid email'),
-//   emailAlreadyInUse('Email already in use'),
-//   weakPassword('Password is too weak'),
-//   wrongPassword('Wrong password');
-
-//   const AuthException1(this.message);
-//   final String message;
-// }
-
 // enum WiringListSearchEnum {
 //   cableData('ケーブル種類'),
 //   start('出発点'),
@@ -244,51 +249,39 @@ class SettingDataClass with _$SettingDataClass {
       _$SettingDataClassFromJson(json);
 }
 
-// class SettingDataClass {
-//   /// ダークモード
-//   bool darkMode;
+/// 配線リストの検索用enum
+enum PageNameEnum { toppage, calc, wiring, setting, about }
 
-//   SettingDataClass({
-//     required this.darkMode,
-//   });
+/// 配線リストの検索用enumのextension
+extension PageNameEnumExt on PageNameEnum {
+  String get title {
+    switch (this) {
+      case PageNameEnum.toppage:
+        return 'トップページ';
+      case PageNameEnum.calc:
+        return '計算';
+      case PageNameEnum.wiring:
+        return '配線管理';
+      case PageNameEnum.setting:
+        return '設定';
+      case PageNameEnum.about:
+        return 'About';
+    }
+  }
+}
 
-//   /// Map型に変換
-//   Map toMap() => {
-//         'darkMode': darkMode,
-//       };
+// /// Map型に変換
+// Map toMap() => {
+//       'current': current,
+//       'cableSize': cableSize,
+//       'voltDrop': voltDrop,
+//       'powerLoss': powerLoss,
+//     };
 
-//   /// JSONオブジェクトからの変換
-//   SettingDataClass.fromJson(Map json) : darkMode = json['darkMode'];
-// }
-
-
-// /// データモデルの定義
-// class CableDesignOutData {
-//   String current; // 電流
-//   String cableSize; // ケーブルサイズ
-//   String voltDrop; // 電圧降下
-//   String powerLoss; // 電力損失
-
-//   CableDesignOutData({
-//     required this.current,
-//     required this.cableSize,
-//     required this.voltDrop,
-//     required this.powerLoss,
-//   });
-
-  // /// Map型に変換
-  // Map toMap() => {
-  //       'current': current,
-  //       'cableSize': cableSize,
-  //       'voltDrop': voltDrop,
-  //       'powerLoss': powerLoss,
-  //     };
-
-//   /// JSONオブジェクトを代入
-//   CableDesignData.fromJson(Map json)
-//       : phase = json['phase'],
-//         current = json['current'],
-//         cableSize = json['cableSize'],
-//         voltDrop = json['voltDrop'],
-//         powerLoss = json['powerLoss'];
-// }
+// /// JSONオブジェクトを代入
+// CableDesignData.fromJson(Map json)
+//     : phase = json['phase'],
+//       current = json['current'],
+//       cableSize = json['cableSize'],
+//       voltDrop = json['voltDrop'],
+//       powerLoss = json['powerLoss'];

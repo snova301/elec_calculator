@@ -1,3 +1,4 @@
+import 'package:elec_facility_calc/src/model/data_class.dart';
 import 'package:flutter/material.dart';
 import 'package:elec_facility_calc/src/view/common_page.dart';
 
@@ -9,7 +10,7 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("About"),
+        title: Text(PageNameEnum.about.title),
       ),
       body: ListView(
         padding: const EdgeInsets.all(8),

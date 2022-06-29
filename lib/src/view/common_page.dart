@@ -1,3 +1,4 @@
+import 'package:elec_facility_calc/src/model/data_class.dart';
 import 'package:elec_facility_calc/src/view/wiring_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -31,7 +32,7 @@ class DrawerContents extends StatelessWidget {
 
           /// トップページへ
           ListTile(
-            title: const Text('トップページ'),
+            title: Text(PageNameEnum.toppage.title),
             leading: const Icon(Icons.home_rounded),
             onTap: () {
               Navigator.push(context,
@@ -41,7 +42,7 @@ class DrawerContents extends StatelessWidget {
 
           /// 計算画面へ
           ListTile(
-            title: const Text('計算画面'),
+            title: Text(PageNameEnum.calc.title),
             leading: const Icon(Icons.calculate),
             onTap: () {
               Navigator.push(context,
@@ -51,7 +52,7 @@ class DrawerContents extends StatelessWidget {
 
           /// 配線リスト画面へ
           ListTile(
-            title: const Text('配線リスト画面'),
+            title: Text(PageNameEnum.wiring.title),
             leading: const Icon(Icons.list_alt),
             onTap: () {
               Navigator.push(
@@ -63,7 +64,7 @@ class DrawerContents extends StatelessWidget {
 
           /// 設定画面へ
           ListTile(
-            title: const Text('設定'),
+            title: Text(PageNameEnum.setting.title),
             leading: const Icon(Icons.settings),
             onTap: () {
               Navigator.push(context,
@@ -84,7 +85,7 @@ class DrawerContents extends StatelessWidget {
 
           /// About
           ListTile(
-            title: const Text('About'),
+            title: Text(PageNameEnum.about.title),
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => const AboutPage()));
@@ -105,7 +106,14 @@ class SnackBarAlert {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         // key: key,
-        content: Text(message),
+        content: Text(
+          message,
+          textAlign: TextAlign.center,
+          // style: TextStyle(
+          //   color: Colors.white,
+          // ),
+        ),
+        // backgroundColor: Colors.black,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),

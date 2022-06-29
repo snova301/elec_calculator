@@ -21,7 +21,11 @@ class ListViewElecPower extends ConsumerWidget {
         const SeparateText(title: '計算条件'),
 
         /// 相選択
-        const ElecPowerPhaseSelectCard(),
+        CalcPhaseSelectCard(
+          phase: ref.watch(elecPowerProvider).phase,
+          onPressedFunc: (String value) =>
+              ref.read(elecPowerProvider.notifier).updatePhase(value),
+        ),
 
         /// 電圧入力
         InputTextCard(
@@ -48,7 +52,27 @@ class ListViewElecPower extends ConsumerWidget {
         ),
 
         /// 計算実行ボタン
-        ElecPowerRunButton(paddingSize: blockWidth),
+        CalcRunButton(
+          paddingSize: blockWidth,
+          func: () {
+            /// textcontrollerのデータを取得
+            final volt = ref.watch(elecPowerTxtCtrVoltProvider).text;
+            final current = ref.watch(elecPowerTxtCtrCurrentProvider).text;
+            final cosFai = ref.watch(elecPowerTxtCtrCosFaiProvider).text;
+            if (ref
+                .read(elecPowerProvider.notifier)
+                .isRunCheck(volt, current, cosFai)) {
+              ref.watch(elecPowerProvider.notifier).run(volt, current, cosFai);
+            } else {
+              showDialog<void>(
+                context: context,
+                builder: (BuildContext context) {
+                  return const CorrectAlertDialog();
+                },
+              );
+            }
+          },
+        ),
 
         /// 結果表示
         const SeparateText(title: '計算結果'),
@@ -81,129 +105,6 @@ class ListViewElecPower extends ConsumerWidget {
           result: ref.watch(elecPowerProvider).sinFai,
         ),
       ],
-    );
-  }
-}
-
-/// 相の選択widget
-class ElecPowerPhaseSelectCard extends ConsumerWidget {
-  const ElecPowerPhaseSelectCard({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            margin: const EdgeInsets.fromLTRB(8, 8, 0, 0),
-            child: const Tooltip(
-              message: '選択してください',
-              child: Text(
-                '電源の相',
-                style: TextStyle(
-                  fontSize: 13,
-                ),
-              ),
-            ),
-          ),
-
-          /// 単相 or 三相の選択row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              /// 単相
-              Container(
-                margin: const EdgeInsets.all(8),
-                child: ElevatedButton(
-                  onPressed: () {
-                    ref.read(elecPowerProvider.notifier).updatePhase('単相');
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        ref.watch(elecPowerProvider).phase == '単相'
-                            ? null
-                            : Colors.grey),
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20)),
-                  ),
-                  child: const Text('単相'),
-                ),
-              ),
-
-              /// 三相
-              Container(
-                margin: const EdgeInsets.all(8),
-                child: ElevatedButton(
-                  onPressed: () {
-                    ref.read(elecPowerProvider.notifier).updatePhase('三相');
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        ref.watch(elecPowerProvider).phase == '三相'
-                            ? null
-                            : Colors.grey),
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20.0)),
-                  ),
-                  child: const Text('三相'),
-                ),
-              ),
-            ],
-          )
-        ],
-      ),
-    );
-  }
-}
-
-/// 実行ボタンのWidget
-class ElecPowerRunButton extends ConsumerWidget {
-  final double paddingSize;
-
-  const ElecPowerRunButton({
-    Key? key,
-    required this.paddingSize,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      margin: EdgeInsets.fromLTRB(paddingSize, 0, paddingSize, 0),
-      child: ElevatedButton(
-        onPressed: () {
-          /// textcontrollerのデータを取得
-          final volt = ref.watch(elecPowerTxtCtrVoltProvider).text;
-          final current = ref.watch(elecPowerTxtCtrCurrentProvider).text;
-          final cosFai = ref.watch(elecPowerTxtCtrCosFaiProvider).text;
-          if (ref
-              .read(elecPowerProvider.notifier)
-              .isRunCheck(volt, current, cosFai)) {
-            ref.watch(elecPowerProvider.notifier).run(volt, current, cosFai);
-          } else {
-            showDialog<void>(
-              context: context,
-              builder: (BuildContext context) {
-                return const CorrectAlertDialog();
-              },
-            );
-          }
-        },
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.redAccent),
-          padding: MaterialStateProperty.all(const EdgeInsets.all(30.0)),
-          shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
-        ),
-        child: const Text(
-          '計算実行',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-      ),
     );
   }
 }

@@ -137,7 +137,6 @@ final wiringListSearchCableTypeProvider = StateProvider((ref) {
 final wiringListSearchCableTypeListProvider = StateProvider((ref) {
   /// 配線リストの取得
   final originalMap = ref.watch(wiringListProvider);
-  // final originalMap = ref.watch(wiringListShowProvider);
 
   /// 一致したデータをリストに格納
   List<String> cableTypeList = [WiringListSearchEnum.cableData.message];
@@ -162,7 +161,6 @@ final wiringListSearchStartProvider = StateProvider((ref) {
 final wiringListSearchStartListProvider = StateProvider((ref) {
   /// 配線リストの取得
   final originalMap = ref.watch(wiringListProvider);
-  // final originalMap = ref.watch(wiringListShowProvider);
 
   /// 一致したデータをリストに格納
   List<String> startList = [WiringListSearchEnum.start.message];
@@ -187,7 +185,6 @@ final wiringListSearchEndProvider = StateProvider((ref) {
 final wiringListSearchEndListProvider = StateProvider((ref) {
   /// 配線リストの取得
   final originalMap = ref.watch(wiringListProvider);
-  // final originalMap = ref.watch(wiringListShowProvider);
 
   /// 一致したデータをリストに格納
   List<String> endList = [WiringListSearchEnum.end.message];

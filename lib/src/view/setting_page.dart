@@ -1,3 +1,4 @@
+import 'package:elec_facility_calc/src/model/data_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
@@ -13,7 +14,7 @@ class SettingPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('設定'),
+        title: Text(PageNameEnum.setting.title),
       ),
       body: ListView(
         padding: const EdgeInsets.all(8),

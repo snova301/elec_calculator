@@ -22,7 +22,11 @@ class ListViewCableDesign extends ConsumerWidget {
         const SeparateText(title: '計算条件'),
 
         /// 相選択
-        const CalcDesignPhaseSelectCard(),
+        CalcPhaseSelectCard(
+          phase: ref.watch(cableDesignProvider).phase,
+          onPressedFunc: (String value) =>
+              ref.read(cableDesignProvider.notifier).updatePhase(value),
+        ),
 
         /// ケーブル種類選択
         const CableDeignSelectCableType(),
@@ -60,7 +64,37 @@ class ListViewCableDesign extends ConsumerWidget {
         ),
 
         /// 計算実行ボタン
-        CableDesignRunButton(paddingSize: blockWidth),
+        CalcRunButton(
+          paddingSize: blockWidth,
+          func: () {
+            /// textcontrollerのデータを取得
+            final strElecOut = ref.watch(cableDesignTxtCtrElecOutProvider).text;
+            final strVolt = ref.watch(cableDesignTxtCtrVoltProvider).text;
+            final strCosFai = ref.watch(cableDesignTxtCtrCosFaiProvider).text;
+            final strCableLength =
+                ref.watch(cableDesignTxtCtrLengthProvider).text;
+
+            /// 実行時に読み込み関係でエラーを吐き出さないか確認後実行
+            if (ref.read(cableDesignProvider.notifier).isRunCheck(
+                  strElecOut,
+                  strVolt,
+                  strCosFai,
+                  strCableLength,
+                )) {
+              ref
+                  .read(cableDesignProvider.notifier)
+                  .run(strElecOut, strVolt, strCosFai, strCableLength);
+            } else {
+              /// snackbarでエラー表示
+              showDialog<void>(
+                context: context,
+                builder: (BuildContext context) {
+                  return const CorrectAlertDialog();
+                },
+              );
+            }
+          },
+        ),
 
         /// 結果表示
         const SeparateText(title: '計算結果'),
@@ -141,139 +175,6 @@ class CableDeignSelectCableType extends ConsumerWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// 相の選択widget
-class CalcDesignPhaseSelectCard extends ConsumerWidget {
-  const CalcDesignPhaseSelectCard({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            margin: const EdgeInsets.fromLTRB(8, 8, 0, 0),
-            child: const Tooltip(
-              message: '選択してください',
-              child: Text(
-                '電源の相',
-                style: TextStyle(
-                  fontSize: 13,
-                ),
-              ),
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                margin: const EdgeInsets.all(8),
-                child: ElevatedButton(
-                  onPressed: () {
-                    ref.read(cableDesignProvider.notifier).updatePhase('単相');
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        ref.watch(cableDesignProvider).phase == '単相'
-                            ? null
-                            : Colors.grey),
-                    // ref.watch(provider) == '単相' ? null : Colors.grey),
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20)),
-                  ),
-                  child: const Text('単相'),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.all(8),
-                child: ElevatedButton(
-                  onPressed: () {
-                    ref.read(cableDesignProvider.notifier).updatePhase('三相');
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        ref.watch(cableDesignProvider).phase == '三相'
-                            ? null
-                            : Colors.grey),
-                    // ref.watch(provider) == '三相' ? null : Colors.grey),
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20.0)),
-                  ),
-                  child: const Text('三相'),
-                ),
-              ),
-            ],
-          )
-        ],
-      ),
-    );
-  }
-}
-
-/// 実行ボタンのWidget
-class CableDesignRunButton extends ConsumerWidget {
-  final double paddingSize;
-
-  const CableDesignRunButton({
-    Key? key,
-    required this.paddingSize,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      margin: EdgeInsets.fromLTRB(paddingSize, 0, paddingSize, 0),
-      child: ElevatedButton(
-        onPressed: () {
-          /// textcontrollerのデータを取得
-          final strElecOut = ref.watch(cableDesignTxtCtrElecOutProvider).text;
-          final strVolt = ref.watch(cableDesignTxtCtrVoltProvider).text;
-          final strCosFai = ref.watch(cableDesignTxtCtrCosFaiProvider).text;
-          final strCableLength =
-              ref.watch(cableDesignTxtCtrLengthProvider).text;
-
-          /// 実行時に読み込み関係でエラーを吐き出さないか確認後実行
-          if (ref.read(cableDesignProvider.notifier).isRunCheck(
-                strElecOut,
-                strVolt,
-                strCosFai,
-                strCableLength,
-              )) {
-            ref
-                .read(cableDesignProvider.notifier)
-                .run(strElecOut, strVolt, strCosFai, strCableLength);
-          } else {
-            /// snackbarでエラー表示
-            showDialog<void>(
-              context: context,
-              builder: (BuildContext context) {
-                return const CorrectAlertDialog();
-              },
-            );
-          }
-        },
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.redAccent),
-          padding: MaterialStateProperty.all(const EdgeInsets.all(30.0)),
-          shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
-        ),
-        child: const Text(
-          '計算実行',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
       ),
     );
   }

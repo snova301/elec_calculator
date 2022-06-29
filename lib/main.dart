@@ -8,8 +8,6 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:elec_facility_calc/src/view/home_page.dart';
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 
-// import 'package:google_mobile_ads/google_mobile_ads.dart'; // 広告用
-
 void main() async {
   /// クラッシュハンドラ
   runZonedGuarded<Future<void>>(() async {
@@ -55,7 +53,6 @@ class MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = ref.watch(settingProvider).darkMode;
-    // final isDarkmode = ref.watch(isDarkmodeProvider.state).state;
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -64,6 +61,11 @@ class MyAppState extends ConsumerState<MyApp> {
       theme: ThemeData(
         brightness: isDarkMode ? Brightness.dark : Brightness.light,
         primarySwatch: Colors.green,
+        // elevatedButtonTheme: ElevatedButtonThemeData(
+        //   style: ButtonStyle(
+        //     backgroundColor: MaterialStateProperty.all(Colors.green),
+        //   ),
+        // ),
         fontFamily: 'NotoSansJP',
         useMaterial3: true,
       ),

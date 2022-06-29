@@ -1,3 +1,4 @@
+import 'package:elec_facility_calc/src/model/data_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +10,22 @@ import 'package:elec_facility_calc/src/view/calc_elec_power_page.dart';
 import 'package:elec_facility_calc/src/viewmodel/calc_conduit_state.dart';
 
 // import 'package:google_mobile_ads/google_mobile_ads.dart'; // 広告用
+
+/// bottomNaviページ名称
+enum CalcPageNameEnum { cableDesign, elecPower, conduit }
+
+extension CalcPageNameEnumExt on CalcPageNameEnum {
+  String get pageName {
+    switch (this) {
+      case CalcPageNameEnum.cableDesign:
+        return 'ケーブル設計';
+      case CalcPageNameEnum.elecPower:
+        return '電力計算';
+      case CalcPageNameEnum.conduit:
+        return '電線管設計';
+    }
+  }
+}
 
 /// 計算ページ
 class CalcPage extends ConsumerStatefulWidget {
@@ -26,6 +43,15 @@ class CalcPageState extends ConsumerState<CalcPage> {
   //   request: const AdRequest(),
   //   listener: const BannerAdListener(),
   // )..load();
+
+  /// ページ名の取得
+  List calcPageNameList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    calcPageNameList = CalcPageNameEnum.values.map((e) => e.pageName).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +74,7 @@ class CalcPageState extends ConsumerState<CalcPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(['ケーブル設計', '電力計算', '電線管設計'][selectedBottomNavi]),
+        title: Text(calcPageNameList[selectedBottomNavi]),
       ),
 
       /// bottomNavigationBarで選択されたitemについて
@@ -74,18 +100,18 @@ class CalcPageState extends ConsumerState<CalcPage> {
 
       /// bottomNavigationBar
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.design_services),
-            label: 'ケーブル設計',
+            icon: const Icon(Icons.design_services),
+            label: CalcPageNameEnum.cableDesign.pageName,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calculate),
-            label: '電力計算',
+            icon: const Icon(Icons.calculate),
+            label: CalcPageNameEnum.elecPower.pageName,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.gavel_rounded),
-            label: '電線管設計',
+            icon: const Icon(Icons.gavel_rounded),
+            label: CalcPageNameEnum.conduit.pageName,
           ),
         ],
         currentIndex: selectedBottomNavi,
@@ -95,7 +121,8 @@ class CalcPageState extends ConsumerState<CalcPage> {
       ),
 
       /// 電線管設計のときのみケーブル選択のためfloatingActionButtonを設置
-      floatingActionButton: selectedBottomNavi == 2
+      floatingActionButton: calcPageNameList[selectedBottomNavi] ==
+              CalcPageNameEnum.conduit.pageName
           ? FloatingActionButton(
               tooltip: 'ケーブル追加',
               child: const Icon(Icons.add),
@@ -139,6 +166,93 @@ class SeparateText extends ConsumerWidget {
           title,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
+      ),
+    );
+  }
+}
+
+/// 相の選択widget
+class CalcPhaseSelectCard extends ConsumerWidget {
+  final String phase;
+  final Function(String value) onPressedFunc;
+
+  const CalcPhaseSelectCard({
+    Key? key,
+    required this.phase,
+    required this.onPressedFunc,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            margin: const EdgeInsets.fromLTRB(8, 8, 0, 0),
+            child: const Tooltip(
+              message: '選択してください',
+              child: Text(
+                '電源の相',
+                style: TextStyle(
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ),
+
+          /// 単相 or 三相の選択row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              /// 単相
+              Container(
+                margin: const EdgeInsets.all(8),
+                child: ElevatedButton(
+                  onPressed: () {
+                    onPressedFunc(PhaseNameEnum.single.phase);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        phase == PhaseNameEnum.single.phase
+                            ? Colors.green
+                            : null),
+                    foregroundColor: MaterialStateProperty.all(
+                        phase == PhaseNameEnum.single.phase
+                            ? Colors.white
+                            : null),
+                    padding:
+                        MaterialStateProperty.all(const EdgeInsets.all(20)),
+                  ),
+                  child: Text(PhaseNameEnum.single.phase),
+                ),
+              ),
+
+              /// 三相
+              Container(
+                margin: const EdgeInsets.all(8),
+                child: ElevatedButton(
+                  onPressed: () {
+                    onPressedFunc(PhaseNameEnum.three.phase);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        phase == PhaseNameEnum.three.phase
+                            ? Colors.green
+                            : null),
+                    foregroundColor: MaterialStateProperty.all(
+                        phase == PhaseNameEnum.three.phase
+                            ? Colors.white
+                            : null),
+                    padding:
+                        MaterialStateProperty.all(const EdgeInsets.all(20.0)),
+                  ),
+                  child: Text(PhaseNameEnum.three.phase),
+                ),
+              ),
+            ],
+          )
+        ],
       ),
     );
   }
@@ -248,6 +362,43 @@ class OutputTextCard extends ConsumerWidget {
                   ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// 実行ボタンのWidget
+class CalcRunButton extends ConsumerWidget {
+  final double paddingSize;
+  final Function() func;
+
+  const CalcRunButton({
+    Key? key,
+    required this.paddingSize,
+    required this.func,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      margin: EdgeInsets.fromLTRB(paddingSize, 0, paddingSize, 0),
+      child: ElevatedButton(
+        onPressed: () {
+          func();
+        },
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Colors.red),
+          foregroundColor: MaterialStateProperty.all(Colors.white),
+          padding: MaterialStateProperty.all(const EdgeInsets.all(30.0)),
+        ),
+        child: const Text(
+          '計算実行',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
       ),
     );
   }

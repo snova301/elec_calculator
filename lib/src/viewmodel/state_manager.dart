@@ -53,7 +53,8 @@ class StateManagerClass {
       /// jsonをデコード
       var getCableDesignData =
           CableDesignData.fromJson(jsonDecode(getCableDesign));
-      // print(getCableDesignData);
+
+      /// 値をproviderへ
       ref.read(cableDesignProvider.notifier).updateAll(getCableDesignData);
     }
 
@@ -61,7 +62,8 @@ class StateManagerClass {
     /// データがない場合、nullになるので、null以外の場合でデコードする
     if (getElecPower != null) {
       var getElecPowerData = ElecPowerData.fromJson(jsonDecode(getElecPower));
-      // print(getElecPowerData);
+
+      /// 値をproviderへ
       ref.read(elecPowerProvider.notifier).updateAll(getElecPowerData);
     }
 
@@ -73,7 +75,8 @@ class StateManagerClass {
       getConduitJson.forEach((key, value) {
         conduitData.add(ConduitCalcDataClass.fromJson(value));
       });
-      // print(conduitData);
+
+      /// 値をproviderへ
       ref.read(conduitCalcProvider.notifier).updateAll(conduitData);
     }
 
@@ -85,7 +88,8 @@ class StateManagerClass {
       getWiringListJson.forEach((key, value) {
         wiringListData[key] = WiringListDataClass.fromJson(value);
       });
-      // print(wiringListData);
+
+      /// 値をproviderへ
       ref.read(wiringListProvider.notifier).updateAll(wiringListData);
     }
 
@@ -93,7 +97,8 @@ class StateManagerClass {
     /// データがない場合、nullになるので、null以外の場合でデコードする
     if (getSetting != null) {
       var getSettingData = SettingDataClass.fromJson(jsonDecode(getSetting));
-      // print(getSettingData);
+
+      /// 値をproviderへ
       ref
           .read(settingProvider.notifier)
           .updateDarkMode(getSettingData.darkMode);
@@ -127,7 +132,6 @@ final cableDesignSPSetProvider = FutureProvider((ref) async {
 
   ///  データの整形
   var setCableDesign = jsonEncode(ref.watch(cableDesignProvider).toJson());
-  // print(setCableDesign);
 
   ///  書込み
   prefs.setString(SharedPrefEnum.calcCableDesign.name, setCableDesign);
@@ -140,7 +144,6 @@ final elecPowerSPSetProvider = FutureProvider((ref) async {
 
   ///  データの整形
   var setElecPower = jsonEncode(ref.watch(elecPowerProvider).toJson());
-  // print(setElecPower);
 
   ///  書込み
   prefs.setString(SharedPrefEnum.calcPower.name, setElecPower);
@@ -164,7 +167,6 @@ final conduitSPSetProvider = FutureProvider((ref) async {
 
   /// json形式に変換
   var setConduit = jsonEncode(conduitJsonMap);
-  // print(setConduit);
 
   ///  書込み
   prefs.setString(SharedPrefEnum.calcConduit.name, setConduit);
@@ -186,7 +188,6 @@ final wiringListSPSetProvider = FutureProvider((ref) async {
 
   /// json形式に変換
   var setWiringList = jsonEncode(wiringJsonMap);
-  // print(setWiringList);
 
   ///  書込み
   prefs.setString(SharedPrefEnum.calcWiringList.name, setWiringList);
@@ -199,7 +200,6 @@ final settingSPSetProvider = FutureProvider((ref) async {
 
   ///  データの整形
   var setSetting = jsonEncode(ref.watch(settingProvider).toJson());
-  // print(setSetting);
 
   ///  書込み
   prefs.setString(SharedPrefEnum.setting.name, setSetting);

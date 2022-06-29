@@ -31,9 +31,9 @@ class WiringListPageState extends ConsumerState<WiringListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Tooltip(
+        title: Tooltip(
           message: '配線管理リストの項目は $maxNum 個まで',
-          child: Text('配線管理リスト'),
+          child: Text(PageNameEnum.wiring.title),
         ),
       ),
       body: Column(
