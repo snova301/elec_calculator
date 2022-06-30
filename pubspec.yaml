@@ -31,7 +31,7 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  google_mobile_ads: ^0.13.6
+  google_mobile_ads: ^1.3.0
   flutter_launcher_icons: ^0.9.3
   flutter_riverpod: ^1.0.4
   shared_preferences: ^2.0.15

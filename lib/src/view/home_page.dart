@@ -7,6 +7,7 @@ import 'package:elec_facility_calc/src/view/about_page.dart';
 import 'package:elec_facility_calc/src/view/setting_page.dart';
 import 'package:elec_facility_calc/src/view/common_page.dart';
 import 'package:elec_facility_calc/src/view/wiring_list_page.dart';
+import 'package:elec_facility_calc/ads_options.dart';
 
 class MyHomePage extends ConsumerWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -25,7 +26,7 @@ class MyHomePage extends ConsumerWidget {
           Expanded(
             child: GridView.count(
               crossAxisCount: 2,
-              padding: EdgeInsets.all(screenWidth / 5),
+              padding: EdgeInsets.all(screenWidth / 6),
               children: <Widget>[
                 _PagePush(
                   title: PageNameEnum.cableDesign.title,

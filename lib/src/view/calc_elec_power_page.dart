@@ -1,3 +1,5 @@
+import 'package:elec_facility_calc/ads_options.dart';
+import 'package:elec_facility_calc/main.dart';
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,6 +17,9 @@ class ListViewElecPower extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    /// 広告の初期化
+    AdsSettingsClass().initElecPowerRec();
+
     /// shared_prefのデータ保存用非同期providerの読み込み
     ref.watch(elecPowerSPSetProvider);
 
@@ -108,6 +113,9 @@ class ListViewElecPower extends ConsumerWidget {
           unit: '%',
           result: ref.watch(elecPowerProvider).sinFai,
         ),
+
+        /// 広告表示
+        isAndroid || isIOS ? const ElecPowerRecBannerContainer() : Container(),
       ],
     );
   }

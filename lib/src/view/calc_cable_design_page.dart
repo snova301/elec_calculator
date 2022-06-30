@@ -1,3 +1,5 @@
+import 'package:elec_facility_calc/ads_options.dart';
+import 'package:elec_facility_calc/main.dart';
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,11 +18,15 @@ class ListViewCableDesign extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    /// 広告の初期化
+    AdsSettingsClass().initCableDesignRec();
+
     /// shared_prefのデータ保存用非同期providerの読み込み
     ref.watch(cableDesignSPSetProvider);
 
     return ListView(
       padding: EdgeInsets.fromLTRB(listViewPadding, 10, listViewPadding, 10),
+      // widget.listViewPadding, 10, widget.listViewPadding, 10),
       children: <Widget>[
         /// 入力表示
         const SeparateText(title: '計算条件'),
@@ -70,6 +76,7 @@ class ListViewCableDesign extends ConsumerWidget {
         /// 計算実行ボタン
         CalcRunButton(
           paddingSize: blockWidth,
+          // paddingSize: widget.blockWidth,
           func: () {
             /// textcontrollerのデータを取得
             final strElecOut = ref.watch(cableDesignTxtCtrElecOutProvider).text;
@@ -130,6 +137,11 @@ class ListViewCableDesign extends ConsumerWidget {
           unit: 'W',
           result: ref.watch(cableDesignProvider).powerLoss,
         ),
+
+        /// 広告表示
+        isAndroid || isIOS
+            ? const CableDesignRecBannerContainer()
+            : Container(),
       ],
     );
   }

@@ -1,3 +1,4 @@
+import 'package:elec_facility_calc/ads_options.dart';
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,6 +20,9 @@ class WiringListPage extends ConsumerStatefulWidget {
 class WiringListPageState extends ConsumerState<WiringListPage> {
   @override
   Widget build(BuildContext context) {
+    /// 広告の初期化
+    AdsSettingsClass().initWiringListStd();
+
     /// 画面情報取得
     // final mediaQueryData = MediaQuery.of(context);
     // final screenWidth = mediaQueryData.size.width;
@@ -42,6 +46,9 @@ class WiringListPageState extends ConsumerState<WiringListPage> {
               fontSize: 13,
             ),
           ),
+
+          /// 広告
+          WiringListStdBannerContainer(),
 
           /// 絞り込み用widget
           WiringSearchView(),

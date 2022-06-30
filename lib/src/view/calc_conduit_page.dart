@@ -1,3 +1,5 @@
+import 'package:elec_facility_calc/ads_options.dart';
+import 'package:elec_facility_calc/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/src/data/cable_data.dart';
@@ -20,6 +22,9 @@ class ListViewConduit extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    /// 広告の初期化
+    AdsSettingsClass().initConduitStd();
+
     /// shared_prefのデータ保存用非同期providerの読み込み
     ref.watch(conduitSPSetProvider);
 
@@ -35,6 +40,10 @@ class ListViewConduit extends ConsumerWidget {
             fontSize: 13,
           ),
         ),
+
+        /// 広告
+        isAndroid || isIOS ? ConduitStdBannerContainer() : Container(),
+
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -62,6 +71,14 @@ class ListViewConduit extends ConsumerWidget {
             itemCount: ref.watch(conduitCalcProvider).length,
             itemBuilder: (context, index) {
               return ConduitCableCard(index: index);
+              // return Column(
+              //   children: [
+              //     ConduitCableCard(index: index),
+              //     index == ref.watch(conduitCalcProvider).length - 1
+              //         ? const LargeBannerContainer()
+              //         : Container(),
+              //   ],
+              // );
             },
           ),
         ),

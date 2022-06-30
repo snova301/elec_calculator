@@ -1,3 +1,4 @@
+import 'package:elec_facility_calc/ads_options.dart';
 import 'package:elec_facility_calc/src/viewmodel/wiring_list_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +11,9 @@ class WiringCreatePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    /// 広告の初期化
+    AdsSettingsClass().initWiringListRec();
+
     /// 新規作成画面か編集画面かの判断
     final isCreate = ref.watch(wiringListSettingProvider).isCreate;
 
@@ -58,6 +62,9 @@ class WiringCreatePage extends ConsumerWidget {
 
           /// 実行ボタン
           const WiringCreateRunButton(),
+
+          /// 広告
+          const WiringListRecBannerContainer(),
         ],
       ),
     );

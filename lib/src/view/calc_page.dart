@@ -1,3 +1,4 @@
+import 'package:elec_facility_calc/ads_options.dart';
 import 'package:elec_facility_calc/src/model/data_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,8 +10,6 @@ import 'package:elec_facility_calc/src/view/calc_conduit_page.dart';
 import 'package:elec_facility_calc/src/view/calc_elec_power_page.dart';
 import 'package:elec_facility_calc/src/viewmodel/calc_conduit_state.dart';
 
-// import 'package:google_mobile_ads/google_mobile_ads.dart'; // 広告用
-
 /// 計算ページ
 class CalcPage extends ConsumerStatefulWidget {
   const CalcPage({Key? key}) : super(key: key);
@@ -20,14 +19,6 @@ class CalcPage extends ConsumerStatefulWidget {
 }
 
 class CalcPageState extends ConsumerState<CalcPage> {
-  /// admobの関数定義
-  // BannerAd adMyBanner = BannerAd(
-  //   adUnitId: 'ca-app-pub-3940256099942544/6300978111', // テスト用
-  //   size: AdSize.banner,
-  //   request: const AdRequest(),
-  //   listener: const BannerAdListener(),
-  // )..load();
-
   /// ページ名の取得
   List calcPageNameList = [
     PageNameEnum.cableDesign.title,
@@ -38,7 +29,7 @@ class CalcPageState extends ConsumerState<CalcPage> {
   @override
   void initState() {
     super.initState();
-    // calcPageNameList = CalcPageNameEnum.values.map((e) => e.pageName).toList();
+
   }
 
   @override
@@ -120,15 +111,6 @@ class CalcPageState extends ConsumerState<CalcPage> {
                   },
                 )
               : null,
-
-      // 広告用のbottomnavigator
-      // bottomNavigationBar: Container(
-      //   alignment: Alignment.center,
-      //   child: AdWidget(ad: adMyBanner),
-      //   width: adMyBanner.size.width.toDouble(),
-      //   height: adMyBanner.size.height.toDouble(),
-      // ),
-      // ),
     );
   }
 }
@@ -382,7 +364,9 @@ class CalcRunButton extends ConsumerWidget {
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.red),
           foregroundColor: MaterialStateProperty.all(Colors.white),
-          padding: MaterialStateProperty.all(const EdgeInsets.all(30.0)),
+          padding: MaterialStateProperty.all(
+            const EdgeInsets.fromLTRB(30, 20, 30, 20),
+          ),
         ),
         child: const Text(
           '計算実行',
