@@ -1,4 +1,3 @@
-import 'package:elec_facility_calc/ads_options.dart';
 import 'package:elec_facility_calc/src/model/data_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,7 +28,6 @@ class CalcPageState extends ConsumerState<CalcPage> {
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
@@ -46,71 +44,74 @@ class CalcPageState extends ConsumerState<CalcPage> {
     /// 電線管設計用
     int maxNumCable = 20;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(calcPageNameList[selectedBottomNavi]),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(calcPageNameList[selectedBottomNavi]),
+        ),
+
+        /// bottomNavigationBarで選択されたitemについて
+        /// widgetのListから選択し、ListViewを表示する
+        body: <Widget>[
+          ListViewCableDesign(
+            listViewPadding: listViewPadding,
+            blockWidth: blockWidth,
+          ),
+          ListViewElecPower(
+            listViewPadding: listViewPadding,
+            blockWidth: blockWidth,
+          ),
+          ListViewConduit(
+            listViewPadding: listViewPadding,
+            blockWidth: blockWidth,
+            maxNumCable: maxNumCable,
+          ),
+        ][selectedBottomNavi],
+
+        /// drawer
+        drawer: const DrawerContents(),
+
+        /// bottomNavigationBar
+        bottomNavigationBar: BottomNavigationBar(
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(PageNameEnum.cableDesign.icon),
+              label: PageNameEnum.cableDesign.title,
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(PageNameEnum.elecPower.icon),
+              label: PageNameEnum.elecPower.title,
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(PageNameEnum.conduit.icon),
+              label: PageNameEnum.conduit.title,
+            ),
+          ],
+          currentIndex: selectedBottomNavi,
+          onTap: (index) {
+            ref.read(bottomNaviSelectProvider.state).state = index;
+          },
+        ),
+
+        /// 電線管設計のときのみケーブル選択のためfloatingActionButtonを設置
+        floatingActionButton:
+            calcPageNameList[selectedBottomNavi] == PageNameEnum.conduit.title
+                ? FloatingActionButton(
+                    tooltip: 'ケーブル追加',
+                    child: const Icon(Icons.add),
+                    onPressed: () {
+                      if (ref.read(conduitCalcProvider).length < maxNumCable) {
+                        ref.read(conduitCalcProvider.notifier).addCable();
+                        ref.read(conduitCalcProvider.notifier).calcCableArea();
+                      } else {
+                        /// snackbarで警告
+                        SnackBarAlert(context: context).snackbar('これ以上追加できません');
+                      }
+                    },
+                  )
+                : null,
       ),
-
-      /// bottomNavigationBarで選択されたitemについて
-      /// widgetのListから選択し、ListViewを表示する
-      body: <Widget>[
-        ListViewCableDesign(
-          listViewPadding: listViewPadding,
-          blockWidth: blockWidth,
-        ),
-        ListViewElecPower(
-          listViewPadding: listViewPadding,
-          blockWidth: blockWidth,
-        ),
-        ListViewConduit(
-          listViewPadding: listViewPadding,
-          blockWidth: blockWidth,
-          maxNumCable: maxNumCable,
-        ),
-      ][selectedBottomNavi],
-
-      /// drawer
-      drawer: const DrawerContents(),
-
-      /// bottomNavigationBar
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(PageNameEnum.cableDesign.icon),
-            label: PageNameEnum.cableDesign.title,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(PageNameEnum.elecPower.icon),
-            label: PageNameEnum.elecPower.title,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(PageNameEnum.conduit.icon),
-            label: PageNameEnum.conduit.title,
-          ),
-        ],
-        currentIndex: selectedBottomNavi,
-        onTap: (index) {
-          ref.read(bottomNaviSelectProvider.state).state = index;
-        },
-      ),
-
-      /// 電線管設計のときのみケーブル選択のためfloatingActionButtonを設置
-      floatingActionButton:
-          calcPageNameList[selectedBottomNavi] == PageNameEnum.conduit.title
-              ? FloatingActionButton(
-                  tooltip: 'ケーブル追加',
-                  child: const Icon(Icons.add),
-                  onPressed: () {
-                    if (ref.read(conduitCalcProvider).length < maxNumCable) {
-                      ref.read(conduitCalcProvider.notifier).addCable();
-                      ref.read(conduitCalcProvider.notifier).calcCableArea();
-                    } else {
-                      /// snackbarで警告
-                      SnackBarAlert(context: context).snackbar('これ以上追加できません');
-                    }
-                  },
-                )
-              : null,
     );
   }
 }
@@ -359,6 +360,7 @@ class CalcRunButton extends ConsumerWidget {
       margin: EdgeInsets.fromLTRB(paddingSize, 0, paddingSize, 0),
       child: ElevatedButton(
         onPressed: () {
+          FocusScope.of(context).unfocus();
           func();
         },
         style: ButtonStyle(

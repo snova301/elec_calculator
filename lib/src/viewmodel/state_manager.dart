@@ -136,7 +136,7 @@ final settingProvider =
 /// 設定のStateNotifierを定義
 class SettingProviderNotifier extends StateNotifier<SettingDataClass> {
   // 空のデータとして初期化
-  SettingProviderNotifier() : super(const SettingDataClass(darkMode: true));
+  SettingProviderNotifier() : super(const SettingDataClass(darkMode: false));
 
   void updateDarkMode(bool value) {
     state = state.copyWith(darkMode: value);

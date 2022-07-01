@@ -216,18 +216,52 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
       }
 
       /// 入力した数値を整形してTextEditingControllerに入れる
-      state = state.copyWith(
-        elecOut: elecOut.toString(),
-      );
-      state = state.copyWith(
-        volt: volt.toString(),
-      );
-      state = state.copyWith(
-        cosFai: cosFai.toString(),
-      );
-      state = state.copyWith(
-        cableLength: cableLength.toString(),
-      );
+      /// web版は問題ないがandroid版では必ず小数点が入ってしまうため
+      /// 整数の場合、intからstringに変換
+
+      /// 電気出力
+      if (elecOut.toDouble() == elecOut.toInt().toDouble()) {
+        state = state.copyWith(
+          elecOut: elecOut.toInt().toString(),
+        );
+      } else {
+        state = state.copyWith(
+          elecOut: elecOut.toString(),
+        );
+      }
+
+      /// 電圧
+      if (volt.toDouble() == volt.toInt().toDouble()) {
+        state = state.copyWith(
+          volt: volt.toInt().toString(),
+        );
+      } else {
+        state = state.copyWith(
+          volt: volt.toString(),
+        );
+      }
+
+      /// 力率
+      if (cosFai.toDouble() == cosFai.toInt().toDouble()) {
+        state = state.copyWith(
+          cosFai: cosFai.toInt().toString(),
+        );
+      } else {
+        state = state.copyWith(
+          cosFai: cosFai.toString(),
+        );
+      }
+
+      /// ケーブル長
+      if (cableLength.toDouble() == cableLength.toInt().toDouble()) {
+        state = state.copyWith(
+          cableLength: cableLength.toInt().toString(),
+        );
+      } else {
+        state = state.copyWith(
+          cableLength: cableLength.toString(),
+        );
+      }
     } catch (e) {
       /// 数値変換や整形に失敗した場合、falseを返す
       return false;

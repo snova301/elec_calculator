@@ -7,7 +7,6 @@ import 'package:elec_facility_calc/src/view/about_page.dart';
 import 'package:elec_facility_calc/src/view/setting_page.dart';
 import 'package:elec_facility_calc/src/view/common_page.dart';
 import 'package:elec_facility_calc/src/view/wiring_list_page.dart';
-import 'package:elec_facility_calc/ads_options.dart';
 
 class MyHomePage extends ConsumerWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -153,15 +152,19 @@ class _AgreementContainer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.all(10),
+
+      //  Container(
+      //   padding: const EdgeInsets.all(10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           const Text(
             'ご利用は',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 11, color: Colors.grey),
+            style: TextStyle(fontSize: 10, color: Colors.grey),
           ),
           TextButton(
             onPressed: () {
@@ -175,13 +178,13 @@ class _AgreementContainer extends ConsumerWidget {
             child: const Text(
               '利用規約',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 11, color: Colors.blue),
+              style: TextStyle(fontSize: 10, color: Colors.blue),
             ),
           ),
           const Text(
             'と',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 11, color: Colors.grey),
+            style: TextStyle(fontSize: 10, color: Colors.grey),
           ),
           TextButton(
             onPressed: () {
@@ -195,13 +198,13 @@ class _AgreementContainer extends ConsumerWidget {
             child: const Text(
               'プライバシーポリシー',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 11, color: Colors.blue),
+              style: TextStyle(fontSize: 10, color: Colors.blue),
             ),
           ),
           const Text(
             'に同意したものとします。',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 11, color: Colors.grey),
+            style: TextStyle(fontSize: 10, color: Colors.grey),
           ),
         ],
       ),

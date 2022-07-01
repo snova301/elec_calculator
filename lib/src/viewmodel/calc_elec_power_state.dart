@@ -128,15 +128,41 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
       }
 
       /// 入力した数値を整形してTextEditingControllerに入れる
-      state = state.copyWith(
-        volt: volt.toString(),
-      );
-      state = state.copyWith(
-        current: current.toString(),
-      );
-      state = state.copyWith(
-        cosFai: cosFai.toString(),
-      );
+      /// web版は問題ないがandroid版では必ず小数点が入ってしまうため
+      /// 整数の場合、intからstringに変換
+
+      /// 電圧
+      if (volt.toDouble() == volt.toInt().toDouble()) {
+        state = state.copyWith(
+          volt: volt.toInt().toString(),
+        );
+      } else {
+        state = state.copyWith(
+          volt: volt.toString(),
+        );
+      }
+
+      /// 電流
+      if (current.toDouble() == current.toInt().toDouble()) {
+        state = state.copyWith(
+          current: current.toInt().toString(),
+        );
+      } else {
+        state = state.copyWith(
+          current: current.toString(),
+        );
+      }
+
+      /// 力率
+      if (cosFai.toDouble() == cosFai.toInt().toDouble()) {
+        state = state.copyWith(
+          cosFai: cosFai.toInt().toString(),
+        );
+      } else {
+        state = state.copyWith(
+          cosFai: cosFai.toString(),
+        );
+      }
     } catch (e) {
       /// 数値変換や整形に失敗した場合、falseを返す
       return false;

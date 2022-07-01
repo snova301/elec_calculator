@@ -151,7 +151,7 @@ class SnackBarAlert {
         // key: key,
         content: Text(
           message,
-          textAlign: TextAlign.center,
+          // textAlign: TextAlign.center,
           // style: TextStyle(
           //   color: Colors.white,
           // ),
@@ -170,5 +170,6 @@ class SnackBarAlert {
 /// URLを開く関数
 void openUrl(urlname) async {
   final Uri url = Uri.parse(urlname);
-  if (!await launchUrl(url)) throw 'Could not launch $url';
+  if (!await launchUrl(url, mode: LaunchMode.externalApplication))
+    throw 'Could not launch $url';
 }

@@ -34,6 +34,30 @@ class AboutPage extends StatelessWidget {
             urlName: 'common/privacypolicy.html',
           ),
 
+          /// お問い合わせフォーム
+          Card(
+            child: ListTile(
+              title: const Text('お問い合わせ'),
+              contentPadding: const EdgeInsets.all(10),
+              onTap: () => openUrl('https://forms.gle/yBGDikXqZzWjco7z8'),
+              trailing: const Icon(Icons.open_in_browser),
+            ),
+          ),
+
+          /// 支援サイト
+          // Card(
+          //   child: ListTile(
+          //     leading: const Icon(
+          //       Icons.favorite_border,
+          //       color: Colors.pink,
+          //     ),
+          //     title: const Text('開発を支援'),
+          //     contentPadding: const EdgeInsets.all(10),
+          //     onTap: () => openUrl('https://www.buymeacoffee.com/snova301'),
+          //     trailing: const Icon(Icons.open_in_browser),
+          //   ),
+          // ),
+
           /// オープンソースライセンスの表示
           Card(
             child: ListTile(
@@ -62,7 +86,7 @@ class _LinkCard extends StatelessWidget {
     return Card(
       child: ListTile(
         title: Text(urlTitle),
-        subtitle: Text('$urlTitle のwebページへ移動します。'),
+        subtitle: Text('$urlTitleのwebページへ移動します。'),
         contentPadding: const EdgeInsets.all(10),
         onTap: () => openUrl('https://snova301.github.io/AppService/$urlName'),
         trailing: const Icon(Icons.open_in_browser),

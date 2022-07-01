@@ -42,25 +42,29 @@ class ListViewConduit extends ConsumerWidget {
         ),
 
         /// 広告
-        isAndroid || isIOS ? ConduitStdBannerContainer() : Container(),
+        isAndroid || isIOS ? const ConduitStdBannerContainer() : Container(),
 
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ConduitConduitTypeCard(
-              height: infoHeight,
-            ),
-            ConduitConduitSizeCard(
-              title: '32',
-              result: ref.watch(conduitOccupancy32Provider),
-              height: infoHeight,
-            ),
-            ConduitConduitSizeCard(
-              title: '48',
-              result: ref.watch(conduitOccupancy48Provider),
-              height: infoHeight,
-            ),
-          ],
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              ConduitConduitTypeCard(
+                height: infoHeight,
+              ),
+              ConduitConduitSizeCard(
+                title: '32',
+                result: ref.watch(conduitOccupancy32Provider),
+                height: infoHeight,
+              ),
+              ConduitConduitSizeCard(
+                title: '48',
+                result: ref.watch(conduitOccupancy48Provider),
+                height: infoHeight,
+              ),
+            ],
+          ),
         ),
 
         /// ケーブルの一覧
@@ -71,14 +75,6 @@ class ListViewConduit extends ConsumerWidget {
             itemCount: ref.watch(conduitCalcProvider).length,
             itemBuilder: (context, index) {
               return ConduitCableCard(index: index);
-              // return Column(
-              //   children: [
-              //     ConduitCableCard(index: index),
-              //     index == ref.watch(conduitCalcProvider).length - 1
-              //         ? const LargeBannerContainer()
-              //         : Container(),
-              //   ],
-              // );
             },
           ),
         ),

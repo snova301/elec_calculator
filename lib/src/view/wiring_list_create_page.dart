@@ -1,4 +1,5 @@
 import 'package:elec_facility_calc/ads_options.dart';
+import 'package:elec_facility_calc/main.dart';
 import 'package:elec_facility_calc/src/viewmodel/wiring_list_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,46 +27,51 @@ class WiringCreatePage extends ConsumerWidget {
     final remarksController =
         ref.watch(wiringListSettingProvider).remarksController;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(isCreate ? 'ケーブル追加' : 'ケーブル編集'),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(10),
-        children: <Widget>[
-          /// ケーブル名称
-          WiringCreateTextFieldMain(
-            controller: nameController,
-            labelText: 'ケーブル名称',
-          ),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(isCreate ? 'ケーブル追加' : 'ケーブル編集'),
+        ),
+        body: ListView(
+          padding: const EdgeInsets.all(10),
+          children: <Widget>[
+            /// ケーブル名称
+            WiringCreateTextFieldMain(
+              controller: nameController,
+              labelText: 'ケーブル名称',
+            ),
 
-          /// ケーブル種類の選択
-          const WiringCreateCableTypeSelect(),
+            /// ケーブル種類の選択
+            const WiringCreateCableTypeSelect(),
 
-          /// 出発点の選択
-          WiringCreateTextFieldMain(
-            controller: startPointController,
-            labelText: '出発点',
-          ),
+            /// 出発点の選択
+            WiringCreateTextFieldMain(
+              controller: startPointController,
+              labelText: '出発点',
+            ),
 
-          /// 到着点の選択
-          WiringCreateTextFieldMain(
-            controller: endPointController,
-            labelText: '到着点',
-          ),
+            /// 到着点の選択
+            WiringCreateTextFieldMain(
+              controller: endPointController,
+              labelText: '到着点',
+            ),
 
-          /// 備考
-          WiringCreateTextFieldSub(
-            controller: remarksController,
-            labelText: '備考',
-          ),
+            /// 備考
+            WiringCreateTextFieldSub(
+              controller: remarksController,
+              labelText: '備考',
+            ),
 
-          /// 実行ボタン
-          const WiringCreateRunButton(),
+            /// 実行ボタン
+            const WiringCreateRunButton(),
 
-          /// 広告
-          const WiringListRecBannerContainer(),
-        ],
+            /// 広告
+            isAndroid || isIOS
+                ? const WiringListRecBannerContainer()
+                : Container(),
+          ],
+        ),
       ),
     );
   }
@@ -124,8 +130,8 @@ class WiringCreateTextFieldSub extends ConsumerWidget {
       title: TextFormField(
         controller: controller,
         maxLength: 300,
-        minLines: 5,
-        maxLines: 5,
+        minLines: 3,
+        maxLines: 3,
         decoration: InputDecoration(
           labelText: labelText,
           alignLabelWithHint: true,
@@ -150,7 +156,7 @@ class WiringCreateCableTypeSelect extends ConsumerWidget {
           border: OutlineInputBorder(),
         ),
         alignment: AlignmentDirectional.center,
-        menuMaxHeight: 200,
+        menuMaxHeight: 320,
         value: ref.watch(wiringListSettingProvider).cableType,
         items: CableData().cableTypeList.map<DropdownMenuItem<String>>(
           (String value) {

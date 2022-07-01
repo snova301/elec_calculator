@@ -1,4 +1,5 @@
 import 'package:elec_facility_calc/ads_options.dart';
+import 'package:elec_facility_calc/main.dart';
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,9 +39,9 @@ class WiringListPageState extends ConsumerState<WiringListPage> {
         title: Text(PageNameEnum.wiring.title),
       ),
       body: Column(
-        children: const <Widget>[
+        children: <Widget>[
           /// 情報画面
-          Text(
+          const Text(
             'ケーブルは $maxNum 本まで設定できます。',
             style: TextStyle(
               fontSize: 13,
@@ -48,13 +49,15 @@ class WiringListPageState extends ConsumerState<WiringListPage> {
           ),
 
           /// 広告
-          WiringListStdBannerContainer(),
+          isAndroid || isIOS
+              ? const WiringListStdBannerContainer()
+              : Container(),
 
           /// 絞り込み用widget
-          WiringSearchView(),
+          const WiringSearchView(),
 
           /// リスト
-          Expanded(
+          const Expanded(
             child: WiringView(),
           ),
         ],
@@ -125,7 +128,7 @@ class WiringListSearchCard extends ConsumerWidget {
         padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
         child: DropdownButton(
           alignment: AlignmentDirectional.center,
-          menuMaxHeight: 200,
+          menuMaxHeight: 240,
           value: ref.watch(providerStr),
           underline: Container(),
           items: ref.watch(providerList).map<DropdownMenuItem<String>>(
@@ -136,8 +139,8 @@ class WiringListSearchCard extends ConsumerWidget {
                 child: Text(
                   value,
                   style: const TextStyle(
-                      // fontSize: 12,
-                      ),
+                    fontSize: 13,
+                  ),
                 ),
               );
             },
@@ -189,8 +192,9 @@ class WiringView extends ConsumerWidget {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Cable Type : $cableType'),
-                  Text('Cable Route : $startPoint ---> $endPoint'),
+                  Text('ケーブル種類 : $cableType'),
+                  Text('出発点 : $startPoint'),
+                  Text('到着点 : $endPoint'),
                 ],
               ),
 
@@ -221,10 +225,29 @@ class WiringView extends ConsumerWidget {
                 ref.read(wiringListSettingProvider);
 
                 /// ページ遷移
+                /// 下から上に上がるアニメーション
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const WiringCreatePage(),
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) {
+                      return const WiringCreatePage();
+                    },
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      return SlideTransition(
+                        position: animation.drive(
+                          Tween(
+                            begin: const Offset(0.0, 1.0),
+                            end: Offset.zero,
+                          ).chain(
+                            CurveTween(
+                              curve: Curves.easeInOut,
+                            ),
+                          ),
+                        ),
+                        child: child,
+                      );
+                    },
                   ),
                 );
               },
@@ -262,10 +285,29 @@ class WiringAddFAB extends ConsumerWidget {
           );
 
           /// ページ遷移
+          /// 下から上に上がるアニメーション
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => const WiringCreatePage(),
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return const WiringCreatePage();
+              },
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return SlideTransition(
+                  position: animation.drive(
+                    Tween(
+                      begin: const Offset(0.0, 1.0),
+                      end: Offset.zero,
+                    ).chain(
+                      CurveTween(
+                        curve: Curves.easeInOut,
+                      ),
+                    ),
+                  ),
+                  child: child,
+                );
+              },
             ),
           );
         } else {
