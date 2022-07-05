@@ -58,7 +58,7 @@ class MyAppState extends ConsumerState<MyApp> {
     try {
       StateManagerClass().getPrefs(ref);
     } catch (e) {
-      print(e);
+      // print(e);
     }
   }
 
@@ -92,6 +92,9 @@ class MyAppState extends ConsumerState<MyApp> {
       supportedLocales: const [
         Locale("ja", "JP"),
       ],
+      // routes: <String, WidgetBuilder>{
+      //   '/home': (BuildContext context) => const MyHomePage(),
+      // },
     );
   }
 }

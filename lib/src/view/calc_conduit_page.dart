@@ -1,5 +1,7 @@
 import 'package:elec_facility_calc/ads_options.dart';
 import 'package:elec_facility_calc/main.dart';
+import 'package:elec_facility_calc/src/model/data_class.dart';
+import 'package:elec_facility_calc/src/view/common_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/src/data/cable_data.dart';
@@ -7,21 +9,23 @@ import 'package:elec_facility_calc/src/data/conduit_data.dart';
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:elec_facility_calc/src/viewmodel/calc_conduit_state.dart';
 
-/// 電線管設計のListView Widget
-class ListViewConduit extends ConsumerWidget {
-  final double listViewPadding;
-  final double blockWidth;
-  final int maxNumCable;
-
-  const ListViewConduit({
-    Key? key,
-    required this.listViewPadding,
-    required this.blockWidth,
-    required this.maxNumCable,
-  }) : super(key: key);
+/// 電線管設計ページ
+class CalcConduitPage extends ConsumerStatefulWidget {
+  const CalcConduitPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  CalcConduitPageState createState() => CalcConduitPageState();
+}
+
+class CalcConduitPageState extends ConsumerState<CalcConduitPage> {
+  @override
+  Widget build(BuildContext context) {
+    /// 画面情報取得
+    final mediaQueryData = MediaQuery.of(context);
+    final screenWidth = mediaQueryData.size.width;
+    // final blockWidth = screenWidth / 100 * 20;
+    final listViewPadding = screenWidth / 20;
+
     /// 広告の初期化
     AdsSettingsClass().initConduitStd();
 
@@ -31,54 +35,86 @@ class ListViewConduit extends ConsumerWidget {
     /// 情報カードの高さ
     double infoHeight = 100;
 
-    return Column(
-      children: [
-        /// 情報画面
-        Text(
-          'ケーブルは $maxNumCable 本まで設定できます。',
-          style: const TextStyle(
-            fontSize: 13,
+    /// 電線管設計用
+    int maxNumCable = 20;
+
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            PageNameEnum.conduit.title,
           ),
         ),
+        body: Column(
+          children: [
+            /// 情報画面
+            Text(
+              'ケーブルは $maxNumCable 本まで設定できます。',
+              style: const TextStyle(
+                fontSize: 13,
+              ),
+            ),
 
-        /// 広告
-        isAndroid || isIOS ? const ConduitStdBannerContainer() : Container(),
+            /// 広告
+            // isAndroid || isIOS
+            //     ? const ConduitStdBannerContainer()
+            //     : Container(),
 
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              ConduitConduitTypeCard(
-                height: infoHeight,
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.all(10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  ConduitConduitTypeCard(
+                    height: infoHeight,
+                  ),
+                  ConduitConduitSizeCard(
+                    title: '32',
+                    result: ref.watch(conduitOccupancy32Provider),
+                    height: infoHeight,
+                  ),
+                  ConduitConduitSizeCard(
+                    title: '48',
+                    result: ref.watch(conduitOccupancy48Provider),
+                    height: infoHeight,
+                  ),
+                ],
               ),
-              ConduitConduitSizeCard(
-                title: '32',
-                result: ref.watch(conduitOccupancy32Provider),
-                height: infoHeight,
+            ),
+
+            /// ケーブルの一覧
+            Expanded(
+              child: ListView.builder(
+                padding: EdgeInsets.fromLTRB(
+                    listViewPadding, 10, listViewPadding, 10),
+                itemCount: ref.watch(conduitCalcProvider).length,
+                itemBuilder: (context, index) {
+                  return ConduitCableCard(index: index);
+                },
               ),
-              ConduitConduitSizeCard(
-                title: '48',
-                result: ref.watch(conduitOccupancy48Provider),
-                height: infoHeight,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
 
-        /// ケーブルの一覧
-        Expanded(
-          child: ListView.builder(
-            padding:
-                EdgeInsets.fromLTRB(listViewPadding, 10, listViewPadding, 10),
-            itemCount: ref.watch(conduitCalcProvider).length,
-            itemBuilder: (context, index) {
-              return ConduitCableCard(index: index);
-            },
-          ),
+        /// drawer
+        drawer: const DrawerContents(),
+
+        floatingActionButton: FloatingActionButton(
+          tooltip: 'ケーブル追加',
+          child: const Icon(Icons.add),
+          onPressed: () {
+            if (ref.read(conduitCalcProvider).length < maxNumCable) {
+              ref.read(conduitCalcProvider.notifier).addCable();
+              ref.read(conduitCalcProvider.notifier).calcCableArea();
+            } else {
+              /// snackbarで警告
+              SnackBarAlert(context: context).snackbar('これ以上追加できません');
+            }
+          },
         ),
-      ],
+      ),
     );
   }
 }

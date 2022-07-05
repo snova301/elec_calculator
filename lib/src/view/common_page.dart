@@ -1,12 +1,12 @@
-import 'package:elec_facility_calc/src/model/data_class.dart';
-import 'package:elec_facility_calc/src/view/wiring_list_page.dart';
-import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:elec_facility_calc/src/view/about_page.dart';
-import 'package:elec_facility_calc/src/view/calc_page.dart';
-import 'package:elec_facility_calc/src/view/home_page.dart';
+import 'package:elec_facility_calc/src/model/data_class.dart';
+import 'package:elec_facility_calc/src/view/calc_cable_design_page.dart';
+import 'package:elec_facility_calc/src/view/calc_conduit_page.dart';
+import 'package:elec_facility_calc/src/view/calc_elec_power_page.dart';
+import 'package:elec_facility_calc/src/view/wiring_list_page.dart';
 import 'package:elec_facility_calc/src/view/setting_page.dart';
 
 /// ドロワーの中身
@@ -37,8 +37,7 @@ class DrawerContents extends ConsumerWidget {
             title: Text(PageNameEnum.toppage.title),
             leading: Icon(PageNameEnum.toppage.icon),
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const MyHomePage()));
+              Navigator.popUntil(context, (route) => route.isFirst);
             },
           ),
 
@@ -47,11 +46,11 @@ class DrawerContents extends ConsumerWidget {
             title: Text(PageNameEnum.cableDesign.title),
             leading: Icon(PageNameEnum.cableDesign.icon),
             onTap: () {
-              ref.read(bottomNaviSelectProvider.state).state = 0;
+              Navigator.popUntil(context, (route) => route.isFirst);
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const CalcPage(),
+                  builder: (context) => const CalcCableDesignPage(),
                 ),
               );
             },
@@ -62,11 +61,11 @@ class DrawerContents extends ConsumerWidget {
             title: Text(PageNameEnum.elecPower.title),
             leading: Icon(PageNameEnum.elecPower.icon),
             onTap: () {
-              ref.read(bottomNaviSelectProvider.state).state = 1;
+              Navigator.popUntil(context, (route) => route.isFirst);
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const CalcPage(),
+                  builder: (context) => const CalcElecPowerPage(),
                 ),
               );
             },
@@ -77,11 +76,11 @@ class DrawerContents extends ConsumerWidget {
             title: Text(PageNameEnum.conduit.title),
             leading: Icon(PageNameEnum.conduit.icon),
             onTap: () {
-              ref.read(bottomNaviSelectProvider.state).state = 2;
+              Navigator.popUntil(context, (route) => route.isFirst);
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const CalcPage(),
+                  builder: (context) => const CalcConduitPage(),
                 ),
               );
             },
@@ -92,6 +91,7 @@ class DrawerContents extends ConsumerWidget {
             title: Text(PageNameEnum.wiring.title),
             leading: Icon(PageNameEnum.wiring.icon),
             onTap: () {
+              Navigator.popUntil(context, (route) => route.isFirst);
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -106,6 +106,7 @@ class DrawerContents extends ConsumerWidget {
             title: Text(PageNameEnum.setting.title),
             leading: Icon(PageNameEnum.setting.icon),
             onTap: () {
+              Navigator.popUntil(context, (route) => route.isFirst);
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -170,6 +171,11 @@ class SnackBarAlert {
 /// URLを開く関数
 void openUrl(urlname) async {
   final Uri url = Uri.parse(urlname);
-  if (!await launchUrl(url, mode: LaunchMode.externalApplication))
+  try {
+    await launchUrl(url, mode: LaunchMode.externalApplication);
+  } catch (e) {
     throw 'Could not launch $url';
+  }
+  // if (!await launchUrl(url, mode: LaunchMode.externalApplication))
+  //   throw 'Could not launch $url';
 }

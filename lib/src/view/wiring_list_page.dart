@@ -49,9 +49,9 @@ class WiringListPageState extends ConsumerState<WiringListPage> {
           ),
 
           /// 広告
-          isAndroid || isIOS
-              ? const WiringListStdBannerContainer()
-              : Container(),
+          // isAndroid || isIOS
+          //     ? const WiringListStdBannerContainer()
+          //     : Container(),
 
           /// 絞り込み用widget
           const WiringSearchView(),

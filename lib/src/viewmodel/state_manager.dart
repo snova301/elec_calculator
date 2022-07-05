@@ -124,9 +124,6 @@ class StateManagerClass {
   }
 }
 
-/// 計算ページのbottomNavi
-final bottomNaviSelectProvider = StateProvider((ref) => 0);
-
 /// 設定のProviderの定義
 final settingProvider =
     StateNotifierProvider<SettingProviderNotifier, SettingDataClass>((ref) {

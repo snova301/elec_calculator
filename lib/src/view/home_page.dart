@@ -1,8 +1,9 @@
+import 'package:elec_facility_calc/src/view/calc_cable_design_page.dart';
+import 'package:elec_facility_calc/src/view/calc_conduit_page.dart';
+import 'package:elec_facility_calc/src/view/calc_elec_power_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/src/model/data_class.dart';
-import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
-import 'package:elec_facility_calc/src/view/calc_page.dart';
 import 'package:elec_facility_calc/src/view/about_page.dart';
 import 'package:elec_facility_calc/src/view/setting_page.dart';
 import 'package:elec_facility_calc/src/view/common_page.dart';
@@ -29,30 +30,24 @@ class MyHomePage extends ConsumerWidget {
               children: <Widget>[
                 _PagePush(
                   title: PageNameEnum.cableDesign.title,
-                  pagepush: const CalcPage(),
+                  pagepush: const CalcCableDesignPage(),
                   backGroundColor: Colors.green,
                   textColor: Colors.white,
                   icon: PageNameEnum.cableDesign.icon,
-                  bottomNaviFunc: () =>
-                      ref.read(bottomNaviSelectProvider.state).state = 0,
                 ),
                 _PagePush(
                   title: PageNameEnum.elecPower.title,
-                  pagepush: const CalcPage(),
+                  pagepush: const CalcElecPowerPage(),
                   backGroundColor: Colors.green,
                   textColor: Colors.white,
                   icon: PageNameEnum.elecPower.icon,
-                  bottomNaviFunc: () =>
-                      ref.read(bottomNaviSelectProvider.state).state = 1,
                 ),
                 _PagePush(
                   title: PageNameEnum.conduit.title,
-                  pagepush: const CalcPage(),
+                  pagepush: const CalcConduitPage(),
                   backGroundColor: Colors.green,
                   textColor: Colors.white,
                   icon: PageNameEnum.conduit.icon,
-                  bottomNaviFunc: () =>
-                      ref.read(bottomNaviSelectProvider.state).state = 2,
                 ),
                 _PagePush(
                   title: PageNameEnum.wiring.title,
@@ -90,7 +85,6 @@ class _PagePush extends ConsumerWidget {
   final Color? backGroundColor;
   final Color? textColor;
   final IconData? icon;
-  final Function? bottomNaviFunc;
 
   const _PagePush({
     Key? key,
@@ -99,7 +93,6 @@ class _PagePush extends ConsumerWidget {
     this.backGroundColor,
     this.textColor,
     this.icon,
-    this.bottomNaviFunc,
   }) : super(key: key);
 
   @override
@@ -109,11 +102,6 @@ class _PagePush extends ConsumerWidget {
       elevation: 2,
       child: InkWell(
         onTap: () {
-          /// bottomNaviの値を変更
-          if (bottomNaviFunc != null) {
-            bottomNaviFunc!();
-          }
-
           /// ページ遷移
           Navigator.push(
             context,
