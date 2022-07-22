@@ -30,7 +30,8 @@ class ConduitCalcNotifier extends StateNotifier<List<ConduitCalcDataClass>> {
       cableArea = 0;
     } else {
       cableArea = cableItems
-          .map((e) => e.cableType == CableTypeEnum.cvt600v.cableType
+          .map((e) => e.cableType == CableTypeEnum.cvt600v.cableType ||
+                  e.cableType == CableTypeEnum.cvt6600v.cableType
               ? 3 * pow(e.cableRadius / 2, 2) * pi
               : pow(e.cableRadius / 2, 2) * pi)
           .reduce((value, element) => value + element);
