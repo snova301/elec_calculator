@@ -56,9 +56,11 @@ class CalcElecPowerPageState extends ConsumerState<CalcElecPowerPage> {
             /// 電圧入力
             InputTextCard(
               title: '線間電圧',
-              unit: 'V',
+              unit: ref.watch(elecPowerProvider).voltUnit!,
+              // unit: 'V',
               message: '整数のみ',
               controller: ref.watch(elecPowerTxtCtrVoltProvider),
+              isVoltUnit: true,
             ),
 
             /// 電流値入力

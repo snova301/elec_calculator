@@ -11,8 +11,8 @@ final cableDesignProvider =
 });
 
 /// 初期値
-const _initData = CableDesignData(
-  phase: '単相',
+var _initData = CableDesignData(
+  phase: PhaseNameEnum.single.str,
   cableType: '600V CV-2C',
   elecOut: '1500',
   volt: '200',

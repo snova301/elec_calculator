@@ -1,4 +1,5 @@
 import 'package:elec_facility_calc/src/model/data_class.dart';
+import 'package:elec_facility_calc/src/viewmodel/calc_elec_power_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,56 +57,50 @@ class CalcPhaseSelectCard extends ConsumerWidget {
           ),
 
           /// 単相 or 三相の選択row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              /// 単相
-              Container(
-                margin: const EdgeInsets.all(8),
-                child: ElevatedButton(
+          Container(
+            margin: const EdgeInsets.all(8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                /// 単相
+                ElevatedButton(
                   onPressed: () {
-                    onPressedFunc(PhaseNameEnum.single.phase);
+                    onPressedFunc(PhaseNameEnum.single.str);
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
-                        phase == PhaseNameEnum.single.phase
+                        phase == PhaseNameEnum.single.str
                             ? Colors.green
                             : null),
                     foregroundColor: MaterialStateProperty.all(
-                        phase == PhaseNameEnum.single.phase
+                        phase == PhaseNameEnum.single.str
                             ? Colors.white
                             : null),
                     padding:
                         MaterialStateProperty.all(const EdgeInsets.all(20)),
                   ),
-                  child: Text(PhaseNameEnum.single.phase),
+                  child: Text(PhaseNameEnum.single.str),
                 ),
-              ),
 
-              /// 三相
-              Container(
-                margin: const EdgeInsets.all(8),
-                child: ElevatedButton(
+                /// 三相
+
+                ElevatedButton(
                   onPressed: () {
-                    onPressedFunc(PhaseNameEnum.three.phase);
+                    onPressedFunc(PhaseNameEnum.three.str);
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
-                        phase == PhaseNameEnum.three.phase
-                            ? Colors.green
-                            : null),
+                        phase == PhaseNameEnum.three.str ? Colors.green : null),
                     foregroundColor: MaterialStateProperty.all(
-                        phase == PhaseNameEnum.three.phase
-                            ? Colors.white
-                            : null),
+                        phase == PhaseNameEnum.three.str ? Colors.white : null),
                     padding:
                         MaterialStateProperty.all(const EdgeInsets.all(20.0)),
                   ),
-                  child: Text(PhaseNameEnum.three.phase),
+                  child: Text(PhaseNameEnum.three.str),
                 ),
-              ),
-            ],
-          )
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -118,6 +113,7 @@ class InputTextCard extends ConsumerWidget {
   final String unit; // 単位
   final String message; // tooltip用メッセージ
   final TextEditingController controller; // TextEditingController
+  final bool? isVoltUnit; // 電圧の単位のbool
 
   const InputTextCard({
     Key? key,
@@ -125,6 +121,7 @@ class InputTextCard extends ConsumerWidget {
     required this.unit,
     required this.message,
     required this.controller,
+    this.isVoltUnit = false,
   }) : super(key: key);
 
   @override
@@ -169,6 +166,80 @@ class InputTextCard extends ConsumerWidget {
               ),
             ),
           ),
+
+          /// 電圧の単位選択
+          isVoltUnit!
+              ? Container(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      /// 文字
+                      const Text(
+                        '単位',
+                        style: TextStyle(
+                          fontSize: 13,
+                        ),
+                      ),
+
+                      /// 選択用ボタン
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          /// 単位v
+                          /// 単位が選択されていたら緑に反転
+                          ElevatedButton(
+                            onPressed: () {
+                              ref
+                                  .read(elecPowerProvider.notifier)
+                                  .updateVoltUnit(VoltUnitEnum.v.str);
+                            },
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  ref.read(elecPowerProvider).voltUnit ==
+                                          VoltUnitEnum.v.str
+                                      ? Colors.green
+                                      : null),
+                              foregroundColor: MaterialStateProperty.all(
+                                  ref.read(elecPowerProvider).voltUnit ==
+                                          VoltUnitEnum.v.str
+                                      ? Colors.white
+                                      : null),
+                              padding: MaterialStateProperty.all(
+                                  const EdgeInsets.all(20)),
+                            ),
+                            child: Text(VoltUnitEnum.v.str),
+                          ),
+
+                          /// 単位kV
+                          /// 単位が選択されていたら緑に反転
+                          ElevatedButton(
+                            onPressed: () {
+                              ref
+                                  .read(elecPowerProvider.notifier)
+                                  .updateVoltUnit(VoltUnitEnum.kv.str);
+                            },
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  ref.read(elecPowerProvider).voltUnit ==
+                                          VoltUnitEnum.kv.str
+                                      ? Colors.green
+                                      : null),
+                              foregroundColor: MaterialStateProperty.all(
+                                  ref.read(elecPowerProvider).voltUnit ==
+                                          VoltUnitEnum.kv.str
+                                      ? Colors.white
+                                      : null),
+                              padding: MaterialStateProperty.all(
+                                  const EdgeInsets.all(20)),
+                            ),
+                            child: Text(VoltUnitEnum.kv.str),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ))
+              : Container(),
         ],
       ),
     );

@@ -10,9 +10,10 @@ final elecPowerProvider =
 });
 
 /// 初期データ
-const _initData = ElecPowerData(
-  phase: '単相',
+var _initData = ElecPowerData(
+  phase: PhaseNameEnum.single.str,
   volt: '100',
+  voltUnit: VoltUnitEnum.v.str,
   current: '10',
   cosFai: '80',
   apparentPower: '0',
@@ -23,7 +24,7 @@ const _initData = ElecPowerData(
 
 /// StateNotifierの中身を定義
 class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
-  // 空のマップとして初期化
+  // 初期化
   ElecPowerNotifier() : super(_initData);
 
   /// 全データの更新(shaerd_prefで使用)
@@ -36,15 +37,32 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
     state = state.copyWith(phase: phase);
   }
 
+  /// 電圧単位の変更
+  void updateVoltUnit(String voltUnit) {
+    state = state.copyWith(voltUnit: voltUnit);
+  }
+
+  /// 電圧単位の倍率設定
+  double calcVoltUnitRatio() {
+    /// 電圧単位がVなら1倍
+    if (state.voltUnit == VoltUnitEnum.v.str) {
+      return 1;
+    }
+
+    /// 電圧単位がkVなら1000倍
+    return 1000;
+  }
+
   /// 皮相電力の変更
   double updateApparentPower(String phase, double volt, double current) {
     double appaPower = 0;
-    if (phase == '単相') {
+    double voltUnitRatio = calcVoltUnitRatio();
+    if (phase == PhaseNameEnum.single.str) {
       /// 単相電力計算
-      appaPower = volt * current;
-    } else if (phase == '三相') {
+      appaPower = volt * current * voltUnitRatio;
+    } else if (phase == PhaseNameEnum.three.str) {
       /// 3相電力計算
-      appaPower = sqrt(3) * volt * current;
+      appaPower = sqrt(3) * volt * current * voltUnitRatio;
     }
 
     /// 小数点2桁以下を四捨五入してString型に

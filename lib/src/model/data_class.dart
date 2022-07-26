@@ -33,12 +33,27 @@ enum PhaseNameEnum { single, three }
 
 /// 相選択のenumのextension
 extension PhaseNameEnumExt on PhaseNameEnum {
-  String get phase {
+  String get str {
     switch (this) {
       case PhaseNameEnum.single:
         return '単相';
       case PhaseNameEnum.three:
         return '三相';
+    }
+  }
+}
+
+/// 電圧単位選択のenum
+enum VoltUnitEnum { v, kv }
+
+/// 電圧単位選択のenumのextension
+extension VoltUnitEnumExt on VoltUnitEnum {
+  String get str {
+    switch (this) {
+      case VoltUnitEnum.v:
+        return 'V';
+      case VoltUnitEnum.kv:
+        return 'KV';
     }
   }
 }
@@ -95,22 +110,6 @@ extension PageNameEnumExt on PageNameEnum {
   }
 }
 
-// /// bottomNaviページ名称
-// enum CalcPageNameEnum { cableDesign, elecPower, conduit }
-
-// extension CalcPageNameEnumExt on CalcPageNameEnum {
-//   String get pageName {
-//     switch (this) {
-//       case CalcPageNameEnum.cableDesign:
-//         return 'ケーブル設計';
-//       case CalcPageNameEnum.elecPower:
-//         return '電力計算';
-//       case CalcPageNameEnum.conduit:
-//         return '電線管設計';
-//     }
-//   }
-// }
-
 /// ケーブル設計入力のProvider入力データの定義
 @freezed
 class CableDesignData with _$CableDesignData {
@@ -163,6 +162,9 @@ class ElecPowerData with _$ElecPowerData {
 
     /// 電圧
     required String volt,
+
+    /// 電圧単位
+    required String? voltUnit,
 
     /// 電流
     required String current,

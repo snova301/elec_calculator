@@ -29,7 +29,7 @@ class WiringListPageState extends ConsumerState<WiringListPage> {
     // final screenWidth = mediaQueryData.size.width;
 
     /// 項目の最大数
-    const maxNum = 10;
+    const maxNum = 50;
 
     /// shared_prefのデータ保存用非同期providerの読み込み
     ref.watch(wiringListSPSetProvider);
