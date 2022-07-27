@@ -13,13 +13,14 @@ final elecPowerProvider =
 var _initData = ElecPowerData(
   phase: PhaseNameEnum.single.str,
   volt: '100',
-  voltUnit: VoltUnitEnum.v.str,
+  voltUnit: VoltUnitEnum.v,
   current: '10',
   cosFai: '80',
-  apparentPower: '0',
-  activePower: '0',
-  reactivePower: '0',
-  sinFai: '0',
+  apparentPower: 0,
+  activePower: 0,
+  reactivePower: 0,
+  sinFai: 0,
+  powerUnit: PowerUnitEnum.w,
 );
 
 /// StateNotifierの中身を定義
@@ -38,14 +39,19 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
   }
 
   /// 電圧単位の変更
-  void updateVoltUnit(String voltUnit) {
+  void updateVoltUnit(VoltUnitEnum voltUnit) {
     state = state.copyWith(voltUnit: voltUnit);
+  }
+
+  /// 電力単位の変更
+  void updatePowerUnit(PowerUnitEnum powerUnit) {
+    state = state.copyWith(powerUnit: powerUnit);
   }
 
   /// 電圧単位の倍率設定
   double calcVoltUnitRatio() {
     /// 電圧単位がVなら1倍
-    if (state.voltUnit == VoltUnitEnum.v.str) {
+    if (state.voltUnit == VoltUnitEnum.v) {
       return 1;
     }
 
@@ -53,10 +59,33 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
     return 1000;
   }
 
+  /// 電力単位の倍率設定
+  double calcPowerUnitRatio() {
+    /// 電力単位がwなら1倍
+    if (state.powerUnit == PowerUnitEnum.w) {
+      return 1;
+    }
+
+    /// 電力単位がkwなら1,000倍
+    else if (state.powerUnit == PowerUnitEnum.kw) {
+      return 1000;
+    }
+
+    /// 電力単位がMWなら1,000,000倍
+    return 1000000;
+  }
+
   /// 皮相電力の変更
-  double updateApparentPower(String phase, double volt, double current) {
+  double updateApparentPower() {
+    /// 読み出し
+    String phase = state.phase;
+    double volt = double.parse(state.volt);
+    double current = double.parse(state.current);
+
+    /// 初期化
     double appaPower = 0;
     double voltUnitRatio = calcVoltUnitRatio();
+
     if (phase == PhaseNameEnum.single.str) {
       /// 単相電力計算
       appaPower = volt * current * voltUnitRatio;
@@ -66,70 +95,76 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
     }
 
     /// 小数点2桁以下を四捨五入してString型に
-    String strAppaPow = (appaPower / 1000).toStringAsFixed(2);
+    // String strAppaPow = (appaPower / 1000).toStringAsFixed(2);
 
     /// 書込み
-    state = state.copyWith(apparentPower: strAppaPow);
+    // state = state.copyWith(apparentPower: strAppaPow);
+    state = state.copyWith(apparentPower: appaPower);
     return appaPower;
   }
 
   /// 有効電力の変更
-  void updateActivePower(double appaPower, double cosFai) {
+  double updateActivePower(double appaPower) {
+    /// 読み込み
+    double cosFai = double.parse(state.cosFai) / 100;
+
     /// 計算
     double actPower = appaPower * cosFai;
 
     /// 小数点2桁以下を四捨五入してString型に
-    String strActPower = (actPower / 1000).toStringAsFixed(2);
+    // String strActPower = (actPower / 1000).toStringAsFixed(2);
 
     /// 書込み
-    state = state.copyWith(activePower: strActPower);
+    state = state.copyWith(activePower: actPower);
+    // state = state.copyWith(activePower: strActPower);
+    return actPower;
   }
 
   /// 無効電力の変更
-  void updateReactivePower(double appaPower, double sinFai) {
+  double updateReactivePower(double appaPower, double sinFai) {
     /// 計算
     double reactPower = appaPower * sinFai;
 
     /// 小数点2桁以下を四捨五入してString型に
-    String strReactPower = (reactPower / 1000).toStringAsFixed(2);
+    // String strReactPower = (reactPower / 1000).toStringAsFixed(2);
 
     /// 書込み
-    state = state.copyWith(reactivePower: strReactPower);
+    state = state.copyWith(reactivePower: reactPower);
+    // state = state.copyWith(reactivePower: strReactPower);
+    return reactPower;
   }
 
   /// sinφの変更
-  double updateSinFai(double cosFai) {
+  double updateSinFai() {
+    /// 読み込み
+    double cosFai = double.parse(state.cosFai) / 100;
+
     /// cosφからsinφを算出
     double sinFai = sqrt(1 - pow(cosFai, 2));
 
     /// 小数点1桁以下を四捨五入してString型に
-    String strSinFai = (sinFai * 100).toStringAsFixed(1);
+    // String strSinFai = (sinFai * 100).toStringAsFixed(1);
 
     /// sinφを書込み
-    state = state.copyWith(sinFai: strSinFai);
+    state = state.copyWith(sinFai: sinFai);
+    // state = state.copyWith(sinFai: strSinFai);
 
     return sinFai;
   }
 
   /// 計算実行
-  void run(String strVolt, String strCurrent, String strCosFai) {
-    /// Textfieldのテキストから取得し、電圧、電流、力率double型へ変換
-    String phase = state.phase;
-    double volt = double.parse(strVolt);
-    double current = double.parse(strCurrent);
-    double cosFai = double.parse(strCosFai) / 100;
-
+  void run() {
     /// 皮相電力を計算
-    double appaPower = updateApparentPower(phase, volt, current);
+    double appaPower = updateApparentPower();
 
     /// sinφを計算
-    double sinFai = updateSinFai(cosFai);
+    double sinFai = updateSinFai();
 
     /// 有効電力の計算
-    updateActivePower(appaPower, cosFai);
+    double activePower = updateActivePower(appaPower);
 
     /// 無効電力の計算
-    updateReactivePower(appaPower, sinFai);
+    double reactPower = updateReactivePower(appaPower, sinFai);
   }
 
   /// runメソッドが実行できるか確認するメソッド
@@ -207,4 +242,51 @@ final elecPowerTxtCtrCurrentProvider = StateProvider((ref) {
 
 final elecPowerTxtCtrCosFaiProvider = StateProvider((ref) {
   return TextEditingController(text: ref.watch(elecPowerProvider).cosFai);
+});
+
+/// 結果の値
+/// 皮相電力
+final elecPowerApparentPowerProvider = StateProvider<String>((ref) {
+  /// 読み込み
+  double power = ref.watch(elecPowerProvider).apparentPower;
+  double powerUnitRatio =
+      ref.watch(elecPowerProvider.notifier).calcPowerUnitRatio();
+
+  /// 小数点1桁以下を四捨五入してString型に
+  String strPower = (power / powerUnitRatio).toStringAsFixed(1);
+  return strPower;
+});
+
+/// 有効電力
+final elecPowerActivePowerProvider = StateProvider((ref) {
+  /// 読み込み
+  double power = ref.watch(elecPowerProvider).activePower;
+  double powerUnitRatio =
+      ref.watch(elecPowerProvider.notifier).calcPowerUnitRatio();
+
+  /// 小数点3桁以下を四捨五入してString型に
+  String strPower = (power / powerUnitRatio).toStringAsFixed(1);
+  return strPower;
+});
+
+/// 無効電力
+final elecPowerReactivePowerProvider = StateProvider((ref) {
+  /// 読み込み
+  double power = ref.watch(elecPowerProvider).reactivePower;
+  double powerUnitRatio =
+      ref.watch(elecPowerProvider.notifier).calcPowerUnitRatio();
+
+  /// 小数点3桁以下を四捨五入してString型に
+  String strPower = (power / powerUnitRatio).toStringAsFixed(1);
+  return strPower;
+});
+
+/// sinφ
+final elecPowerSinFaiProvider = StateProvider((ref) {
+  /// 読み込み
+  double sinFai = ref.watch(elecPowerProvider).sinFai;
+
+  /// 小数点1桁以下を四捨五入してString型に
+  String strSinFai = (sinFai * 100).toStringAsFixed(1);
+  return strSinFai;
 });

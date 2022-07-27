@@ -53,7 +53,61 @@ extension VoltUnitEnumExt on VoltUnitEnum {
       case VoltUnitEnum.v:
         return 'V';
       case VoltUnitEnum.kv:
-        return 'KV';
+        return 'kV';
+    }
+  }
+}
+
+/// 電力単位選択のenum
+enum PowerUnitEnum { w, kw, mw }
+
+/// 電力単位選択のenumのextension
+extension PowerUnitEnumExt on PowerUnitEnum {
+  /// 一般
+  String get str {
+    switch (this) {
+      case PowerUnitEnum.w:
+        return '-';
+      case PowerUnitEnum.kw:
+        return 'k';
+      case PowerUnitEnum.mw:
+        return 'M';
+    }
+  }
+
+  /// 皮相電力
+  String get strApparent {
+    switch (this) {
+      case PowerUnitEnum.w:
+        return 'VA';
+      case PowerUnitEnum.kw:
+        return 'kVA';
+      case PowerUnitEnum.mw:
+        return 'MVA';
+    }
+  }
+
+  /// 有効電力
+  String get strActive {
+    switch (this) {
+      case PowerUnitEnum.w:
+        return 'W';
+      case PowerUnitEnum.kw:
+        return 'kW';
+      case PowerUnitEnum.mw:
+        return 'MW';
+    }
+  }
+
+  /// 無効電力
+  String get strReactive {
+    switch (this) {
+      case PowerUnitEnum.w:
+        return 'Var';
+      case PowerUnitEnum.kw:
+        return 'kVar';
+      case PowerUnitEnum.mw:
+        return 'MVar';
     }
   }
 }
@@ -133,6 +187,12 @@ class CableDesignData with _$CableDesignData {
     /// ケーブル長さ
     required String cableLength,
 
+    // /// 電圧単位
+    // required VoltUnitEnum voltUnit,
+
+    // /// 電力単位
+    // required PowerUnitEnum powerUnit,
+
     /// 出力
     /// 電流
     required String current,
@@ -164,7 +224,7 @@ class ElecPowerData with _$ElecPowerData {
     required String volt,
 
     /// 電圧単位
-    required String? voltUnit,
+    required VoltUnitEnum voltUnit,
 
     /// 電流
     required String current,
@@ -174,16 +234,19 @@ class ElecPowerData with _$ElecPowerData {
 
     /// 出力
     /// 皮相電力
-    required String apparentPower,
+    required double apparentPower,
 
     /// 有効電力
-    required String activePower,
+    required double activePower,
 
     /// 無効電力
-    required String reactivePower,
+    required double reactivePower,
 
     /// sinφ
-    required String sinFai,
+    required double sinFai,
+
+    /// 電力単位
+    required PowerUnitEnum powerUnit,
   }) = _ElecPowerData;
 
   /// from Json

@@ -43,6 +43,7 @@ class CalcPhaseSelectCard extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          /// タイトル
           Container(
             margin: const EdgeInsets.fromLTRB(8, 8, 0, 0),
             child: const Tooltip(
@@ -83,7 +84,6 @@ class CalcPhaseSelectCard extends ConsumerWidget {
                 ),
 
                 /// 三相
-
                 ElevatedButton(
                   onPressed: () {
                     onPressedFunc(PhaseNameEnum.three.str);
@@ -107,21 +107,124 @@ class CalcPhaseSelectCard extends ConsumerWidget {
   }
 }
 
+/// 電力の単位の選択widget
+class CalcPowerUnitSelectCard extends ConsumerWidget {
+  final String powerUnit;
+  final Function(PowerUnitEnum value) onPressedFunc;
+
+  const CalcPowerUnitSelectCard({
+    Key? key,
+    required this.powerUnit,
+    required this.onPressedFunc,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          /// タイトル
+          Container(
+            margin: const EdgeInsets.fromLTRB(8, 8, 0, 0),
+            child: const Tooltip(
+              message: '選択してください',
+              child: Text(
+                '電力の単位',
+                style: TextStyle(
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ),
+
+          /// 選択row
+          Container(
+            margin: const EdgeInsets.all(8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                /// 単位なし
+                ElevatedButton(
+                  onPressed: () {
+                    onPressedFunc(PowerUnitEnum.w);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        powerUnit == PowerUnitEnum.w.str ? Colors.green : null),
+                    foregroundColor: MaterialStateProperty.all(
+                        powerUnit == PowerUnitEnum.w.str ? Colors.white : null),
+                    padding:
+                        MaterialStateProperty.all(const EdgeInsets.all(20)),
+                  ),
+                  child: Text(PowerUnitEnum.w.str),
+                ),
+
+                /// kオーダー
+                ElevatedButton(
+                  onPressed: () {
+                    onPressedFunc(PowerUnitEnum.kw);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        powerUnit == PowerUnitEnum.kw.str
+                            ? Colors.green
+                            : null),
+                    foregroundColor: MaterialStateProperty.all(
+                        powerUnit == PowerUnitEnum.kw.str
+                            ? Colors.white
+                            : null),
+                    padding:
+                        MaterialStateProperty.all(const EdgeInsets.all(20.0)),
+                  ),
+                  child: Text(PowerUnitEnum.kw.str),
+                ),
+
+                /// Mオーダー
+                ElevatedButton(
+                  onPressed: () {
+                    onPressedFunc(PowerUnitEnum.mw);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        powerUnit == PowerUnitEnum.mw.str
+                            ? Colors.green
+                            : null),
+                    foregroundColor: MaterialStateProperty.all(
+                        powerUnit == PowerUnitEnum.mw.str
+                            ? Colors.white
+                            : null),
+                    padding:
+                        MaterialStateProperty.all(const EdgeInsets.all(20.0)),
+                  ),
+                  child: Text(PowerUnitEnum.mw.str),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// 入力用のwidget
 class InputTextCard extends ConsumerWidget {
   final String title; // タイトル
-  final String unit; // 単位
+  final String? unit; // 単位
   final String message; // tooltip用メッセージ
-  final TextEditingController controller; // TextEditingController
-  final bool? isVoltUnit; // 電圧の単位のbool
+  final TextEditingController? controller; // TextEditingController
+  // final bool? isElecPowerVoltUnit; // 電圧の単位のbool
+  final Function(VoltUnitEnum value)? onPressedVoltUnitFunc;
 
   const InputTextCard({
     Key? key,
     required this.title,
-    required this.unit,
+    this.unit,
     required this.message,
-    required this.controller,
-    this.isVoltUnit = false,
+    this.controller,
+    // this.isElecPowerVoltUnit = false,
+    this.onPressedVoltUnitFunc,
   }) : super(key: key);
 
   @override
@@ -146,29 +249,32 @@ class InputTextCard extends ConsumerWidget {
           ),
 
           /// 表示
-          ListTile(
-            title: TextField(
-              controller: controller,
-              textAlign: TextAlign.right,
-              style: const TextStyle(
-                fontSize: 18,
-              ),
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-                LengthLimitingTextInputFormatter(10),
-              ],
-            ),
-            trailing: Text(
-              unit,
-              style: const TextStyle(
-                fontSize: 13,
-              ),
-            ),
-          ),
+          controller != null && unit != null
+              ? ListTile(
+                  title: TextField(
+                    controller: controller,
+                    textAlign: TextAlign.right,
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                      LengthLimitingTextInputFormatter(10),
+                    ],
+                  ),
+                  trailing: Text(
+                    unit!,
+                    style: const TextStyle(
+                      fontSize: 13,
+                    ),
+                  ),
+                )
+              : Container(),
 
-          /// 電圧の単位選択
-          isVoltUnit!
+          /// 電力計算の電圧単位の選択
+          onPressedVoltUnitFunc != null
+              // isElecPowerVoltUnit! && onPressedFunc != null
               ? Container(
                   padding: const EdgeInsets.all(10),
                   child: Column(
@@ -176,7 +282,7 @@ class InputTextCard extends ConsumerWidget {
                     children: [
                       /// 文字
                       const Text(
-                        '単位',
+                        '電圧単位',
                         style: TextStyle(
                           fontSize: 13,
                         ),
@@ -190,19 +296,17 @@ class InputTextCard extends ConsumerWidget {
                           /// 単位が選択されていたら緑に反転
                           ElevatedButton(
                             onPressed: () {
-                              ref
-                                  .read(elecPowerProvider.notifier)
-                                  .updateVoltUnit(VoltUnitEnum.v.str);
+                              onPressedVoltUnitFunc!(VoltUnitEnum.v);
                             },
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(
                                   ref.read(elecPowerProvider).voltUnit ==
-                                          VoltUnitEnum.v.str
+                                          VoltUnitEnum.v
                                       ? Colors.green
                                       : null),
                               foregroundColor: MaterialStateProperty.all(
                                   ref.read(elecPowerProvider).voltUnit ==
-                                          VoltUnitEnum.v.str
+                                          VoltUnitEnum.v
                                       ? Colors.white
                                       : null),
                               padding: MaterialStateProperty.all(
@@ -215,19 +319,17 @@ class InputTextCard extends ConsumerWidget {
                           /// 単位が選択されていたら緑に反転
                           ElevatedButton(
                             onPressed: () {
-                              ref
-                                  .read(elecPowerProvider.notifier)
-                                  .updateVoltUnit(VoltUnitEnum.kv.str);
+                              onPressedVoltUnitFunc!(VoltUnitEnum.kv);
                             },
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(
                                   ref.read(elecPowerProvider).voltUnit ==
-                                          VoltUnitEnum.kv.str
+                                          VoltUnitEnum.kv
                                       ? Colors.green
                                       : null),
                               foregroundColor: MaterialStateProperty.all(
                                   ref.read(elecPowerProvider).voltUnit ==
-                                          VoltUnitEnum.kv.str
+                                          VoltUnitEnum.kv
                                       ? Colors.white
                                       : null),
                               padding: MaterialStateProperty.all(
@@ -238,7 +340,8 @@ class InputTextCard extends ConsumerWidget {
                         ],
                       ),
                     ],
-                  ))
+                  ),
+                )
               : Container(),
         ],
       ),
@@ -295,6 +398,8 @@ class OutputTextCard extends ConsumerWidget {
                     ),
                   ),
           ),
+
+          ///
         ],
       ),
     );

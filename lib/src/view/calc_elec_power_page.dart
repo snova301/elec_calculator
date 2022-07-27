@@ -56,11 +56,12 @@ class CalcElecPowerPageState extends ConsumerState<CalcElecPowerPage> {
             /// 電圧入力
             InputTextCard(
               title: '線間電圧',
-              unit: ref.watch(elecPowerProvider).voltUnit!,
-              // unit: 'V',
+              unit: ref.watch(elecPowerProvider).voltUnit.str,
               message: '整数のみ',
               controller: ref.watch(elecPowerTxtCtrVoltProvider),
-              isVoltUnit: true,
+              // isElecPowerVoltUnit: true,
+              onPressedVoltUnitFunc: (VoltUnitEnum value) =>
+                  ref.read(elecPowerProvider.notifier).updateVoltUnit(value),
             ),
 
             /// 電流値入力
@@ -87,13 +88,17 @@ class CalcElecPowerPageState extends ConsumerState<CalcElecPowerPage> {
                 final volt = ref.watch(elecPowerTxtCtrVoltProvider).text;
                 final current = ref.watch(elecPowerTxtCtrCurrentProvider).text;
                 final cosFai = ref.watch(elecPowerTxtCtrCosFaiProvider).text;
-                if (ref
+
+                /// 実行できるか確認
+                bool isRunCheck = ref
                     .read(elecPowerProvider.notifier)
-                    .isRunCheck(volt, current, cosFai)) {
-                  ref
-                      .watch(elecPowerProvider.notifier)
-                      .run(volt, current, cosFai);
+                    .isRunCheck(volt, current, cosFai);
+
+                /// 実行可能なら計算実行
+                if (isRunCheck) {
+                  ref.watch(elecPowerProvider.notifier).run();
                 } else {
+                  /// 実行不可能ならエラーダイアログ
                   showDialog<void>(
                     context: context,
                     builder: (BuildContext context) {
@@ -107,32 +112,44 @@ class CalcElecPowerPageState extends ConsumerState<CalcElecPowerPage> {
             /// 結果表示
             const SeparateText(title: '計算結果'),
 
+            /// 単位選択
+            CalcPowerUnitSelectCard(
+              powerUnit: ref.watch(elecPowerProvider).powerUnit.str,
+              onPressedFunc: (PowerUnitEnum value) =>
+                  ref.read(elecPowerProvider.notifier).updatePowerUnit(value),
+            ),
+
             /// 皮相電力
             OutputTextCard(
               title: '皮相電力',
-              unit: 'kVA',
-              result: ref.watch(elecPowerProvider).apparentPower,
+              unit: ref.watch(elecPowerProvider).powerUnit.strApparent,
+              // unit: 'kVA',
+              result: ref.watch(elecPowerApparentPowerProvider),
+              // result: ref.watch(elecPowerProvider).apparentPower,
             ),
 
             /// 有効電力
             OutputTextCard(
               title: '有効電力',
-              unit: 'kW',
-              result: ref.watch(elecPowerProvider).activePower,
+              unit: ref.watch(elecPowerProvider).powerUnit.strActive,
+              result: ref.watch(elecPowerActivePowerProvider),
+              // result: ref.watch(elecPowerProvider).activePower,
             ),
 
             /// 無効電力
             OutputTextCard(
               title: '無効電力',
-              unit: 'kVar',
-              result: ref.watch(elecPowerProvider).reactivePower,
+              unit: ref.watch(elecPowerProvider).powerUnit.strReactive,
+              result: ref.watch(elecPowerReactivePowerProvider),
+              // result: ref.watch(elecPowerProvider).reactivePower,
             ),
 
             /// sinφ
             OutputTextCard(
               title: 'sinφ',
               unit: '%',
-              result: ref.watch(elecPowerProvider).sinFai,
+              result: ref.watch(elecPowerSinFaiProvider),
+              // result: ref.watch(elecPowerProvider).sinFai,
             ),
 
             /// 広告表示
