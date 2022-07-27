@@ -1,8 +1,7 @@
-import 'package:elec_facility_calc/src/model/data_class.dart';
-import 'package:elec_facility_calc/src/viewmodel/calc_elec_power_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:elec_facility_calc/src/model/data_class.dart';
 
 /// 計算ページ
 /// 計算条件や計算結果の文字表示widget
@@ -107,7 +106,7 @@ class CalcPhaseSelectCard extends ConsumerWidget {
   }
 }
 
-/// 電力の単位の選択widget
+/// 電力の単位の接頭語選択widget
 class CalcPowerUnitSelectCard extends ConsumerWidget {
   final String powerUnit;
   final Function(PowerUnitEnum value) onPressedFunc;
@@ -130,7 +129,7 @@ class CalcPowerUnitSelectCard extends ConsumerWidget {
             child: const Tooltip(
               message: '選択してください',
               child: Text(
-                '電力の単位',
+                '電力の単位の接頭語',
                 style: TextStyle(
                   fontSize: 13,
                 ),
@@ -214,8 +213,8 @@ class InputTextCard extends ConsumerWidget {
   final String? unit; // 単位
   final String message; // tooltip用メッセージ
   final TextEditingController? controller; // TextEditingController
-  // final bool? isElecPowerVoltUnit; // 電圧の単位のbool
-  final Function(VoltUnitEnum value)? onPressedVoltUnitFunc;
+  final Function(VoltUnitEnum value)? onPressedVoltUnitFunc; // 電圧の単位選択
+  final Function(PowerUnitEnum value)? onPressedPowerUnitFunc; // 電力の単位選択
 
   const InputTextCard({
     Key? key,
@@ -223,19 +222,19 @@ class InputTextCard extends ConsumerWidget {
     this.unit,
     required this.message,
     this.controller,
-    // this.isElecPowerVoltUnit = false,
     this.onPressedVoltUnitFunc,
+    this.onPressedPowerUnitFunc,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(
+      elevation: 2,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           /// タイトル
           Container(
-            // padding: const EdgeInsets.all(8),
             margin: const EdgeInsets.fromLTRB(8, 8, 0, 0),
             child: Tooltip(
               message: message,
@@ -272,9 +271,8 @@ class InputTextCard extends ConsumerWidget {
                 )
               : Container(),
 
-          /// 電力計算の電圧単位の選択
+          /// 電圧単位の選択
           onPressedVoltUnitFunc != null
-              // isElecPowerVoltUnit! && onPressedFunc != null
               ? Container(
                   padding: const EdgeInsets.all(10),
                   child: Column(
@@ -300,13 +298,11 @@ class InputTextCard extends ConsumerWidget {
                             },
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(
-                                  ref.read(elecPowerProvider).voltUnit ==
-                                          VoltUnitEnum.v
+                                  unit == VoltUnitEnum.v.str
                                       ? Colors.green
                                       : null),
                               foregroundColor: MaterialStateProperty.all(
-                                  ref.read(elecPowerProvider).voltUnit ==
-                                          VoltUnitEnum.v
+                                  unit == VoltUnitEnum.v.str
                                       ? Colors.white
                                       : null),
                               padding: MaterialStateProperty.all(
@@ -323,19 +319,105 @@ class InputTextCard extends ConsumerWidget {
                             },
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(
-                                  ref.read(elecPowerProvider).voltUnit ==
-                                          VoltUnitEnum.kv
+                                  unit == VoltUnitEnum.kv.str
                                       ? Colors.green
                                       : null),
                               foregroundColor: MaterialStateProperty.all(
-                                  ref.read(elecPowerProvider).voltUnit ==
-                                          VoltUnitEnum.kv
+                                  unit == VoltUnitEnum.kv.str
                                       ? Colors.white
                                       : null),
                               padding: MaterialStateProperty.all(
                                   const EdgeInsets.all(20)),
                             ),
                             child: Text(VoltUnitEnum.kv.str),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              : Container(),
+
+          /// 電力単位の選択
+          onPressedPowerUnitFunc != null
+              ? Container(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      /// 文字
+                      const Text(
+                        '電力単位',
+                        style: TextStyle(
+                          fontSize: 13,
+                        ),
+                      ),
+
+                      /// 選択用ボタン
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          /// 単位W
+                          /// 単位が選択されていたら緑に反転
+                          ElevatedButton(
+                            onPressed: () {
+                              onPressedPowerUnitFunc!(PowerUnitEnum.w);
+                            },
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  unit == PowerUnitEnum.w.strActive
+                                      ? Colors.green
+                                      : null),
+                              foregroundColor: MaterialStateProperty.all(
+                                  unit == PowerUnitEnum.w.strActive
+                                      ? Colors.white
+                                      : null),
+                              padding: MaterialStateProperty.all(
+                                  const EdgeInsets.all(20)),
+                            ),
+                            child: Text(PowerUnitEnum.w.strActive),
+                          ),
+
+                          /// 単位kW
+                          /// 単位が選択されていたら緑に反転
+                          ElevatedButton(
+                            onPressed: () {
+                              onPressedPowerUnitFunc!(PowerUnitEnum.kw);
+                            },
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  unit == PowerUnitEnum.kw.strActive
+                                      ? Colors.green
+                                      : null),
+                              foregroundColor: MaterialStateProperty.all(
+                                  unit == PowerUnitEnum.kw.strActive
+                                      ? Colors.white
+                                      : null),
+                              padding: MaterialStateProperty.all(
+                                  const EdgeInsets.all(20)),
+                            ),
+                            child: Text(PowerUnitEnum.kw.strActive),
+                          ),
+
+                          /// 単位MW
+                          /// 単位が選択されていたら緑に反転
+                          ElevatedButton(
+                            onPressed: () {
+                              onPressedPowerUnitFunc!(PowerUnitEnum.mw);
+                            },
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  unit == PowerUnitEnum.mw.strActive
+                                      ? Colors.green
+                                      : null),
+                              foregroundColor: MaterialStateProperty.all(
+                                  unit == PowerUnitEnum.mw.strActive
+                                      ? Colors.white
+                                      : null),
+                              padding: MaterialStateProperty.all(
+                                  const EdgeInsets.all(20)),
+                            ),
+                            child: Text(PowerUnitEnum.mw.strActive),
                           ),
                         ],
                       ),

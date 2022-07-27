@@ -176,35 +176,44 @@ class CableDesignData with _$CableDesignData {
     required String cableType,
 
     /// 電気出力
-    required String elecOut,
+    required double elecOut,
 
     /// 電圧
-    required String volt,
+    required double volt,
 
     /// 力率
-    required String cosFai,
+    required double cosFai,
 
     /// ケーブル長さ
-    required String cableLength,
+    required double cableLength,
 
-    // /// 電圧単位
-    // required VoltUnitEnum voltUnit,
+    /// 電圧単位
+    required VoltUnitEnum voltUnit,
 
-    // /// 電力単位
-    // required PowerUnitEnum powerUnit,
+    /// 電力単位
+    required PowerUnitEnum powerUnit,
 
     /// 出力
     /// 電流
-    required String current,
+    required double current,
 
-    /// ケーブルサイズ
-    required String cableSize,
+    /// ケーブルサイズ(第1候補)
+    required String cableSize1,
 
-    /// 電圧降下
-    required String voltDrop,
+    /// 電圧降下(第1候補)
+    required double voltDrop1,
 
-    /// 電力損失
-    required String powerLoss,
+    /// 電力損失(第1候補)
+    required double powerLoss1,
+
+    /// ケーブルサイズ(第2候補)
+    required String cableSize2,
+
+    /// 電圧降下(第2候補)
+    required double voltDrop2,
+
+    /// 電力損失(第2候補)
+    required double powerLoss2,
   }) = _CableDesignData;
 
   /// from Json
@@ -221,16 +230,16 @@ class ElecPowerData with _$ElecPowerData {
     required String phase,
 
     /// 電圧
-    required String volt,
+    required double volt,
 
     /// 電圧単位
     required VoltUnitEnum voltUnit,
 
     /// 電流
-    required String current,
+    required double current,
 
     /// 力率
-    required String cosFai,
+    required double cosFai,
 
     /// 出力
     /// 皮相電力

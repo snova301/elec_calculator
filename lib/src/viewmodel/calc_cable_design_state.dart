@@ -13,15 +13,20 @@ final cableDesignProvider =
 /// 初期値
 var _initData = CableDesignData(
   phase: PhaseNameEnum.single.str,
-  cableType: '600V CV-2C',
-  elecOut: '1500',
-  volt: '200',
-  cosFai: '80',
-  cableLength: '10',
-  current: '0',
-  cableSize: '0',
-  voltDrop: '0',
-  powerLoss: '0',
+  cableType: CableTypeEnum.cv2c600v.cableType,
+  elecOut: 1500,
+  volt: 200,
+  cosFai: 80,
+  cableLength: 10,
+  current: 0,
+  cableSize1: '0',
+  voltDrop1: 0,
+  powerLoss1: 0,
+  cableSize2: '0',
+  voltDrop2: 0,
+  powerLoss2: 0,
+  powerUnit: PowerUnitEnum.w,
+  voltUnit: VoltUnitEnum.v,
 );
 
 /// ケーブル設計のNotifierの定義
@@ -44,9 +49,56 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
     state = state.copyWith(cableType: cableType);
   }
 
+  /// 電圧単位の変更
+  void updateVoltUnit(VoltUnitEnum voltUnit) {
+    state = state.copyWith(voltUnit: voltUnit);
+  }
+
+  /// 電力単位の変更
+  void updatePowerUnit(PowerUnitEnum powerUnit) {
+    state = state.copyWith(powerUnit: powerUnit);
+  }
+
+  /// 電圧単位の倍率設定
+  double calcVoltUnitRatio() {
+    /// 電圧単位がVなら1倍
+    if (state.voltUnit == VoltUnitEnum.v) {
+      return 1;
+    }
+
+    /// 電圧単位がkVなら1000倍
+    return 1000;
+  }
+
+  /// 電力単位の倍率設定
+  double calcPowerUnitRatio() {
+    /// 電力単位がwなら1倍
+    if (state.powerUnit == PowerUnitEnum.w) {
+      return 1;
+    }
+
+    /// 電力単位がkwなら1,000倍
+    else if (state.powerUnit == PowerUnitEnum.kw) {
+      return 1000;
+    }
+
+    /// 電力単位がMWなら1,000,000倍
+    return 1000000;
+  }
+
   /// 電流の変更
-  double updateCurrent(
-      String phase, double elecOut, double volt, double cosFai) {
+  void updateCurrent() {
+    /// 倍率読み込み
+    double powerUnitRatio = calcPowerUnitRatio();
+    double voltUnitRatio = calcVoltUnitRatio();
+
+    /// 読み込み
+    String phase = state.phase;
+    double elecOut = state.elecOut * powerUnitRatio;
+    double volt = state.volt * voltUnitRatio;
+    double cosFai = state.cosFai / 100;
+
+    /// 初期化
     double current = 0;
 
     /// 相ごとの計算
@@ -58,21 +110,14 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
       current = elecOut / (sqrt(3) * volt * cosFai);
     }
 
-    /// 小数点2桁以下を四捨五入してString型に
-    String strCurrent = current.toStringAsFixed(1);
-
     /// 書込み
-    state = state.copyWith(current: strCurrent);
-
-    return current;
+    state = state.copyWith(current: current);
   }
 
-  /// ケーブルサイズの変更
-  Map updateCableSize(double current) {
+  List calcCableSize() {
     /// 計算用変数初期化
-    double rVal = 0;
-    double xVal = 0;
     String cableType = state.cableType;
+    double current = state.current;
 
     /// ケーブル種類からデータを取得
     /// ケーブルのインピーダンスと許容電流のマップデータ
@@ -89,33 +134,58 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
       }
     });
 
-    /// 許容電流が満たせない場合は'規格なし'を返す。
-    String cableSize = '';
+    return cableAnswerList;
+  }
+
+  /// ケーブルサイズの変更
+  Map updateCableSize() {
+    /// 計算用変数初期化
+    String cableSize1 = '候補なし';
+    String cableSize2 = '候補なし';
+    double rVal1 = 0;
+    double xVal1 = 0;
+    double rVal2 = 0;
+    double xVal2 = 0;
+
+    /// ケーブル候補の選定
+    List cableAnswerList = calcCableSize();
+
+    /// 第1候補の選定
+    /// 許容電流が満たせない場合は'候補なし'を返す。
     if (cableAnswerList.isEmpty) {
-      cableSize = '規格なし';
-      rVal = xVal = 0;
+      rVal1 = xVal1 = 0;
     } else {
-      cableSize = cableAnswerList[0][0];
-      rVal = cableAnswerList[0][1];
-      xVal = cableAnswerList[0][2];
+      cableSize1 = cableAnswerList[0][0];
+      rVal1 = cableAnswerList[0][1];
+      xVal1 = cableAnswerList[0][2];
+
+      /// 第2候補の選定
+      /// 許容電流が満たせない場合は'候補なし'を返す。
+      cableAnswerList.removeAt(0);
+      if (cableAnswerList.isEmpty) {
+        rVal2 = xVal2 = 0;
+      } else {
+        cableSize2 = cableAnswerList[0][0];
+        rVal2 = cableAnswerList[0][1];
+        xVal2 = cableAnswerList[0][2];
+      }
     }
 
     /// 書込み
-    state = state.copyWith(cableSize: cableSize);
+    state = state.copyWith(cableSize1: cableSize1);
+    state = state.copyWith(cableSize2: cableSize2);
 
-    return {'cableSize': cableSize, 'rVal': rVal, 'xVal': xVal};
+    return {'rVal1': rVal1, 'xVal1': xVal1, 'rVal2': rVal2, 'xVal2': xVal2};
   }
 
   /// 電圧降下の変更
-  void updateVoltDrop(
-    String phase,
-    double current,
-    double cableLength,
-    double rVal,
-    double xVal,
-    double cosFai,
-    double sinFai,
-  ) {
+  void updateVoltDrop(double rVal, double xVal, double sinFai, int sizeNum) {
+    /// 読み込み
+    String phase = state.phase;
+    double current = state.current;
+    double cosFai = state.cosFai / 100;
+    double cableLength = state.cableLength / 1000;
+
     /// 電圧降下計算の係数
     double kVal = 1;
 
@@ -130,20 +200,23 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
     double dVoltDrop =
         kVal * current * cableLength * (rVal * cosFai + xVal * sinFai);
 
-    /// 小数点2桁以下を四捨五入してString型に
-    String strVoltDrop = dVoltDrop.toStringAsFixed(1);
-
     /// 書込み
-    state = state.copyWith(voltDrop: strVoltDrop);
+    if (sizeNum == 1) {
+      /// 第1候補
+      state = state.copyWith(voltDrop1: dVoltDrop);
+    } else if (sizeNum == 2) {
+      /// 第2候補
+      state = state.copyWith(voltDrop2: dVoltDrop);
+    }
   }
 
   /// 電力損失の変更
-  void updatePowerLoss(
-    String phase,
-    double current,
-    double rVal,
-    double cableLength,
-  ) {
+  void updatePowerLoss(double rVal, int sizeNum) {
+    /// 読み込み
+    String phase = state.phase;
+    double current = state.current;
+    double cableLength = state.cableLength / 1000;
+
     /// 電力損失計算の係数
     double kVal = 2;
 
@@ -157,43 +230,47 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
     /// 電力損失計算
     double dPowLoss = kVal * rVal * current * current * cableLength;
 
-    /// 小数点2桁以下を四捨五入してString型に
-    String strPowLoss = dPowLoss.toStringAsFixed(1);
-
     /// 書込み
-    state = state.copyWith(powerLoss: strPowLoss);
+    if (sizeNum == 1) {
+      /// 第1候補
+      state = state.copyWith(powerLoss1: dPowLoss);
+    } else if (sizeNum == 2) {
+      /// 第2候補
+      state = state.copyWith(powerLoss2: dPowLoss);
+    }
   }
 
   /// 計算実行
-  void run(
-    String strElecOut,
-    String strVolt,
-    String strCosFai,
-    String strCableLength,
-  ) {
+  void run() {
     /// Textfieldのテキストを取得し、doubleに変換
-    String phase = state.phase;
-    double elecOut = double.parse(strElecOut);
-    double volt = double.parse(strVolt);
-    double cosFai = double.parse(strCosFai) / 100;
-    double cableLength = double.parse(strCableLength) / 1000;
+    double cosFai = state.cosFai / 100;
 
     /// cosφからsinφを算出
     double sinFai = sqrt(1 - pow(cosFai, 2));
 
     /// 電流値の計算
-    double current = updateCurrent(phase, elecOut, volt, cosFai);
+    updateCurrent();
 
     /// ケーブルサイズ計算
-    Map temp = updateCableSize(current);
-    double rVal = temp['rVal'];
-    double xVal = temp['xVal'];
+    Map temp = updateCableSize();
+    double rVal1 = temp['rVal1'];
+    double xVal1 = temp['xVal1'];
+    double rVal2 = temp['rVal2'];
+    double xVal2 = temp['xVal2'];
 
+    /// 第1候補の計算
     /// ケーブル電圧降下計算
-    updateVoltDrop(phase, current, cableLength, rVal, xVal, cosFai, sinFai);
+    updateVoltDrop(rVal1, xVal1, sinFai, 1);
 
     /// ケーブル電力損失計算
-    updatePowerLoss(phase, current, rVal, cableLength);
+    updatePowerLoss(rVal1, 1);
+
+    /// 第2候補の計算
+    /// ケーブル電圧降下計算
+    updateVoltDrop(rVal2, xVal2, sinFai, 2);
+
+    /// ケーブル電力損失計算
+    updatePowerLoss(rVal2, 2);
   }
 
   /// runメソッドが実行できるか確認するメソッド
@@ -220,46 +297,46 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
       /// 整数の場合、intからstringに変換
 
       /// 電気出力
-      if (elecOut.toDouble() == elecOut.toInt().toDouble()) {
+      if (elecOut == elecOut.toInt().toDouble()) {
         state = state.copyWith(
-          elecOut: elecOut.toInt().toString(),
+          elecOut: elecOut.toInt().toDouble(),
         );
       } else {
         state = state.copyWith(
-          elecOut: elecOut.toString(),
+          elecOut: elecOut,
         );
       }
 
       /// 電圧
-      if (volt.toDouble() == volt.toInt().toDouble()) {
+      if (volt == volt.toInt().toDouble()) {
         state = state.copyWith(
-          volt: volt.toInt().toString(),
+          volt: volt.toInt().toDouble(),
         );
       } else {
         state = state.copyWith(
-          volt: volt.toString(),
+          volt: volt,
         );
       }
 
       /// 力率
-      if (cosFai.toDouble() == cosFai.toInt().toDouble()) {
+      if (cosFai == cosFai.toInt().toDouble()) {
         state = state.copyWith(
-          cosFai: cosFai.toInt().toString(),
+          cosFai: cosFai.toInt().toDouble(),
         );
       } else {
         state = state.copyWith(
-          cosFai: cosFai.toString(),
+          cosFai: cosFai,
         );
       }
 
       /// ケーブル長
-      if (cableLength.toDouble() == cableLength.toInt().toDouble()) {
+      if (cableLength == cableLength.toInt().toDouble()) {
         state = state.copyWith(
-          cableLength: cableLength.toInt().toString(),
+          cableLength: cableLength.toInt().toDouble(),
         );
       } else {
         state = state.copyWith(
-          cableLength: cableLength.toString(),
+          cableLength: cableLength,
         );
       }
     } catch (e) {
@@ -279,18 +356,72 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
 
 /// texteditingcontrollerの定義
 final cableDesignTxtCtrElecOutProvider = StateProvider((ref) {
-  return TextEditingController(text: ref.watch(cableDesignProvider).elecOut);
+  return TextEditingController(
+      text: ref.watch(cableDesignProvider).elecOut.toString());
 });
 
 final cableDesignTxtCtrVoltProvider = StateProvider((ref) {
-  return TextEditingController(text: ref.watch(cableDesignProvider).volt);
+  return TextEditingController(
+      text: ref.watch(cableDesignProvider).volt.toString());
 });
 
 final cableDesignTxtCtrCosFaiProvider = StateProvider((ref) {
-  return TextEditingController(text: ref.watch(cableDesignProvider).cosFai);
+  return TextEditingController(
+      text: ref.watch(cableDesignProvider).cosFai.toString());
 });
 
 final cableDesignTxtCtrLengthProvider = StateProvider((ref) {
   return TextEditingController(
-      text: ref.watch(cableDesignProvider).cableLength);
+      text: ref.watch(cableDesignProvider).cableLength.toString());
+});
+
+/// 結果の値
+/// 電流
+final cableDesignCurrentProvider = StateProvider<String>((ref) {
+  /// 読み込み
+  double current = ref.watch(cableDesignProvider).current;
+
+  /// 小数点1桁以下を四捨五入してString型に
+  String strPower = current.toStringAsFixed(1);
+  return strPower;
+});
+
+/// 電圧降下
+final cableDesignVoltDrop1Provider = StateProvider((ref) {
+  /// 読み込み
+  double voltDrop = ref.watch(cableDesignProvider).voltDrop1;
+
+  /// 小数点3桁以下を四捨五入してString型に
+  String strVoltDrop = voltDrop.toStringAsFixed(1);
+  return strVoltDrop;
+});
+
+/// 電力損失
+final cableDesignPowerLoss1Provider = StateProvider((ref) {
+  /// 読み込み
+  double powerLoss = ref.watch(cableDesignProvider).powerLoss1;
+
+  /// 小数点3桁以下を四捨五入してString型に
+  String strPowerLoss = powerLoss.toStringAsFixed(1);
+  return strPowerLoss;
+});
+
+/// 電圧降下
+final cableDesignVoltDrop2Provider = StateProvider((ref) {
+  /// 読み込み
+  double voltDrop = ref.watch(cableDesignProvider).voltDrop2;
+
+  /// 小数点3桁以下を四捨五入してString型に
+  String strVoltDrop = voltDrop.toStringAsFixed(1);
+  return strVoltDrop;
+});
+
+/// 電力損失
+final cableDesignPowerLoss2Provider = StateProvider((ref) {
+  /// 読み込み
+  double powerLoss = ref.watch(cableDesignProvider).powerLoss2;
+
+  /// 小数点3桁以下を四捨五入してString型に
+  String strPowerLoss = powerLoss.toStringAsFixed(1);
+  return strPowerLoss;
 });

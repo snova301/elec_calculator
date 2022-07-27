@@ -60,17 +60,23 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
             /// 電気容量入力
             InputTextCard(
               title: '電気容量',
-              unit: 'W',
+              unit: ref.watch(cableDesignProvider).powerUnit.strActive,
+              // unit: 'W',
               message: '整数のみ',
               controller: ref.watch(cableDesignTxtCtrElecOutProvider),
+              onPressedPowerUnitFunc: (PowerUnitEnum value) =>
+                  ref.read(cableDesignProvider.notifier).updatePowerUnit(value),
             ),
 
             /// 線間電圧入力
             InputTextCard(
               title: '線間電圧',
-              unit: 'V',
+              // unit: 'V',
+              unit: ref.watch(cableDesignProvider).voltUnit.str,
               message: '整数のみ',
               controller: ref.watch(cableDesignTxtCtrVoltProvider),
+              onPressedVoltUnitFunc: (VoltUnitEnum value) =>
+                  ref.read(cableDesignProvider.notifier).updateVoltUnit(value),
             ),
 
             /// 力率入力
@@ -103,18 +109,18 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
                 final strCableLength =
                     ref.watch(cableDesignTxtCtrLengthProvider).text;
 
-                /// 実行時に読み込み関係でエラーを吐き出さないか確認後実行
-                if (ref.read(cableDesignProvider.notifier).isRunCheck(
-                      strElecOut,
-                      strVolt,
-                      strCosFai,
-                      strCableLength,
-                    )) {
-                  ref
-                      .read(cableDesignProvider.notifier)
-                      .run(strElecOut, strVolt, strCosFai, strCableLength);
+                /// 実行時に読み込み関係でエラーを吐き出さないか確認後に実行
+                bool isRunCheck =
+                    ref.read(cableDesignProvider.notifier).isRunCheck(
+                          strElecOut,
+                          strVolt,
+                          strCosFai,
+                          strCableLength,
+                        );
+                if (isRunCheck) {
+                  ref.read(cableDesignProvider.notifier).run();
                 } else {
-                  /// snackbarでエラー表示
+                  /// エラー表示
                   showDialog<void>(
                     context: context,
                     builder: (BuildContext context) {
@@ -132,28 +138,77 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
             OutputTextCard(
               title: '電流',
               unit: 'A',
-              result: ref.watch(cableDesignProvider).current,
+              result: ref.watch(cableDesignCurrentProvider),
             ),
 
-            /// ケーブルサイズ表示
-            OutputTextCard(
-              title: ref.watch(cableDesignProvider).cableType,
-              unit: 'mm2',
-              result: ref.watch(cableDesignProvider).cableSize,
+            /// 第1候補結果
+            Container(
+              margin: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.green),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: ExpansionTile(
+                initiallyExpanded: true,
+                title: const Text('ケーブル第1候補'),
+                children: [
+                  /// ケーブルサイズ表示
+                  OutputTextCard(
+                    title: ref.watch(cableDesignProvider).cableType,
+                    unit: 'mm2',
+                    result: ref.watch(cableDesignProvider).cableSize1,
+                  ),
+
+                  /// 電圧降下表示
+                  OutputTextCard(
+                    title: '電圧降下',
+                    unit: 'V',
+                    result: ref.watch(cableDesignVoltDrop1Provider),
+                  ),
+
+                  /// 電力損失表示
+                  OutputTextCard(
+                    title: '電力損失',
+                    unit: 'W',
+                    result: ref.watch(cableDesignPowerLoss1Provider),
+                  ),
+                ],
+              ),
             ),
 
-            /// 電圧降下表示
-            OutputTextCard(
-              title: '電圧降下',
-              unit: 'V',
-              result: ref.watch(cableDesignProvider).voltDrop,
-            ),
+            /// 第2候補結果
+            Container(
+              margin: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.green),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: ExpansionTile(
+                initiallyExpanded: false,
+                title: const Text('ケーブル第2候補'),
+                children: [
+                  /// ケーブルサイズ表示
+                  OutputTextCard(
+                    title: ref.watch(cableDesignProvider).cableType,
+                    unit: 'mm2',
+                    result: ref.watch(cableDesignProvider).cableSize2,
+                  ),
 
-            /// 電力損失表示
-            OutputTextCard(
-              title: '電力損失',
-              unit: 'W',
-              result: ref.watch(cableDesignProvider).powerLoss,
+                  /// 電圧降下表示
+                  OutputTextCard(
+                    title: '電圧降下',
+                    unit: 'V',
+                    result: ref.watch(cableDesignVoltDrop2Provider),
+                  ),
+
+                  /// 電力損失表示
+                  OutputTextCard(
+                    title: '電力損失',
+                    unit: 'W',
+                    result: ref.watch(cableDesignPowerLoss2Provider),
+                  ),
+                ],
+              ),
             ),
 
             /// 広告表示

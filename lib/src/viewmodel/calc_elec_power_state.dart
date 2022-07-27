@@ -12,10 +12,10 @@ final elecPowerProvider =
 /// 初期データ
 var _initData = ElecPowerData(
   phase: PhaseNameEnum.single.str,
-  volt: '100',
+  volt: 100,
   voltUnit: VoltUnitEnum.v,
-  current: '10',
-  cosFai: '80',
+  current: 10,
+  cosFai: 80,
   apparentPower: 0,
   activePower: 0,
   reactivePower: 0,
@@ -76,11 +76,11 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
   }
 
   /// 皮相電力の変更
-  double updateApparentPower() {
+  void updateApparentPower() {
     /// 読み出し
     String phase = state.phase;
-    double volt = double.parse(state.volt);
-    double current = double.parse(state.current);
+    double volt = state.volt;
+    double current = state.current;
 
     /// 初期化
     double appaPower = 0;
@@ -94,77 +94,61 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
       appaPower = sqrt(3) * volt * current * voltUnitRatio;
     }
 
-    /// 小数点2桁以下を四捨五入してString型に
-    // String strAppaPow = (appaPower / 1000).toStringAsFixed(2);
-
     /// 書込み
-    // state = state.copyWith(apparentPower: strAppaPow);
     state = state.copyWith(apparentPower: appaPower);
-    return appaPower;
   }
 
   /// 有効電力の変更
-  double updateActivePower(double appaPower) {
+  void updateActivePower() {
     /// 読み込み
-    double cosFai = double.parse(state.cosFai) / 100;
+    double appaPower = state.apparentPower;
+    double cosFai = state.cosFai / 100;
 
     /// 計算
     double actPower = appaPower * cosFai;
 
-    /// 小数点2桁以下を四捨五入してString型に
-    // String strActPower = (actPower / 1000).toStringAsFixed(2);
-
     /// 書込み
     state = state.copyWith(activePower: actPower);
-    // state = state.copyWith(activePower: strActPower);
-    return actPower;
   }
 
   /// 無効電力の変更
-  double updateReactivePower(double appaPower, double sinFai) {
+  void updateReactivePower() {
+    /// 読み込み
+    double appaPower = state.apparentPower;
+    double sinFai = state.sinFai;
+
     /// 計算
     double reactPower = appaPower * sinFai;
 
-    /// 小数点2桁以下を四捨五入してString型に
-    // String strReactPower = (reactPower / 1000).toStringAsFixed(2);
-
     /// 書込み
     state = state.copyWith(reactivePower: reactPower);
-    // state = state.copyWith(reactivePower: strReactPower);
-    return reactPower;
   }
 
   /// sinφの変更
-  double updateSinFai() {
+  void updateSinFai() {
     /// 読み込み
-    double cosFai = double.parse(state.cosFai) / 100;
+    double cosFai = state.cosFai / 100;
 
     /// cosφからsinφを算出
     double sinFai = sqrt(1 - pow(cosFai, 2));
 
-    /// 小数点1桁以下を四捨五入してString型に
-    // String strSinFai = (sinFai * 100).toStringAsFixed(1);
-
     /// sinφを書込み
     state = state.copyWith(sinFai: sinFai);
-    // state = state.copyWith(sinFai: strSinFai);
-
-    return sinFai;
   }
 
   /// 計算実行
   void run() {
     /// 皮相電力を計算
-    double appaPower = updateApparentPower();
+    updateApparentPower();
 
     /// sinφを計算
-    double sinFai = updateSinFai();
+    updateSinFai();
 
     /// 有効電力の計算
-    double activePower = updateActivePower(appaPower);
+    updateActivePower();
 
     /// 無効電力の計算
-    double reactPower = updateReactivePower(appaPower, sinFai);
+    updateReactivePower();
   }
 
   /// runメソッドが実行できるか確認するメソッド
@@ -185,35 +169,35 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
       /// 整数の場合、intからstringに変換
 
       /// 電圧
-      if (volt.toDouble() == volt.toInt().toDouble()) {
+      if (volt == volt.toInt().toDouble()) {
         state = state.copyWith(
-          volt: volt.toInt().toString(),
+          volt: volt.toInt().toDouble(),
         );
       } else {
         state = state.copyWith(
-          volt: volt.toString(),
+          volt: volt,
         );
       }
 
       /// 電流
-      if (current.toDouble() == current.toInt().toDouble()) {
+      if (current == current.toInt().toDouble()) {
         state = state.copyWith(
-          current: current.toInt().toString(),
+          current: current.toInt().toDouble(),
         );
       } else {
         state = state.copyWith(
-          current: current.toString(),
+          current: current,
         );
       }
 
       /// 力率
-      if (cosFai.toDouble() == cosFai.toInt().toDouble()) {
+      if (cosFai == cosFai.toInt().toDouble()) {
         state = state.copyWith(
-          cosFai: cosFai.toInt().toString(),
+          cosFai: cosFai.toInt().toDouble(),
         );
       } else {
         state = state.copyWith(
-          cosFai: cosFai.toString(),
+          cosFai: cosFai,
         );
       }
     } catch (e) {
@@ -233,15 +217,18 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
 
 /// texteditingcontrollerの定義
 final elecPowerTxtCtrVoltProvider = StateProvider((ref) {
-  return TextEditingController(text: ref.watch(elecPowerProvider).volt);
+  return TextEditingController(
+      text: ref.watch(elecPowerProvider).volt.toString());
 });
 
 final elecPowerTxtCtrCurrentProvider = StateProvider((ref) {
-  return TextEditingController(text: ref.watch(elecPowerProvider).current);
+  return TextEditingController(
+      text: ref.watch(elecPowerProvider).current.toString());
 });
 
 final elecPowerTxtCtrCosFaiProvider = StateProvider((ref) {
-  return TextEditingController(text: ref.watch(elecPowerProvider).cosFai);
+  return TextEditingController(
+      text: ref.watch(elecPowerProvider).cosFai.toString());
 });
 
 /// 結果の値

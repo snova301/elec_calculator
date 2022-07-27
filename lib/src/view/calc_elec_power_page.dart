@@ -59,7 +59,6 @@ class CalcElecPowerPageState extends ConsumerState<CalcElecPowerPage> {
               unit: ref.watch(elecPowerProvider).voltUnit.str,
               message: '整数のみ',
               controller: ref.watch(elecPowerTxtCtrVoltProvider),
-              // isElecPowerVoltUnit: true,
               onPressedVoltUnitFunc: (VoltUnitEnum value) =>
                   ref.read(elecPowerProvider.notifier).updateVoltUnit(value),
             ),
@@ -123,9 +122,7 @@ class CalcElecPowerPageState extends ConsumerState<CalcElecPowerPage> {
             OutputTextCard(
               title: '皮相電力',
               unit: ref.watch(elecPowerProvider).powerUnit.strApparent,
-              // unit: 'kVA',
               result: ref.watch(elecPowerApparentPowerProvider),
-              // result: ref.watch(elecPowerProvider).apparentPower,
             ),
 
             /// 有効電力
@@ -133,7 +130,6 @@ class CalcElecPowerPageState extends ConsumerState<CalcElecPowerPage> {
               title: '有効電力',
               unit: ref.watch(elecPowerProvider).powerUnit.strActive,
               result: ref.watch(elecPowerActivePowerProvider),
-              // result: ref.watch(elecPowerProvider).activePower,
             ),
 
             /// 無効電力
@@ -141,7 +137,6 @@ class CalcElecPowerPageState extends ConsumerState<CalcElecPowerPage> {
               title: '無効電力',
               unit: ref.watch(elecPowerProvider).powerUnit.strReactive,
               result: ref.watch(elecPowerReactivePowerProvider),
-              // result: ref.watch(elecPowerProvider).reactivePower,
             ),
 
             /// sinφ
@@ -149,7 +144,6 @@ class CalcElecPowerPageState extends ConsumerState<CalcElecPowerPage> {
               title: 'sinφ',
               unit: '%',
               result: ref.watch(elecPowerSinFaiProvider),
-              // result: ref.watch(elecPowerProvider).sinFai,
             ),
 
             /// 広告表示
