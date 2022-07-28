@@ -29,16 +29,18 @@ class CableDataClass {
 }
 
 /// 相選択のenum
-enum PhaseNameEnum { single, three }
+enum PhaseNameEnum { single, three, singlePhaseThreeWire }
 
 /// 相選択のenumのextension
 extension PhaseNameEnumExt on PhaseNameEnum {
   String get str {
     switch (this) {
       case PhaseNameEnum.single:
-        return '単相';
+        return '単相2線';
       case PhaseNameEnum.three:
-        return '三相';
+        return '三相3線';
+      case PhaseNameEnum.singlePhaseThreeWire:
+        return '単相3線';
     }
   }
 }
@@ -170,7 +172,7 @@ class CableDesignData with _$CableDesignData {
   const factory CableDesignData({
     /// 入力
     /// 相
-    required String phase,
+    required PhaseNameEnum phase,
 
     /// ケーブル種類
     required String cableType,
@@ -227,7 +229,7 @@ class ElecPowerData with _$ElecPowerData {
   const factory ElecPowerData({
     /// 入力
     /// 相
-    required String phase,
+    required PhaseNameEnum phase,
 
     /// 電圧
     required double volt,

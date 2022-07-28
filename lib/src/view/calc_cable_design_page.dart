@@ -49,8 +49,8 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
 
             /// 相選択
             CalcPhaseSelectCard(
-              phase: ref.watch(cableDesignProvider).phase,
-              onPressedFunc: (String value) =>
+              phase: ref.watch(cableDesignProvider).phase.str,
+              onPressedFunc: (PhaseNameEnum value) =>
                   ref.read(cableDesignProvider.notifier).updatePhase(value),
             ),
 
@@ -254,8 +254,9 @@ class CableDeignSelectCableType extends ConsumerWidget {
             alignment: Alignment.center,
             child: DropdownButton(
               value: ref.watch(cableDesignProvider).cableType,
-              items: CableData()
-                  .cableTypeList
+              items: CableData().cableTypeList
+                  // items: ref
+                  //     .watch(cableDesignCableTypeDDMenuProvider)
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   alignment: AlignmentDirectional.centerStart,

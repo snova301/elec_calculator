@@ -30,8 +30,8 @@ class ConduitCalcNotifier extends StateNotifier<List<ConduitCalcDataClass>> {
       cableArea = 0;
     } else {
       cableArea = cableItems
-          .map((e) => e.cableType == CableTypeEnum.cvt600v.cableType ||
-                  e.cableType == CableTypeEnum.cvt6600v.cableType
+          .map((e) => e.cableType == CableTypeEnum.cvt600v.str ||
+                  e.cableType == CableTypeEnum.cvt6600v.str
               ? 3 * pow(e.cableRadius / 2, 2) * pi
               : pow(e.cableRadius / 2, 2) * pi)
           .reduce((value, element) => value + element);
@@ -60,7 +60,7 @@ class ConduitCalcNotifier extends StateNotifier<List<ConduitCalcDataClass>> {
     /// ケーブル種類、サイズ、仕上外径を追加
     /// 追加は固定で、600V CV-2C 2sq
     final cableData = ConduitCalcDataClass(
-      cableType: CableTypeEnum.cv2c600v.cableType,
+      cableType: CableTypeEnum.cv2c600v.str,
       cableSize: '2',
       cableRadius: 10.5,
     );
@@ -147,7 +147,7 @@ class ConduitCalcNotifier extends StateNotifier<List<ConduitCalcDataClass>> {
 
 /// 電線管種類のprovider
 final conduitConduitTypeProvider = StateProvider<String>((ref) {
-  return ConduitTypeEnum.pf.conduitType;
+  return ConduitTypeEnum.pf.str;
 });
 
 /// 32%占有率の計算

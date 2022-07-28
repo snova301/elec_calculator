@@ -12,8 +12,8 @@ final cableDesignProvider =
 
 /// 初期値
 var _initData = CableDesignData(
-  phase: PhaseNameEnum.single.str,
-  cableType: CableTypeEnum.cv2c600v.cableType,
+  phase: PhaseNameEnum.single,
+  cableType: CableTypeEnum.cv2c600v.str,
   elecOut: 1500,
   volt: 200,
   cosFai: 80,
@@ -40,7 +40,7 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
   }
 
   /// 相の変更
-  void updatePhase(String phase) {
+  void updatePhase(PhaseNameEnum phase) {
     state = state.copyWith(phase: phase);
   }
 
@@ -93,7 +93,7 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
     double voltUnitRatio = calcVoltUnitRatio();
 
     /// 読み込み
-    String phase = state.phase;
+    PhaseNameEnum phase = state.phase;
     double elecOut = state.elecOut * powerUnitRatio;
     double volt = state.volt * voltUnitRatio;
     double cosFai = state.cosFai / 100;
@@ -102,12 +102,15 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
     double current = 0;
 
     /// 相ごとの計算
-    if ((phase == '単相') && (cosFai <= 1)) {
-      // 単相の電流計算と計算係数設定
+    if ((phase == PhaseNameEnum.single) && (cosFai <= 1)) {
+      // 単相2線の電流計算と計算係数設定
       current = elecOut / (volt * cosFai);
-    } else if ((phase == '三相') && (cosFai <= 1)) {
-      // 三相の電流計算と計算係数設定
+    } else if ((phase == PhaseNameEnum.three) && (cosFai <= 1)) {
+      // 三相3線の電流計算と計算係数設定
       current = elecOut / (sqrt(3) * volt * cosFai);
+    } else if ((phase == PhaseNameEnum.singlePhaseThreeWire) && (cosFai <= 1)) {
+      // 単相3線の電流計算と計算係数設定
+      current = elecOut / (volt * cosFai);
     }
 
     /// 書込み
@@ -139,6 +142,11 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
 
   /// ケーブルサイズの変更
   Map updateCableSize() {
+    /// 読み込み
+    double voltUnitRatio = calcVoltUnitRatio();
+    double volt = state.volt * voltUnitRatio;
+    String cableType = state.cableType;
+
     /// 計算用変数初期化
     String cableSize1 = '候補なし';
     String cableSize2 = '候補なし';
@@ -146,9 +154,16 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
     double xVal1 = 0;
     double rVal2 = 0;
     double xVal2 = 0;
+    List cableAnswerList = [];
+
+    /// 計算電圧が選択されたケーブルの最高電圧以下かを調査
+    List cableTypeList = CableData().cableTypeVoltList(volt);
+    bool containsCableType = cableTypeList.contains(cableType);
 
     /// ケーブル候補の選定
-    List cableAnswerList = calcCableSize();
+    if (containsCableType) {
+      cableAnswerList = calcCableSize();
+    }
 
     /// 第1候補の選定
     /// 許容電流が満たせない場合は'候補なし'を返す。
@@ -181,19 +196,21 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
   /// 電圧降下の変更
   void updateVoltDrop(double rVal, double xVal, double sinFai, int sizeNum) {
     /// 読み込み
-    String phase = state.phase;
+    PhaseNameEnum phase = state.phase;
     double current = state.current;
     double cosFai = state.cosFai / 100;
     double cableLength = state.cableLength / 1000;
 
     /// 電圧降下計算の係数
-    double kVal = 1;
+    double kVal = 0;
 
     /// 相ごとの電圧降下計算の係数設定
-    if (phase == '単相') {
+    if (phase == PhaseNameEnum.single) {
       kVal = 2;
-    } else if (phase == '三相') {
+    } else if (phase == PhaseNameEnum.three) {
       kVal = sqrt(3);
+    } else if (phase == PhaseNameEnum.singlePhaseThreeWire) {
+      kVal = 1;
     }
 
     /// 電圧降下の計算
@@ -213,18 +230,20 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
   /// 電力損失の変更
   void updatePowerLoss(double rVal, int sizeNum) {
     /// 読み込み
-    String phase = state.phase;
+    PhaseNameEnum phase = state.phase;
     double current = state.current;
     double cableLength = state.cableLength / 1000;
 
     /// 電力損失計算の係数
-    double kVal = 2;
+    double kVal = 0;
 
     /// 相ごとの電力損失計算の係数設定
-    if (phase == '単相') {
+    if (phase == PhaseNameEnum.single) {
       kVal = 2;
-    } else if (phase == '三相') {
+    } else if (phase == PhaseNameEnum.three) {
       kVal = 3;
+    } else if (phase == PhaseNameEnum.singlePhaseThreeWire) {
+      kVal = 2;
     }
 
     /// 電力損失計算
@@ -374,6 +393,16 @@ final cableDesignTxtCtrLengthProvider = StateProvider((ref) {
   return TextEditingController(
       text: ref.watch(cableDesignProvider).cableLength.toString());
 });
+
+// /// ケーブル種類のドロップダウンメニューリスト
+// final cableDesignCableTypeDDMenuProvider = StateProvider<List<String>>((ref) {
+//   /// 読み込み
+//   double volt =
+//   List<String> cableTypeList = CableData().cableTypeVoltList(volt);
+//   // List<String> cableTypeList = CableData().cableTypeList;
+
+//   return cableTypeList;
+// });
 
 /// 結果の値
 /// 電流

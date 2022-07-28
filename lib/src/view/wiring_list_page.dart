@@ -278,7 +278,7 @@ class WiringAddFAB extends ConsumerWidget {
             isCreate: true,
             id: const Uuid().v4(),
             nameController: TextEditingController(text: ''),
-            cableType: CableTypeEnum.cv2c600v.cableType,
+            cableType: CableTypeEnum.cv2c600v.str,
             startPointController: TextEditingController(text: ''),
             endPointController: TextEditingController(text: ''),
             remarksController: TextEditingController(text: ''),

@@ -48,8 +48,8 @@ class CalcElecPowerPageState extends ConsumerState<CalcElecPowerPage> {
 
             /// 相選択
             CalcPhaseSelectCard(
-              phase: ref.watch(elecPowerProvider).phase,
-              onPressedFunc: (String value) =>
+              phase: ref.watch(elecPowerProvider).phase.str,
+              onPressedFunc: (PhaseNameEnum value) =>
                   ref.read(elecPowerProvider.notifier).updatePhase(value),
             ),
 

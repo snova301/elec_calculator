@@ -28,7 +28,7 @@ class SeparateText extends ConsumerWidget {
 /// 相の選択widget
 class CalcPhaseSelectCard extends ConsumerWidget {
   final String phase;
-  final Function(String value) onPressedFunc;
+  final Function(PhaseNameEnum value) onPressedFunc;
 
   const CalcPhaseSelectCard({
     Key? key,
@@ -62,10 +62,10 @@ class CalcPhaseSelectCard extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                /// 単相
+                /// 単相2線
                 ElevatedButton(
                   onPressed: () {
-                    onPressedFunc(PhaseNameEnum.single.str);
+                    onPressedFunc(PhaseNameEnum.single);
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
@@ -82,10 +82,30 @@ class CalcPhaseSelectCard extends ConsumerWidget {
                   child: Text(PhaseNameEnum.single.str),
                 ),
 
-                /// 三相
+                /// 単相3線
                 ElevatedButton(
                   onPressed: () {
-                    onPressedFunc(PhaseNameEnum.three.str);
+                    onPressedFunc(PhaseNameEnum.singlePhaseThreeWire);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        phase == PhaseNameEnum.singlePhaseThreeWire.str
+                            ? Colors.green
+                            : null),
+                    foregroundColor: MaterialStateProperty.all(
+                        phase == PhaseNameEnum.singlePhaseThreeWire.str
+                            ? Colors.white
+                            : null),
+                    padding:
+                        MaterialStateProperty.all(const EdgeInsets.all(20)),
+                  ),
+                  child: Text(PhaseNameEnum.singlePhaseThreeWire.str),
+                ),
+
+                /// 三相3線
+                ElevatedButton(
+                  onPressed: () {
+                    onPressedFunc(PhaseNameEnum.three);
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(

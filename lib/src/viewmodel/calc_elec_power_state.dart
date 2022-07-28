@@ -10,8 +10,8 @@ final elecPowerProvider =
 });
 
 /// 初期データ
-var _initData = ElecPowerData(
-  phase: PhaseNameEnum.single.str,
+const _initData = ElecPowerData(
+  phase: PhaseNameEnum.single,
   volt: 100,
   voltUnit: VoltUnitEnum.v,
   current: 10,
@@ -34,7 +34,7 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
   }
 
   /// 相の変更
-  void updatePhase(String phase) {
+  void updatePhase(PhaseNameEnum phase) {
     state = state.copyWith(phase: phase);
   }
 
@@ -78,7 +78,7 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
   /// 皮相電力の変更
   void updateApparentPower() {
     /// 読み出し
-    String phase = state.phase;
+    PhaseNameEnum phase = state.phase;
     double volt = state.volt;
     double current = state.current;
 
@@ -86,10 +86,11 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
     double appaPower = 0;
     double voltUnitRatio = calcVoltUnitRatio();
 
-    if (phase == PhaseNameEnum.single.str) {
+    if (phase == PhaseNameEnum.single ||
+        phase == PhaseNameEnum.singlePhaseThreeWire) {
       /// 単相電力計算
       appaPower = volt * current * voltUnitRatio;
-    } else if (phase == PhaseNameEnum.three.str) {
+    } else if (phase == PhaseNameEnum.three) {
       /// 3相電力計算
       appaPower = sqrt(3) * volt * current * voltUnitRatio;
     }

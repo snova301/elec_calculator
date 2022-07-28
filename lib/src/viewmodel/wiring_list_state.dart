@@ -65,7 +65,7 @@ final wiringListSettingProvider = StateProvider((ref) {
     isCreate: true,
     id: '',
     nameController: TextEditingController(text: ''),
-    cableType: CableTypeEnum.cv2c600v.cableType,
+    cableType: CableTypeEnum.cv2c600v.str,
     startPointController: TextEditingController(text: ''),
     endPointController: TextEditingController(text: ''),
     remarksController: TextEditingController(text: ''),
