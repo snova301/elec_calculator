@@ -38,6 +38,9 @@ class CalcConduitPageState extends ConsumerState<CalcConduitPage> {
     /// 電線管設計用
     int maxNumCable = 20;
 
+    /// レスポンシブ設定
+    bool isDrawerFixed = checkResponsive(screenWidth);
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -46,60 +49,70 @@ class CalcConduitPageState extends ConsumerState<CalcConduitPage> {
             PageNameEnum.conduit.title,
           ),
         ),
-        body: Column(
+        body: Row(
           children: [
-            /// 情報画面
-            Text(
-              'ケーブルは $maxNumCable 本まで設定できます。',
-              style: const TextStyle(
-                fontSize: 13,
-              ),
-            ),
+            /// 画面幅が規定以上でメニューを左側に固定
+            isDrawerFixed ? const DrawerContentsFixed() : Container(),
 
-            /// 広告
-            isAndroid || isIOS
-                ? const ConduitStdBannerContainer()
-                : Container(),
+            /// サイズ指定されていないとエラーなのでExpandedで囲む
+            Expanded(
+              child: Column(
+                children: [
+                  /// 情報画面
+                  Text(
+                    'ケーブルは $maxNumCable 本まで設定できます。',
+                    style: const TextStyle(
+                      fontSize: 13,
+                    ),
+                  ),
 
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.all(10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  ConduitConduitTypeCard(
-                    height: infoHeight,
+                  /// 広告
+                  isAndroid || isIOS
+                      ? const ConduitStdBannerContainer()
+                      : Container(),
+
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        ConduitConduitTypeCard(
+                          height: infoHeight,
+                        ),
+                        ConduitConduitSizeCard(
+                          title: '32',
+                          result: ref.watch(conduitOccupancy32Provider),
+                          height: infoHeight,
+                        ),
+                        ConduitConduitSizeCard(
+                          title: '48',
+                          result: ref.watch(conduitOccupancy48Provider),
+                          height: infoHeight,
+                        ),
+                      ],
+                    ),
                   ),
-                  ConduitConduitSizeCard(
-                    title: '32',
-                    result: ref.watch(conduitOccupancy32Provider),
-                    height: infoHeight,
-                  ),
-                  ConduitConduitSizeCard(
-                    title: '48',
-                    result: ref.watch(conduitOccupancy48Provider),
-                    height: infoHeight,
+
+                  /// ケーブルの一覧
+                  Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.fromLTRB(
+                          listViewPadding, 10, listViewPadding, 10),
+                      itemCount: ref.watch(conduitCalcProvider).length,
+                      itemBuilder: (context, index) {
+                        return ConduitCableCard(index: index);
+                      },
+                    ),
                   ),
                 ],
-              ),
-            ),
-
-            /// ケーブルの一覧
-            Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.fromLTRB(
-                    listViewPadding, 10, listViewPadding, 10),
-                itemCount: ref.watch(conduitCalcProvider).length,
-                itemBuilder: (context, index) {
-                  return ConduitCableCard(index: index);
-                },
               ),
             ),
           ],
         ),
 
         /// drawer
-        drawer: const DrawerContents(),
+        drawer: isDrawerFixed ? null : const DrawerContents(),
 
         floatingActionButton: FloatingActionButton(
           tooltip: 'ケーブル追加',

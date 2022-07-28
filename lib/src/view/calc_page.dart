@@ -510,12 +510,10 @@ class OutputTextCard extends ConsumerWidget {
 
 /// 実行ボタンのWidget
 class CalcRunButton extends ConsumerWidget {
-  final double paddingSize;
   final Function() func;
 
   const CalcRunButton({
     Key? key,
-    required this.paddingSize,
     required this.func,
   }) : super(key: key);
 
@@ -523,7 +521,6 @@ class CalcRunButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       padding: const EdgeInsets.all(10),
-      margin: EdgeInsets.fromLTRB(paddingSize, 0, paddingSize, 0),
       child: ElevatedButton(
         onPressed: () {
           FocusScope.of(context).unfocus();

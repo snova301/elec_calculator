@@ -25,8 +25,11 @@ class WiringListPageState extends ConsumerState<WiringListPage> {
     AdsSettingsClass().initWiringListStd();
 
     /// 画面情報取得
-    // final mediaQueryData = MediaQuery.of(context);
-    // final screenWidth = mediaQueryData.size.width;
+    final mediaQueryData = MediaQuery.of(context);
+    final screenWidth = mediaQueryData.size.width;
+
+    /// レスポンシブ設定
+    bool isDrawerFixed = checkResponsive(screenWidth);
 
     /// 項目の最大数
     const maxNum = 50;
@@ -38,31 +41,44 @@ class WiringListPageState extends ConsumerState<WiringListPage> {
       appBar: AppBar(
         title: Text(PageNameEnum.wiring.title),
       ),
-      body: Column(
-        children: <Widget>[
-          /// 情報画面
-          const Text(
-            'ケーブルは $maxNum 本まで設定できます。',
-            style: TextStyle(
-              fontSize: 13,
+      body: Row(
+        children: [
+          /// 画面幅が規定以上でメニューを左側に固定
+          isDrawerFixed ? const DrawerContentsFixed() : Container(),
+
+          /// サイズ指定されていないとエラーなのでExpandedで囲む
+          Expanded(
+            child: Column(
+              children: <Widget>[
+                /// 情報画面
+                const Text(
+                  'ケーブルは $maxNum 本まで設定できます。',
+                  style: TextStyle(
+                    fontSize: 13,
+                  ),
+                ),
+
+                /// 広告
+                isAndroid || isIOS
+                    ? const WiringListStdBannerContainer()
+                    : Container(),
+
+                /// 絞り込み用widget
+                const WiringSearchView(),
+
+                /// リスト
+                const Expanded(
+                  child: WiringView(),
+                ),
+              ],
             ),
-          ),
-
-          /// 広告
-          isAndroid || isIOS
-              ? const WiringListStdBannerContainer()
-              : Container(),
-
-          /// 絞り込み用widget
-          const WiringSearchView(),
-
-          /// リスト
-          const Expanded(
-            child: WiringView(),
           ),
         ],
       ),
-      drawer: const DrawerContents(),
+
+      /// Drawer
+      drawer: isDrawerFixed ? null : const DrawerContents(),
+
       floatingActionButton: const WiringAddFAB(maxNum: maxNum),
     );
   }

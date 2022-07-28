@@ -1,3 +1,4 @@
+import 'package:elec_facility_calc/src/view/common_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
@@ -12,30 +13,44 @@ class SettingPage extends ConsumerWidget {
     /// shared_prefのデータ保存用非同期providerの読み込み
     ref.watch(settingSPSetProvider);
 
+    /// レスポンシブ設定
+    final screenWidth = MediaQuery.of(context).size.width;
+    bool isDrawerFixed = checkResponsive(screenWidth);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(PageNameEnum.setting.title),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(8),
-        children: <Widget>[
-          /// ダークモードの設定
-          const _DarkmodeCard(),
+      body: Row(
+        children: [
+          /// 画面幅が規定以上でメニューを左側に固定
+          isDrawerFixed ? const DrawerContentsFixed() : Container(),
 
-          /// 電線管設計データの削除
-          _DataRemoveCard(
-            title: '電線管設計',
-            func: () {
-              StateManagerClass().removeConduitCalc(ref);
-            },
-          ),
+          /// サイズ指定されていないとエラーなのでExpandedで囲む
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.all(8),
+              children: <Widget>[
+                /// ダークモードの設定
+                const _DarkmodeCard(),
 
-          /// 配線管理データの削除
-          _DataRemoveCard(
-            title: '配線管理',
-            func: () {
-              StateManagerClass().removeWiringList(ref);
-            },
+                /// 電線管設計データの削除
+                _DataRemoveCard(
+                  title: '電線管設計',
+                  func: () {
+                    StateManagerClass().removeConduitCalc(ref);
+                  },
+                ),
+
+                /// 配線管理データの削除
+                _DataRemoveCard(
+                  title: '配線管理',
+                  func: () {
+                    StateManagerClass().removeWiringList(ref);
+                  },
+                ),
+              ],
+            ),
           ),
         ],
       ),

@@ -17,6 +17,14 @@ class MyHomePage extends ConsumerWidget {
     /// 画面情報
     final screenWidth = MediaQuery.of(context).size.width;
 
+    /// 個数設定
+    int crossAxisCountNum = 2;
+    if (screenWidth > 600 && screenWidth < 1100) {
+      crossAxisCountNum = 3;
+    } else if (screenWidth > 1100) {
+      crossAxisCountNum = 4;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('電気設備計算アシスタント'),
@@ -25,8 +33,9 @@ class MyHomePage extends ConsumerWidget {
         children: <Widget>[
           Expanded(
             child: GridView.count(
-              crossAxisCount: 2,
-              padding: EdgeInsets.all(screenWidth / 6),
+              crossAxisCount: crossAxisCountNum,
+              padding:
+                  EdgeInsets.fromLTRB(screenWidth / 6, 80, screenWidth / 6, 80),
               children: <Widget>[
                 _PagePush(
                   title: PageNameEnum.cableDesign.title,
