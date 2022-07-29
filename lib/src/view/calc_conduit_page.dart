@@ -1,7 +1,7 @@
 import 'package:elec_facility_calc/ads_options.dart';
 import 'package:elec_facility_calc/main.dart';
 import 'package:elec_facility_calc/src/model/data_class.dart';
-import 'package:elec_facility_calc/src/view/common_page.dart';
+import 'package:elec_facility_calc/src/view/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/src/data/cable_data.dart';

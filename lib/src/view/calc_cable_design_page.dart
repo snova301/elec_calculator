@@ -1,12 +1,12 @@
 import 'package:elec_facility_calc/ads_options.dart';
 import 'package:elec_facility_calc/main.dart';
 import 'package:elec_facility_calc/src/model/data_class.dart';
-import 'package:elec_facility_calc/src/view/common_page.dart';
+import 'package:elec_facility_calc/src/view/common_widgets.dart';
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/src/data/cable_data.dart';
-import 'package:elec_facility_calc/src/view/calc_page.dart';
+import 'package:elec_facility_calc/src/view/calc_widgets.dart';
 import 'package:elec_facility_calc/src/viewmodel/calc_cable_design_state.dart';
 
 class CalcCableDesignPage extends ConsumerStatefulWidget {
@@ -145,6 +145,11 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
                     },
                   ),
 
+                  /// 広告表示
+                  isAndroid || isIOS
+                      ? const CableDesignRecBannerContainer()
+                      : Container(),
+
                   /// 結果表示
                   const SeparateText(title: '計算結果'),
 
@@ -224,11 +229,6 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
                       ],
                     ),
                   ),
-
-                  /// 広告表示
-                  isAndroid || isIOS
-                      ? const CableDesignRecBannerContainer()
-                      : Container(),
                 ],
               ),
             ),

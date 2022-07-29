@@ -4,7 +4,7 @@ import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
-import 'package:elec_facility_calc/src/view/common_page.dart';
+import 'package:elec_facility_calc/src/view/common_widgets.dart';
 import 'package:elec_facility_calc/src/data/cable_data.dart';
 import 'package:elec_facility_calc/src/model/data_class.dart';
 import 'package:elec_facility_calc/src/viewmodel/wiring_list_state.dart';

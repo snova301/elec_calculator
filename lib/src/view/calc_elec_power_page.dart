@@ -1,11 +1,11 @@
 import 'package:elec_facility_calc/ads_options.dart';
 import 'package:elec_facility_calc/main.dart';
 import 'package:elec_facility_calc/src/model/data_class.dart';
-import 'package:elec_facility_calc/src/view/common_page.dart';
+import 'package:elec_facility_calc/src/view/common_widgets.dart';
 import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:elec_facility_calc/src/view/calc_page.dart';
+import 'package:elec_facility_calc/src/view/calc_widgets.dart';
 import 'package:elec_facility_calc/src/viewmodel/calc_elec_power_state.dart';
 
 /// 電力計算ページ
@@ -121,6 +121,11 @@ class CalcElecPowerPageState extends ConsumerState<CalcElecPowerPage> {
                     },
                   ),
 
+                  /// 広告表示
+                  isAndroid || isIOS
+                      ? const ElecPowerRecBannerContainer()
+                      : Container(),
+
                   /// 結果表示
                   const SeparateText(title: '計算結果'),
 
@@ -159,11 +164,6 @@ class CalcElecPowerPageState extends ConsumerState<CalcElecPowerPage> {
                     unit: '%',
                     result: ref.watch(elecPowerSinFaiProvider),
                   ),
-
-                  /// 広告表示
-                  isAndroid || isIOS
-                      ? const ElecPowerRecBannerContainer()
-                      : Container(),
                 ],
               ),
             ),

@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/src/model/data_class.dart';
 import 'package:elec_facility_calc/src/view/about_page.dart';
 import 'package:elec_facility_calc/src/view/setting_page.dart';
-import 'package:elec_facility_calc/src/view/common_page.dart';
+import 'package:elec_facility_calc/src/view/common_widgets.dart';
 import 'package:elec_facility_calc/src/view/wiring_list_page.dart';
 
 class MyHomePage extends ConsumerWidget {
@@ -111,6 +111,9 @@ class _PagePush extends ConsumerWidget {
       elevation: 2,
       child: InkWell(
         onTap: () {
+          /// ページ遷移のanalytics
+          AnalyticsService().logPage(title);
+
           /// ページ遷移
           Navigator.push(
             context,
