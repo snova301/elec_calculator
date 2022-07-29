@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:elec_facility_calc/src/view/about_page.dart';
 import 'package:elec_facility_calc/src/model/data_class.dart';
@@ -72,6 +73,9 @@ class DrawerContentsListTile extends ConsumerWidget {
           ),
           leading: Icon(PageNameEnum.cableDesign.icon),
           onTap: () {
+            /// ページ遷移のanalytics
+            AnalyticsService().logPage(PageNameEnum.cableDesign.title);
+
             Navigator.popUntil(context, (route) => route.isFirst);
             Navigator.push(
               context,
@@ -90,6 +94,9 @@ class DrawerContentsListTile extends ConsumerWidget {
           ),
           leading: Icon(PageNameEnum.elecPower.icon),
           onTap: () {
+            /// ページ遷移のanalytics
+            AnalyticsService().logPage(PageNameEnum.elecPower.title);
+
             Navigator.popUntil(context, (route) => route.isFirst);
             Navigator.push(
               context,
@@ -108,6 +115,9 @@ class DrawerContentsListTile extends ConsumerWidget {
           ),
           leading: Icon(PageNameEnum.conduit.icon),
           onTap: () {
+            /// ページ遷移のanalytics
+            AnalyticsService().logPage(PageNameEnum.conduit.title);
+
             Navigator.popUntil(context, (route) => route.isFirst);
             Navigator.push(
               context,
@@ -126,6 +136,9 @@ class DrawerContentsListTile extends ConsumerWidget {
           ),
           leading: Icon(PageNameEnum.wiring.icon),
           onTap: () {
+            /// ページ遷移のanalytics
+            AnalyticsService().logPage(PageNameEnum.wiring.title);
+
             Navigator.popUntil(context, (route) => route.isFirst);
             Navigator.push(
               context,
@@ -144,6 +157,9 @@ class DrawerContentsListTile extends ConsumerWidget {
           ),
           leading: Icon(PageNameEnum.setting.icon),
           onTap: () {
+            /// ページ遷移のanalytics
+            AnalyticsService().logPage(PageNameEnum.setting.title);
+
             // Navigator.popUntil(context, (route) => route.isFirst);
             Navigator.push(
               context,
@@ -163,6 +179,9 @@ class DrawerContentsListTile extends ConsumerWidget {
           // leading: const Icon(Icons.architecture),
           trailing: const Icon(Icons.open_in_browser),
           onTap: () {
+            /// ページ遷移のanalytics
+            AnalyticsService().logPage('計算方法');
+
             openUrl(
                 'https://snova301.github.io/AppService/elec_calculator/method.html');
           },
@@ -175,6 +194,9 @@ class DrawerContentsListTile extends ConsumerWidget {
             style: TextStyle(fontSize: fontSize),
           ),
           onTap: () {
+            /// ページ遷移のanalytics
+            AnalyticsService().logPage(PageNameEnum.about.title);
+
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => const AboutPage()));
           },
@@ -227,6 +249,17 @@ class SnackBarAlert {
         ),
         duration: const Duration(milliseconds: 2000),
       ),
+    );
+  }
+}
+
+class AnalyticsService {
+  Future<void> logPage(String screenName) async {
+    await FirebaseAnalytics.instance.logEvent(
+      name: 'screen_view',
+      parameters: {
+        'firebase_screen': screenName,
+      },
     );
   }
 }

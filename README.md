@@ -1,6 +1,6 @@
 # Electricity Calculator
 
-![](https://img.shields.io/badge/dart-v2.17.5-blue?style=flat&logo=dart) ![](https://img.shields.io/badge/flutter-v3.0.4-blue?style=flat&logo=flutter) ![](https://img.shields.io/badge/-firebase-orange?style=flat&logo=firebase)
+![](https://img.shields.io/badge/flutter-v3.0.5-blue?style=flat&logo=flutter) ![](https://img.shields.io/badge/dart-v2.17.6-blue?style=flat&logo=dart) ![](https://img.shields.io/badge/-firebase-orange?style=flat&logo=firebase)
 
 
 Electricity Calculator is mobile/web app for all electrical engineer.

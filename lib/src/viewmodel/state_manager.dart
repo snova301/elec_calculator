@@ -66,29 +66,36 @@ class StateManagerClass {
     var getSetting = prefs.getString(SharedPrefEnum.setting.name);
 
     /// ケーブル設計
-    /// データがない場合、nullになるので、null以外の場合でデコードする
-    if (getCableDesign != null) {
+    /// データがない場合はnullになるので、null以外の場合でデコードする
+    /// また、データクラスの変更があった場合は読み込みエラーになるので、回避
+    try {
       /// jsonをデコード
       var getCableDesignData =
-          CableDesignData.fromJson(jsonDecode(getCableDesign));
+          CableDesignData.fromJson(jsonDecode(getCableDesign!));
 
       /// 値をproviderへ
       ref.read(cableDesignProvider.notifier).updateAll(getCableDesignData);
+    } catch (e) {
+      print(e);
     }
 
     /// 電力計算
     /// データがない場合、nullになるので、null以外の場合でデコードする
-    if (getElecPower != null) {
-      var getElecPowerData = ElecPowerData.fromJson(jsonDecode(getElecPower));
+    /// また、データクラスの変更があった場合は読み込みエラーになるので、回避
+    try {
+      var getElecPowerData = ElecPowerData.fromJson(jsonDecode(getElecPower!));
 
       /// 値をproviderへ
       ref.read(elecPowerProvider.notifier).updateAll(getElecPowerData);
+    } catch (e) {
+      print(e);
     }
 
     /// 電線管設計
     /// データがない場合、nullになるので、null以外の場合でデコードする
-    if (getConduit != null) {
-      Map getConduitJson = jsonDecode(getConduit);
+    /// また、データクラスの変更があった場合は読み込みエラーになるので、回避
+    try {
+      Map getConduitJson = jsonDecode(getConduit!);
       List<ConduitCalcDataClass> conduitData = [];
       getConduitJson.forEach((key, value) {
         conduitData.add(ConduitCalcDataClass.fromJson(value));
@@ -96,12 +103,15 @@ class StateManagerClass {
 
       /// 値をproviderへ
       ref.read(conduitCalcProvider.notifier).updateAll(conduitData);
+    } catch (e) {
+      print(e);
     }
 
     /// 配線リスト
     /// データがない場合、nullになるので、null以外の場合でデコードする
-    if (getWiringList != null) {
-      Map getWiringListJson = jsonDecode(getWiringList);
+    /// また、データクラスの変更があった場合は読み込みエラーになるので、回避
+    try {
+      Map getWiringListJson = jsonDecode(getWiringList!);
       Map<String, WiringListDataClass> wiringListData = {};
       getWiringListJson.forEach((key, value) {
         wiringListData[key] = WiringListDataClass.fromJson(value);
@@ -109,17 +119,22 @@ class StateManagerClass {
 
       /// 値をproviderへ
       ref.read(wiringListProvider.notifier).updateAll(wiringListData);
+    } catch (e) {
+      print(e);
     }
 
     /// 設定
     /// データがない場合、nullになるので、null以外の場合でデコードする
-    if (getSetting != null) {
-      var getSettingData = SettingDataClass.fromJson(jsonDecode(getSetting));
+    /// また、データクラスの変更があった場合は読み込みエラーになるので、回避
+    try {
+      var getSettingData = SettingDataClass.fromJson(jsonDecode(getSetting!));
 
       /// 値をproviderへ
       ref
           .read(settingProvider.notifier)
           .updateDarkMode(getSettingData.darkMode);
+    } catch (e) {
+      print(e);
     }
   }
 }
