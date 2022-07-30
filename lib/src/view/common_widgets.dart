@@ -212,15 +212,21 @@ class DrawerContentsFixed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScrollController scrollController = ScrollController();
     return Row(
-      children: const [
+      children: [
         SizedBox(
           width: 230,
-          child: DrawerContentsListTile(
-            fontSize: 13,
+          child: ListView(
+            controller: scrollController,
+            children: const [
+              DrawerContentsListTile(
+                fontSize: 13,
+              ),
+            ],
           ),
         ),
-        VerticalDivider()
+        const VerticalDivider()
       ],
     );
   }
@@ -234,15 +240,9 @@ class SnackBarAlert {
   void snackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        // key: key,
         content: Text(
           message,
-          // textAlign: TextAlign.center,
-          // style: TextStyle(
-          //   color: Colors.white,
-          // ),
         ),
-        // backgroundColor: Colors.black,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),

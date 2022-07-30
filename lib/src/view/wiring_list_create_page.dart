@@ -67,9 +67,7 @@ class WiringCreatePage extends ConsumerWidget {
             const WiringCreateRunButton(),
 
             /// 広告
-            isAndroid || isIOS
-                ? const WiringListRecBannerContainer()
-                : Container(),
+            existAds ? const WiringListRecBannerContainer() : Container(),
           ],
         ),
       ),

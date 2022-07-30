@@ -95,11 +95,11 @@ class CalcElecPowerPageState extends ConsumerState<CalcElecPowerPage> {
                     // paddingSize: blockWidth,
                     func: () {
                       /// textcontrollerのデータを取得
-                      final volt = ref.watch(elecPowerTxtCtrVoltProvider).text;
+                      final volt = ref.read(elecPowerTxtCtrVoltProvider).text;
                       final current =
-                          ref.watch(elecPowerTxtCtrCurrentProvider).text;
+                          ref.read(elecPowerTxtCtrCurrentProvider).text;
                       final cosFai =
-                          ref.watch(elecPowerTxtCtrCosFaiProvider).text;
+                          ref.read(elecPowerTxtCtrCosFaiProvider).text;
 
                       /// 実行できるか確認
                       bool isRunCheck = ref
@@ -122,9 +122,7 @@ class CalcElecPowerPageState extends ConsumerState<CalcElecPowerPage> {
                   ),
 
                   /// 広告表示
-                  isAndroid || isIOS
-                      ? const ElecPowerRecBannerContainer()
-                      : Container(),
+                  existAds ? const ElecPowerRecBannerContainer() : Container(),
 
                   /// 結果表示
                   const SeparateText(title: '計算結果'),

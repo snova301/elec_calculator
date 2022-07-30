@@ -86,12 +86,14 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
     double appaPower = 0;
     double voltUnitRatio = calcVoltUnitRatio();
 
-    if (phase == PhaseNameEnum.single ||
-        phase == PhaseNameEnum.singlePhaseThreeWire) {
-      /// 単相電力計算
+    if (phase == PhaseNameEnum.single) {
+      /// 単相2線電力計算
       appaPower = volt * current * voltUnitRatio;
+    } else if (phase == PhaseNameEnum.singlePhaseThreeWire) {
+      /// 単相3線電力計算
+      appaPower = 2 * volt * current * voltUnitRatio;
     } else if (phase == PhaseNameEnum.three) {
-      /// 3相電力計算
+      /// 三相3線電力計算
       appaPower = sqrt(3) * volt * current * voltUnitRatio;
     }
 
@@ -165,42 +167,12 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
         return false;
       }
 
-      /// 入力した数値を整形してTextEditingControllerに入れる
-      /// web版は問題ないがandroid版では必ず小数点が入ってしまうため
-      /// 整数の場合、intからstringに変換
-
-      /// 電圧
-      if (volt == volt.toInt().toDouble()) {
-        state = state.copyWith(
-          volt: volt.toInt().toDouble(),
-        );
-      } else {
-        state = state.copyWith(
-          volt: volt,
-        );
-      }
-
-      /// 電流
-      if (current == current.toInt().toDouble()) {
-        state = state.copyWith(
-          current: current.toInt().toDouble(),
-        );
-      } else {
-        state = state.copyWith(
-          current: current,
-        );
-      }
-
-      /// 力率
-      if (cosFai == cosFai.toInt().toDouble()) {
-        state = state.copyWith(
-          cosFai: cosFai.toInt().toDouble(),
-        );
-      } else {
-        state = state.copyWith(
-          cosFai: cosFai,
-        );
-      }
+      /// 入力した数値をTextEditingControllerに入れる
+      state = state.copyWith(
+        volt: volt,
+        current: current,
+        cosFai: cosFai,
+      );
     } catch (e) {
       /// 数値変換や整形に失敗した場合、falseを返す
       return false;
@@ -217,19 +189,34 @@ class ElecPowerNotifier extends StateNotifier<ElecPowerData> {
 }
 
 /// texteditingcontrollerの定義
+/// web版は問題ないがandroid版では必ず小数点が入ってしまうため
+/// 整数の場合、intからstringに変換
+
+/// 電圧
 final elecPowerTxtCtrVoltProvider = StateProvider((ref) {
+  double volt = ref.watch(elecPowerProvider).volt;
   return TextEditingController(
-      text: ref.watch(elecPowerProvider).volt.toString());
+      text: volt == volt.toInt().toDouble()
+          ? volt.toInt().toString()
+          : volt.toString());
 });
 
+/// 電流
 final elecPowerTxtCtrCurrentProvider = StateProvider((ref) {
+  double current = ref.watch(elecPowerProvider).current;
   return TextEditingController(
-      text: ref.watch(elecPowerProvider).current.toString());
+      text: current == current.toInt().toDouble()
+          ? current.toInt().toString()
+          : current.toString());
 });
 
+/// 力率
 final elecPowerTxtCtrCosFaiProvider = StateProvider((ref) {
+  double cosFai = ref.watch(elecPowerProvider).cosFai;
   return TextEditingController(
-      text: ref.watch(elecPowerProvider).cosFai.toString());
+      text: cosFai == cosFai.toInt().toDouble()
+          ? cosFai.toInt().toString()
+          : cosFai.toString());
 });
 
 /// 結果の値

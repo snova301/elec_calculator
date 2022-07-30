@@ -110,7 +110,7 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
       current = elecOut / (sqrt(3) * volt * cosFai);
     } else if ((phase == PhaseNameEnum.singlePhaseThreeWire) && (cosFai <= 1)) {
       // 単相3線の電流計算と計算係数設定
-      current = elecOut / (volt * cosFai);
+      current = elecOut / (2 * volt * cosFai);
     }
 
     /// 書込み
@@ -161,29 +161,29 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
     bool containsCableType = cableTypeList.contains(cableType);
 
     /// ケーブル候補の選定
+    /// ケーブルの定格電圧を超えているものは以下のステップ実行不可能
     if (containsCableType) {
       cableAnswerList = calcCableSize();
-    }
 
-    /// 第1候補の選定
-    /// 許容電流が満たせない場合は'候補なし'を返す。
-    if (cableAnswerList.isEmpty) {
-      rVal1 = xVal1 = 0;
-    } else {
-      cableSize1 = cableAnswerList[0][0];
-      rVal1 = cableAnswerList[0][1];
-      xVal1 = cableAnswerList[0][2];
-
-      /// 第2候補の選定
+      /// 第1候補の選定
       /// 許容電流が満たせない場合は'候補なし'を返す。
-      cableAnswerList.removeAt(0);
-      if (cableAnswerList.isEmpty) {
-        rVal2 = xVal2 = 0;
-      } else {
-        cableSize2 = cableAnswerList[0][0];
-        rVal2 = cableAnswerList[0][1];
-        xVal2 = cableAnswerList[0][2];
+      if (cableAnswerList.isNotEmpty) {
+        cableSize1 = cableAnswerList[0][0];
+        rVal1 = cableAnswerList[0][1];
+        xVal1 = cableAnswerList[0][2];
+
+        /// 第2候補の選定
+        /// 許容電流が満たせない場合は'候補なし'を返す。
+        cableAnswerList.removeAt(0);
+        if (cableAnswerList.isNotEmpty) {
+          cableSize2 = cableAnswerList[0][0];
+          rVal2 = cableAnswerList[0][1];
+          xVal2 = cableAnswerList[0][2];
+        }
       }
+    } else {
+      cableSize1 = '候補なし(電圧要確認)';
+      cableSize2 = '候補なし(電圧要確認)';
     }
 
     /// 書込み
@@ -311,53 +311,13 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
         return false;
       }
 
-      /// 入力した数値を整形してTextEditingControllerに入れる
-      /// web版は問題ないがandroid版では必ず小数点が入ってしまうため
-      /// 整数の場合、intからstringに変換
-
-      /// 電気出力
-      if (elecOut == elecOut.toInt().toDouble()) {
-        state = state.copyWith(
-          elecOut: elecOut.toInt().toDouble(),
-        );
-      } else {
-        state = state.copyWith(
-          elecOut: elecOut,
-        );
-      }
-
-      /// 電圧
-      if (volt == volt.toInt().toDouble()) {
-        state = state.copyWith(
-          volt: volt.toInt().toDouble(),
-        );
-      } else {
-        state = state.copyWith(
-          volt: volt,
-        );
-      }
-
-      /// 力率
-      if (cosFai == cosFai.toInt().toDouble()) {
-        state = state.copyWith(
-          cosFai: cosFai.toInt().toDouble(),
-        );
-      } else {
-        state = state.copyWith(
-          cosFai: cosFai,
-        );
-      }
-
-      /// ケーブル長
-      if (cableLength == cableLength.toInt().toDouble()) {
-        state = state.copyWith(
-          cableLength: cableLength.toInt().toDouble(),
-        );
-      } else {
-        state = state.copyWith(
-          cableLength: cableLength,
-        );
-      }
+      /// 入力した数値をTextEditingControllerに入れる
+      state = state.copyWith(
+        elecOut: elecOut,
+        volt: volt,
+        cosFai: cosFai,
+        cableLength: cableLength,
+      );
     } catch (e) {
       /// 数値変換や整形に失敗した場合、falseを返す
       return false;
@@ -374,35 +334,45 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
 }
 
 /// texteditingcontrollerの定義
+/// web版は問題ないがandroid版では必ず小数点が入ってしまうため
+/// 整数の場合、intからstringに変換
+
+/// 電気出力
 final cableDesignTxtCtrElecOutProvider = StateProvider((ref) {
+  double elecOut = ref.watch(cableDesignProvider).elecOut;
+
   return TextEditingController(
-      text: ref.watch(cableDesignProvider).elecOut.toString());
+      text: elecOut == elecOut.toInt().toDouble()
+          ? elecOut.toInt().toString()
+          : elecOut.toString());
 });
 
+/// 電圧
 final cableDesignTxtCtrVoltProvider = StateProvider((ref) {
+  double volt = ref.watch(cableDesignProvider).volt;
   return TextEditingController(
-      text: ref.watch(cableDesignProvider).volt.toString());
+      text: volt == volt.toInt().toDouble()
+          ? volt.toInt().toString()
+          : volt.toString());
 });
 
+/// 力率
 final cableDesignTxtCtrCosFaiProvider = StateProvider((ref) {
+  double cosFai = ref.watch(cableDesignProvider).cosFai;
   return TextEditingController(
-      text: ref.watch(cableDesignProvider).cosFai.toString());
+      text: cosFai == cosFai.toInt().toDouble()
+          ? cosFai.toInt().toString()
+          : cosFai.toString());
 });
 
+/// ケーブル長
 final cableDesignTxtCtrLengthProvider = StateProvider((ref) {
+  double cableLength = ref.watch(cableDesignProvider).cableLength;
   return TextEditingController(
-      text: ref.watch(cableDesignProvider).cableLength.toString());
+      text: cableLength == cableLength.toInt().toDouble()
+          ? cableLength.toInt().toString()
+          : cableLength.toString());
 });
-
-// /// ケーブル種類のドロップダウンメニューリスト
-// final cableDesignCableTypeDDMenuProvider = StateProvider<List<String>>((ref) {
-//   /// 読み込み
-//   double volt =
-//   List<String> cableTypeList = CableData().cableTypeVoltList(volt);
-//   // List<String> cableTypeList = CableData().cableTypeList;
-
-//   return cableTypeList;
-// });
 
 /// 結果の値
 /// 電流

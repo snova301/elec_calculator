@@ -52,7 +52,6 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
               child: ListView(
                 padding: EdgeInsets.fromLTRB(
                     listViewPadding, 10, listViewPadding, 10),
-                // widget.listViewPadding, 10, widget.listViewPadding, 10),
                 children: <Widget>[
                   /// 入力表示
                   const SeparateText(title: '計算条件'),
@@ -72,7 +71,6 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
                   InputTextCard(
                     title: '電気容量',
                     unit: ref.watch(cableDesignProvider).powerUnit.strActive,
-                    // unit: 'W',
                     message: '整数のみ',
                     controller: ref.watch(cableDesignTxtCtrElecOutProvider),
                     onPressedPowerUnitFunc: (PowerUnitEnum value) => ref
@@ -83,7 +81,6 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
                   /// 線間電圧入力
                   InputTextCard(
                     title: '線間電圧',
-                    // unit: 'V',
                     unit: ref.watch(cableDesignProvider).voltUnit.str,
                     message: '整数のみ',
                     controller: ref.watch(cableDesignTxtCtrVoltProvider),
@@ -110,18 +107,16 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
 
                   /// 計算実行ボタン
                   CalcRunButton(
-                    // paddingSize: blockWidth,
-                    // paddingSize: widget.blockWidth,
                     func: () {
                       /// textcontrollerのデータを取得
                       final strElecOut =
-                          ref.watch(cableDesignTxtCtrElecOutProvider).text;
+                          ref.read(cableDesignTxtCtrElecOutProvider).text;
                       final strVolt =
-                          ref.watch(cableDesignTxtCtrVoltProvider).text;
+                          ref.read(cableDesignTxtCtrVoltProvider).text;
                       final strCosFai =
-                          ref.watch(cableDesignTxtCtrCosFaiProvider).text;
+                          ref.read(cableDesignTxtCtrCosFaiProvider).text;
                       final strCableLength =
-                          ref.watch(cableDesignTxtCtrLengthProvider).text;
+                          ref.read(cableDesignTxtCtrLengthProvider).text;
 
                       /// 実行時に読み込み関係でエラーを吐き出さないか確認後に実行
                       bool isRunCheck =
@@ -133,6 +128,15 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
                               );
                       if (isRunCheck) {
                         ref.read(cableDesignProvider.notifier).run();
+
+                        /// 電圧がケーブルの定格を超えていたらsnackbarで警告
+                        ref.read(cableDesignProvider).cableSize1 ==
+                                '候補なし(電圧要確認)'
+                            ? SnackBarAlert(context: context)
+                                .snackbar('電圧がケーブルの定格電圧を超えています')
+                            : null;
+
+                        /// 電圧
                       } else {
                         /// エラー表示
                         showDialog<void>(
@@ -146,7 +150,7 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
                   ),
 
                   /// 広告表示
-                  isAndroid || isIOS
+                  existAds
                       ? const CableDesignRecBannerContainer()
                       : Container(),
 
@@ -203,7 +207,7 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: ExpansionTile(
-                      initiallyExpanded: false,
+                      initiallyExpanded: true,
                       title: const Text('ケーブル第2候補'),
                       children: [
                         /// ケーブルサイズ表示

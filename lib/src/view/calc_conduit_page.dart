@@ -67,9 +67,7 @@ class CalcConduitPageState extends ConsumerState<CalcConduitPage> {
                   ),
 
                   /// 広告
-                  isAndroid || isIOS
-                      ? const ConduitStdBannerContainer()
-                      : Container(),
+                  existAds ? const ConduitStdBannerContainer() : Container(),
 
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,

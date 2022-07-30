@@ -149,7 +149,7 @@ class CalcPowerUnitSelectCard extends ConsumerWidget {
             child: const Tooltip(
               message: '選択してください',
               child: Text(
-                '電力の単位の接頭語',
+                '単位の接頭語',
                 style: TextStyle(
                   fontSize: 13,
                 ),
@@ -491,7 +491,7 @@ class OutputTextCard extends ConsumerWidget {
                 fontSize: 18,
               ),
             ),
-            trailing: result == '規格なし'
+            trailing: result == '候補なし' || result == '候補なし(電圧要確認)'
                 ? const Text('')
                 : Text(
                     unit,
