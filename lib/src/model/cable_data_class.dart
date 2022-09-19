@@ -20,3 +20,20 @@ class CableDataClass {
     required this.diameter,
   });
 }
+
+
+// /// Map型に変換
+// Map toMap() => {
+//       'current': current,
+//       'cableSize': cableSize,
+//       'voltDrop': voltDrop,
+//       'powerLoss': powerLoss,
+//     };
+
+// /// JSONオブジェクトを代入
+// CableDesignData.fromJson(Map json)
+//     : phase = json['phase'],
+//       current = json['current'],
+//       cableSize = json['cableSize'],
+//       voltDrop = json['voltDrop'],
+//       powerLoss = json['powerLoss'];

@@ -154,3 +154,14 @@ extension WiringListSearchEnumExt on WiringListSearchEnum {
     }
   }
 }
+
+
+/// なぜかできないenumの進化版
+// enum WiringListSearchEnum {
+//   cableData('ケーブル種類'),
+//   start('出発点'),
+//   end('到着点');
+
+//   const WiringListSearchEnum(this.name);
+//   final String name;
+// }

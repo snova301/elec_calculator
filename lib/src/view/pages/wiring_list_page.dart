@@ -8,7 +8,6 @@ import 'package:uuid/uuid.dart';
 import 'package:elec_facility_calc/ads_options.dart';
 import 'package:elec_facility_calc/src/notifiers/state_manager.dart';
 import 'package:elec_facility_calc/src/data/cable_data.dart';
-import 'package:elec_facility_calc/src/model/data_class.dart';
 import 'package:elec_facility_calc/src/notifiers/wiring_list_state.dart';
 
 /// 配線管理リストのページ
