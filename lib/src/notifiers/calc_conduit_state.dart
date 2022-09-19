@@ -1,8 +1,9 @@
 import 'dart:math';
+import 'package:elec_facility_calc/src/model/cable_data_class.dart';
+import 'package:elec_facility_calc/src/model/conduit_calc_data_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/src/data/cable_data.dart';
 import 'package:elec_facility_calc/src/data/conduit_data.dart';
-import 'package:elec_facility_calc/src/model/data_class.dart';
 
 /// 電線管設計のProviderの定義
 final conduitCalcProvider =

@@ -1,3 +1,4 @@
+import 'package:elec_facility_calc/src/model/enum_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -8,7 +9,6 @@ import 'package:elec_facility_calc/src/view/pages/calc_conduit_page.dart';
 import 'package:elec_facility_calc/src/view/pages/calc_elec_power_page.dart';
 import 'package:elec_facility_calc/src/view/pages/setting_page.dart';
 import 'package:elec_facility_calc/src/view/pages/wiring_list_page.dart';
-import 'package:elec_facility_calc/src/model/data_class.dart';
 
 /// ドロワーの中身
 class DrawerContents extends ConsumerWidget {

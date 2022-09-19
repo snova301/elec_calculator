@@ -1,8 +1,10 @@
 import 'dart:math';
+import 'package:elec_facility_calc/src/model/cable_data_class.dart';
+import 'package:elec_facility_calc/src/model/cable_design_data_model.dart';
+import 'package:elec_facility_calc/src/model/enum_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/src/data/cable_data.dart';
-import 'package:elec_facility_calc/src/model/data_class.dart';
 
 /// ケーブル設計入力のProviderの定義
 final cableDesignProvider =

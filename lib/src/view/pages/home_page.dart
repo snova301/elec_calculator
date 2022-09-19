@@ -1,3 +1,4 @@
+import 'package:elec_facility_calc/src/model/enum_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/src/view/pages/about_page.dart';
@@ -7,7 +8,6 @@ import 'package:elec_facility_calc/src/view/pages/calc_elec_power_page.dart';
 import 'package:elec_facility_calc/src/view/pages/setting_page.dart';
 import 'package:elec_facility_calc/src/view/pages/wiring_list_page.dart';
 import 'package:elec_facility_calc/src/view/widgets/common_widgets.dart';
-import 'package:elec_facility_calc/src/model/data_class.dart';
 
 class MyHomePage extends ConsumerWidget {
   const MyHomePage({Key? key}) : super(key: key);

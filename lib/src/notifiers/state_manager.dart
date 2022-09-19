@@ -1,5 +1,9 @@
 import 'dart:convert';
-import 'package:elec_facility_calc/src/model/data_class.dart';
+import 'package:elec_facility_calc/src/model/cable_design_data_model.dart';
+import 'package:elec_facility_calc/src/model/conduit_calc_data_model.dart';
+import 'package:elec_facility_calc/src/model/elec_power_data_model.dart';
+import 'package:elec_facility_calc/src/model/setting_data_model.dart';
+import 'package:elec_facility_calc/src/model/wiring_list_data_model.dart';
 import 'package:elec_facility_calc/src/notifiers/calc_cable_design_state.dart';
 import 'package:elec_facility_calc/src/notifiers/calc_conduit_state.dart';
 import 'package:elec_facility_calc/src/notifiers/calc_elec_power_state.dart';

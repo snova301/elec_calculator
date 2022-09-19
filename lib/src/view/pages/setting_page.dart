@@ -1,8 +1,8 @@
+import 'package:elec_facility_calc/src/model/enum_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/src/view/widgets/common_widgets.dart';
 import 'package:elec_facility_calc/src/notifiers/state_manager.dart';
-import 'package:elec_facility_calc/src/model/data_class.dart';
 
 /// 設定ページ
 class SettingPage extends ConsumerWidget {

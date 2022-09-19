@@ -1,14 +1,12 @@
 # Electricity Calculator
 
-![](https://img.shields.io/badge/flutter-v3.0.5-blue?style=flat&logo=flutter) ![](https://img.shields.io/badge/dart-v2.17.6-blue?style=flat&logo=dart) ![](https://img.shields.io/badge/-firebase-orange?style=flat&logo=firebase)
-
+![](https://img.shields.io/badge/flutter-v3.3.2-blue?style=flat&logo=flutter) ![](https://img.shields.io/badge/dart-v2.18.1-blue?style=flat&logo=dart) ![](https://img.shields.io/badge/-firebase-orange?style=flat&logo=firebase)
 
 Electricity Calculator is mobile/web app for all electrical engineer.
 
 This is a calculator when you want to calculate cable size, voltage drop, power, and conduit size in electrical equipment design work or electrical work site.
 
 <img src='assets/screenshot/Screenshot_1656582771.png' width='200'>
-
 
 ## Getting Started
 
@@ -24,7 +22,6 @@ For ios app
 
 [web](https://ewacdj-3936b.web.app/)
 
-
 ## Features
 
 - Select the cable size based on the electric capacity, voltage, and power factor.
@@ -33,19 +30,14 @@ For ios app
 - Select a conduit size from the selected cable.
 - Manage the wiring list.
 
-
 ## How to use
 
 You can check how to use to click [here](https://snova301.github.io/AppService/elec_calculator/home.html).
-
-
 
 ## Source Code
 
 This source code does not contain cable data, so you need to get cable data such as cable impedance.
 
-
-
 ※Google Play および Google Play ロゴは、Google LLC の商標です。
 
-※Apple、Apple logo、App Storeは米国およびその他の国で登録されたApple Inc.の商標です。
+※Apple、Apple logo、App Store は米国およびその他の国で登録された Apple Inc.の商標です。
