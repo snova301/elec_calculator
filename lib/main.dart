@@ -1,14 +1,14 @@
 import 'dart:async';
+import 'firebase_options.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'firebase_options.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:elec_facility_calc/src/view/home_page.dart';
-import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
+import 'package:elec_facility_calc/src/view/pages/home_page.dart';
+import 'package:elec_facility_calc/src/notifiers/state_manager.dart';
 
 /// プラットフォームの確認
 final isAndroid =

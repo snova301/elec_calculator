@@ -1,13 +1,13 @@
-import 'package:elec_facility_calc/src/view/calc_cable_design_page.dart';
-import 'package:elec_facility_calc/src/view/calc_conduit_page.dart';
-import 'package:elec_facility_calc/src/view/calc_elec_power_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:elec_facility_calc/src/view/pages/about_page.dart';
+import 'package:elec_facility_calc/src/view/pages/calc_cable_design_page.dart';
+import 'package:elec_facility_calc/src/view/pages/calc_conduit_page.dart';
+import 'package:elec_facility_calc/src/view/pages/calc_elec_power_page.dart';
+import 'package:elec_facility_calc/src/view/pages/setting_page.dart';
+import 'package:elec_facility_calc/src/view/pages/wiring_list_page.dart';
+import 'package:elec_facility_calc/src/view/widgets/common_widgets.dart';
 import 'package:elec_facility_calc/src/model/data_class.dart';
-import 'package:elec_facility_calc/src/view/about_page.dart';
-import 'package:elec_facility_calc/src/view/setting_page.dart';
-import 'package:elec_facility_calc/src/view/common_widgets.dart';
-import 'package:elec_facility_calc/src/view/wiring_list_page.dart';
 
 class MyHomePage extends ConsumerWidget {
   const MyHomePage({Key? key}) : super(key: key);

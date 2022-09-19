@@ -1,12 +1,11 @@
-import 'package:elec_facility_calc/ads_options.dart';
-import 'package:elec_facility_calc/main.dart';
-import 'package:elec_facility_calc/src/model/data_class.dart';
-import 'package:elec_facility_calc/src/view/common_widgets.dart';
-import 'package:elec_facility_calc/src/viewmodel/state_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:elec_facility_calc/src/view/calc_widgets.dart';
-import 'package:elec_facility_calc/src/viewmodel/calc_elec_power_state.dart';
+import 'package:elec_facility_calc/ads_options.dart';
+import 'package:elec_facility_calc/src/model/data_class.dart';
+import 'package:elec_facility_calc/src/notifiers/state_manager.dart';
+import 'package:elec_facility_calc/src/view/widgets/calc_widgets.dart';
+import 'package:elec_facility_calc/src/view/widgets/common_widgets.dart';
+import 'package:elec_facility_calc/src/notifiers/calc_elec_power_state.dart';
 
 /// 電力計算ページ
 class CalcElecPowerPage extends ConsumerStatefulWidget {

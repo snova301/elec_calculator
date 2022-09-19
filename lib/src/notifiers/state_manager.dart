@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:elec_facility_calc/src/model/data_class.dart';
-import 'package:elec_facility_calc/src/viewmodel/calc_cable_design_state.dart';
-import 'package:elec_facility_calc/src/viewmodel/calc_conduit_state.dart';
-import 'package:elec_facility_calc/src/viewmodel/calc_elec_power_state.dart';
-import 'package:elec_facility_calc/src/viewmodel/wiring_list_state.dart';
+import 'package:elec_facility_calc/src/notifiers/calc_cable_design_state.dart';
+import 'package:elec_facility_calc/src/notifiers/calc_conduit_state.dart';
+import 'package:elec_facility_calc/src/notifiers/calc_elec_power_state.dart';
+import 'package:elec_facility_calc/src/notifiers/wiring_list_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -76,7 +76,7 @@ class StateManagerClass {
       /// 値をproviderへ
       ref.read(cableDesignProvider.notifier).updateAll(getCableDesignData);
     } catch (e) {
-      print(e);
+      // print(e);
     }
 
     /// 電力計算
@@ -88,7 +88,7 @@ class StateManagerClass {
       /// 値をproviderへ
       ref.read(elecPowerProvider.notifier).updateAll(getElecPowerData);
     } catch (e) {
-      print(e);
+      // print(e);
     }
 
     /// 電線管設計
@@ -104,7 +104,7 @@ class StateManagerClass {
       /// 値をproviderへ
       ref.read(conduitCalcProvider.notifier).updateAll(conduitData);
     } catch (e) {
-      print(e);
+      // print(e);
     }
 
     /// 配線リスト
@@ -120,7 +120,7 @@ class StateManagerClass {
       /// 値をproviderへ
       ref.read(wiringListProvider.notifier).updateAll(wiringListData);
     } catch (e) {
-      print(e);
+      // print(e);
     }
 
     /// 設定
@@ -134,7 +134,7 @@ class StateManagerClass {
           .read(settingProvider.notifier)
           .updateDarkMode(getSettingData.darkMode);
     } catch (e) {
-      print(e);
+      // print(e);
     }
   }
 }
