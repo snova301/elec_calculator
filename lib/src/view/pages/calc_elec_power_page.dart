@@ -1,10 +1,11 @@
 import 'package:elec_facility_calc/src/model/enum_class.dart';
+import 'package:elec_facility_calc/src/view/widgets/drawer_contents_widget.dart';
+import 'package:elec_facility_calc/src/view/widgets/responsive_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/ads_options.dart';
 import 'package:elec_facility_calc/src/notifiers/state_manager.dart';
 import 'package:elec_facility_calc/src/view/widgets/calc_widgets.dart';
-import 'package:elec_facility_calc/src/view/widgets/common_widgets.dart';
 import 'package:elec_facility_calc/src/notifiers/calc_elec_power_state.dart';
 
 /// 電力計算ページ
