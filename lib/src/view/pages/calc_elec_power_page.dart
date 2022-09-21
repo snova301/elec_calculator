@@ -1,11 +1,17 @@
 import 'package:elec_facility_calc/src/model/enum_class.dart';
+import 'package:elec_facility_calc/src/view/widgets/calc_power_unit_select_card.dart';
 import 'package:elec_facility_calc/src/view/widgets/drawer_contents_widget.dart';
 import 'package:elec_facility_calc/src/view/widgets/responsive_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/ads_options.dart';
 import 'package:elec_facility_calc/src/notifiers/state_manager.dart';
-import 'package:elec_facility_calc/src/view/widgets/calc_widgets.dart';
+import 'package:elec_facility_calc/src/view/widgets/calc_phase_select_card.dart';
+import 'package:elec_facility_calc/src/view/widgets/calc_run_button_widget.dart';
+import 'package:elec_facility_calc/src/view/widgets/correct_alert_dialog_widget.dart';
+import 'package:elec_facility_calc/src/view/widgets/input_text_card_widget.dart';
+import 'package:elec_facility_calc/src/view/widgets/output_text_card_widget.dart';
+import 'package:elec_facility_calc/src/view/widgets/separate_text_widget.dart';
 import 'package:elec_facility_calc/src/notifiers/calc_elec_power_state.dart';
 
 /// 電力計算ページ
@@ -29,7 +35,7 @@ class CalcElecPowerPageState extends ConsumerState<CalcElecPowerPage> {
     bool isDrawerFixed = checkResponsive(screenWidth);
 
     /// 広告の初期化
-    AdsSettingsClass().initElecPowerRec();
+    AdsSettingsClass().initRecBanner();
 
     /// shared_prefのデータ保存用非同期providerの読み込み
     ref.watch(elecPowerSPSetProvider);
@@ -122,7 +128,7 @@ class CalcElecPowerPageState extends ConsumerState<CalcElecPowerPage> {
                   ),
 
                   /// 広告表示
-                  existAds ? const ElecPowerRecBannerContainer() : Container(),
+                  existAds ? const RecBannerContainer() : Container(),
 
                   /// 結果表示
                   const SeparateText(title: '計算結果'),

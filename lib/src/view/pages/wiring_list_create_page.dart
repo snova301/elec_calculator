@@ -12,7 +12,7 @@ class WiringCreatePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     /// 広告の初期化
-    AdsSettingsClass().initWiringListRec();
+    AdsSettingsClass().initRecBanner();
 
     /// 新規作成画面か編集画面かの判断
     final isCreate = ref.watch(wiringListSettingProvider).isCreate;
@@ -66,7 +66,7 @@ class WiringCreatePage extends ConsumerWidget {
             const WiringCreateRunButton(),
 
             /// 広告
-            existAds ? const WiringListRecBannerContainer() : Container(),
+            existAds ? const RecBannerContainer() : Container(),
           ],
         ),
       ),
@@ -211,7 +211,7 @@ class WiringCreateRunButton extends ConsumerWidget {
           Navigator.pop(context);
         } else {
           /// 未入力項目がある場合はSnackbarで警告
-          SnackBarAlert(context: context).snackbar('未入力項目があります');
+          SnackBarAlertClass(context: context).snackbar('未入力項目があります');
         }
       },
       style: ButtonStyle(

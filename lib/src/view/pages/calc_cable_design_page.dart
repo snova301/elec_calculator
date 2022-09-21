@@ -1,10 +1,15 @@
 import 'package:elec_facility_calc/src/model/enum_class.dart';
+import 'package:elec_facility_calc/src/view/widgets/calc_phase_select_card.dart';
+import 'package:elec_facility_calc/src/view/widgets/calc_run_button_widget.dart';
+import 'package:elec_facility_calc/src/view/widgets/correct_alert_dialog_widget.dart';
 import 'package:elec_facility_calc/src/view/widgets/drawer_contents_widget.dart';
+import 'package:elec_facility_calc/src/view/widgets/input_text_card_widget.dart';
+import 'package:elec_facility_calc/src/view/widgets/output_text_card_widget.dart';
 import 'package:elec_facility_calc/src/view/widgets/responsive_widget.dart';
+import 'package:elec_facility_calc/src/view/widgets/separate_text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/ads_options.dart';
-import 'package:elec_facility_calc/src/view/widgets/calc_widgets.dart';
 import 'package:elec_facility_calc/src/view/widgets/common_widgets.dart';
 import 'package:elec_facility_calc/src/notifiers/state_manager.dart';
 import 'package:elec_facility_calc/src/data/cable_data.dart';
@@ -30,7 +35,7 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
     bool isDrawerFixed = checkResponsive(screenWidth);
 
     /// 広告の初期化
-    AdsSettingsClass().initCableDesignRec();
+    AdsSettingsClass().initRecBanner();
 
     /// shared_prefのデータ保存用非同期providerの読み込み
     ref.watch(cableDesignSPSetProvider);
@@ -133,7 +138,7 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
                         /// 電圧がケーブルの定格を超えていたらsnackbarで警告
                         ref.read(cableDesignProvider).cableSize1 ==
                                 '候補なし(電圧要確認)'
-                            ? SnackBarAlert(context: context)
+                            ? SnackBarAlertClass(context: context)
                                 .snackbar('電圧がケーブルの定格電圧を超えています')
                             : null;
 
@@ -151,9 +156,7 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
                   ),
 
                   /// 広告表示
-                  existAds
-                      ? const CableDesignRecBannerContainer()
-                      : Container(),
+                  existAds ? const RecBannerContainer() : Container(),
 
                   /// 結果表示
                   const SeparateText(title: '計算結果'),

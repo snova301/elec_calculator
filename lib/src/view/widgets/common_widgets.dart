@@ -3,9 +3,12 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// snackbarで注意喚起を行うWidget
-class SnackBarAlert {
+///
+/// 使い方
+/// SnackBarAlertClass(context: context).snackbar('これ以上追加できません');
+class SnackBarAlertClass {
   final BuildContext context;
-  SnackBarAlert({Key? key, required this.context}) : super();
+  SnackBarAlertClass({Key? key, required this.context}) : super();
 
   void snackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -23,13 +26,46 @@ class SnackBarAlert {
   }
 }
 
+/// dialogの表示
+class AlertDialogClass {
+  final BuildContext context;
+  AlertDialogClass({Key? key, required this.context}) : super();
+
+  void showAlertDialog(String title, String content, Function() onOkPressed) {
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, 'Cancel');
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              onOkPressed();
+              Navigator.pop(context, 'OK');
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// firebase analyticsの管理
 class AnalyticsService {
   Future<void> logPage(String screenName) async {
     await FirebaseAnalytics.instance.logEvent(
-      name: 'screen_view',
-      parameters: {
-        'firebase_screen': screenName,
-      },
+      name: screenName,
+      // name: '変更だよ',
+      // parameters: {
+      //   'firebase_screen': screenName,
+      // },
     );
   }
 }

@@ -28,7 +28,7 @@ class CalcConduitPageState extends ConsumerState<CalcConduitPage> {
     final listViewPadding = screenWidth / 20;
 
     /// 広告の初期化
-    AdsSettingsClass().initConduitStd();
+    AdsSettingsClass().initStdBanner();
 
     /// shared_prefのデータ保存用非同期providerの読み込み
     ref.watch(conduitSPSetProvider);
@@ -68,7 +68,7 @@ class CalcConduitPageState extends ConsumerState<CalcConduitPage> {
                   ),
 
                   /// 広告
-                  existAds ? const ConduitStdBannerContainer() : Container(),
+                  existAds ? const StdBannerContainer() : Container(),
 
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -122,7 +122,7 @@ class CalcConduitPageState extends ConsumerState<CalcConduitPage> {
               ref.read(conduitCalcProvider.notifier).calcCableArea();
             } else {
               /// snackbarで警告
-              SnackBarAlert(context: context).snackbar('これ以上追加できません');
+              SnackBarAlertClass(context: context).snackbar('これ以上追加できません');
             }
           },
         ),
