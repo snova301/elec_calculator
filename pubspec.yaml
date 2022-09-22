@@ -40,6 +40,7 @@ dependencies:
 
   uuid: ^3.0.6
   json_annotation: ^4.6.0
+  flutter_native_splash: ^2.2.9
 
   firebase_core: ^1.18.0
   firebase_analytics: ^9.1.8
@@ -53,6 +54,15 @@ flutter_icons:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+
+flutter_native_splash:
+  image: assets/icon/elec_icon_20211123_round.png
+  color: "#eaf4fc"
+  color_dark: "#16160e"
+  android_12:
+    image: assets/icon/elec_icon_20211123_round.png
+    color: "#eaf4fc"
+    color_dark: "#16160e"
 
 dev_dependencies:
   flutter_test:

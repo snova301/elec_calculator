@@ -70,6 +70,7 @@ class CalcConduitPageState extends ConsumerState<CalcConduitPage> {
                   /// 広告
                   existAds ? const StdBannerContainer() : Container(),
 
+                  /// 結果表示
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.all(10),
