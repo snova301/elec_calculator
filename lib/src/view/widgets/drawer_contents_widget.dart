@@ -91,16 +91,6 @@ class DrawerContentsListTile extends ConsumerWidget {
           ),
           leading: Icon(PageNameEnum.cableDesign.icon),
           onTap: () {
-            // /// ページ遷移のanalytics
-            // AnalyticsService().logPage(PageNameEnum.cableDesign.title);
-
-            // Navigator.popUntil(context, (route) => route.isFirst);
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => const CalcCableDesignPage(),
-            //   ),
-            // );
             toPagePush(
               context,
               PageNameEnum.cableDesign.title,
@@ -117,16 +107,6 @@ class DrawerContentsListTile extends ConsumerWidget {
           ),
           leading: Icon(PageNameEnum.elecPower.icon),
           onTap: () {
-            // /// ページ遷移のanalytics
-            // AnalyticsService().logPage(PageNameEnum.elecPower.title);
-
-            // Navigator.popUntil(context, (route) => route.isFirst);
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => const CalcElecPowerPage(),
-            //   ),
-            // );
             toPagePush(
               context,
               PageNameEnum.elecPower.title,
@@ -143,16 +123,6 @@ class DrawerContentsListTile extends ConsumerWidget {
           ),
           leading: Icon(PageNameEnum.conduit.icon),
           onTap: () {
-            // /// ページ遷移のanalytics
-            // AnalyticsService().logPage(PageNameEnum.conduit.title);
-
-            // Navigator.popUntil(context, (route) => route.isFirst);
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => const CalcConduitPage(),
-            //   ),
-            // );
             toPagePush(
               context,
               PageNameEnum.conduit.title,
@@ -169,20 +139,26 @@ class DrawerContentsListTile extends ConsumerWidget {
           ),
           leading: Icon(PageNameEnum.wiring.icon),
           onTap: () {
-            // /// ページ遷移のanalytics
-            // AnalyticsService().logPage(PageNameEnum.wiring.title);
-
-            // Navigator.popUntil(context, (route) => route.isFirst);
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => const WiringListPage(),
-            //   ),
-            // );
             toPagePush(
               context,
               PageNameEnum.wiring.title,
               PageNameEnum.wiring.page,
+            );
+          },
+        ),
+
+        /// 法律画面へ
+        ListTile(
+          title: Text(
+            PageNameEnum.showLaw.title,
+            style: TextStyle(fontSize: fontSize),
+          ),
+          leading: Icon(PageNameEnum.showLaw.icon),
+          onTap: () {
+            toPagePush(
+              context,
+              PageNameEnum.showLaw.title,
+              PageNameEnum.showLaw.page,
             );
           },
         ),
@@ -195,16 +171,6 @@ class DrawerContentsListTile extends ConsumerWidget {
           ),
           leading: Icon(PageNameEnum.setting.icon),
           onTap: () {
-            // /// ページ遷移のanalytics
-            // AnalyticsService().logPage(PageNameEnum.setting.title);
-
-            // // Navigator.popUntil(context, (route) => route.isFirst);
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => const SettingPage(),
-            //   ),
-            // );
             toPagePush(
               context,
               PageNameEnum.setting.title,
@@ -237,11 +203,6 @@ class DrawerContentsListTile extends ConsumerWidget {
             style: TextStyle(fontSize: fontSize),
           ),
           onTap: () {
-            // /// ページ遷移のanalytics
-            // AnalyticsService().logPage(PageNameEnum.about.title);
-
-            // Navigator.push(context,
-            //     MaterialPageRoute(builder: (context) => const AboutPage()));
             toPagePush(
               context,
               PageNameEnum.about.title,

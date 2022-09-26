@@ -1,4 +1,5 @@
 import 'package:elec_facility_calc/src/model/enum_class.dart';
+import 'package:elec_facility_calc/src/view/pages/show_law_select_page.dart';
 import 'package:elec_facility_calc/src/view/widgets/drawer_contents_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -65,6 +66,13 @@ class MyHomePage extends ConsumerWidget {
                   backGroundColor: Colors.green,
                   textColor: Colors.white,
                   icon: PageNameEnum.wiring.icon,
+                ),
+                _PagePush(
+                  title: PageNameEnum.showLaw.title,
+                  pagepush: const ShowLawPage(),
+                  backGroundColor: Colors.green,
+                  textColor: Colors.white,
+                  icon: PageNameEnum.showLaw.icon,
                 ),
                 _PagePush(
                   title: PageNameEnum.setting.title,
