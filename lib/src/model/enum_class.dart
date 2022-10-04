@@ -49,7 +49,7 @@ enum PageNameEnum {
   elecPower('電力計算', CalcElecPowerPage(), Icons.calculate),
   conduit('電線管設計', CalcConduitPage(), Icons.gavel_rounded),
   wiring('配線管理', WiringListPage(), Icons.list_alt),
-  showLaw('法律表示', ShowLawPage(), Icons.list_alt),
+  showLaw('法律表示', ShowLawPage(), Icons.library_books),
   setting('設定', SettingPage(), Icons.settings),
   about('About', AboutPage(), null);
 

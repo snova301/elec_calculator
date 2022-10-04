@@ -44,25 +44,59 @@ class ShowLawPage extends ConsumerWidget {
                   ),
                 ),
                 const LinkCard(
-                  urlTitle: '消防法',
+                  urlTitle: '電気事業法',
                   urlName:
-                      'https://elaws.e-gov.go.jp/document?lawid=323AC1000000186_20210901_503AC0000000036',
-                  // cardColor: Colors.orange,
-                  // fontColor: Colors.white,
+                      'https://elaws.e-gov.go.jp/document?lawid=339AC0000000170',
                 ),
                 const LinkCard(
-                  urlTitle: '消防法施行令',
+                  urlTitle: '電気事業法施行令',
                   urlName:
-                      'https://elaws.e-gov.go.jp/document?lawid=336CO0000000037',
-                  // cardColor: Colors.orange,
-                  // fontColor: Colors.white,
+                      'https://elaws.e-gov.go.jp/document?lawid=340CO0000000206',
                 ),
                 const LinkCard(
-                  urlTitle: '消防法施行規則',
+                  urlTitle: '電気事業法施行規則',
                   urlName:
-                      'https://elaws.e-gov.go.jp/document?lawid=336M50000008006',
-                  // cardColor: Colors.orange,
-                  // fontColor: Colors.white,
+                      'https://elaws.e-gov.go.jp/document?lawid=407M50000400077',
+                ),
+                const LinkCard(
+                  urlTitle: '電気設備に関する技術基準を定める省令',
+                  urlName:
+                      'https://elaws.e-gov.go.jp/document?lawid=409M50000400052',
+                ),
+                const LinkCard(
+                  urlTitle: '電気関係報告規則',
+                  urlName:
+                      'https://elaws.e-gov.go.jp/document?lawid=340M50000400054',
+                ),
+                const LinkCard(
+                  urlTitle: '電気工事士法',
+                  urlName:
+                      'https://elaws.e-gov.go.jp/document?lawid=335AC0000000139',
+                ),
+                const LinkCard(
+                  urlTitle: '電気工事士法施行令',
+                  urlName:
+                      'https://elaws.e-gov.go.jp/document?lawid=335CO0000000260',
+                ),
+                const LinkCard(
+                  urlTitle: '電気工事士法施行規則',
+                  urlName:
+                      'https://elaws.e-gov.go.jp/document?lawid=335M50000400097',
+                ),
+                const LinkCard(
+                  urlTitle: '電気工事業の業務の適正化に関する法律',
+                  urlName:
+                      'https://elaws.e-gov.go.jp/document?lawid=345AC1000000096',
+                ),
+                const LinkCard(
+                  urlTitle: '電気工事業の業務の適正化に関する法律施行令',
+                  urlName:
+                      'https://elaws.e-gov.go.jp/document?lawid=345CO0000000327',
+                ),
+                const LinkCard(
+                  urlTitle: '電気工事業の業務の適正化に関する法律施行規則',
+                  urlName:
+                      'https://elaws.e-gov.go.jp/document?lawid=345M50000400103',
                 ),
 
                 /// 広告表示

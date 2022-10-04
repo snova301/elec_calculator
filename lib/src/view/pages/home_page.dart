@@ -177,8 +177,7 @@ class _AgreementContainer extends ConsumerWidget {
           ),
           TextButton(
             onPressed: () {
-              openUrl(
-                  'https://snova301.github.io/AppService/common/terms.html');
+              openUrl('https://app-info.esunowba.dev/terms');
             },
             style: ButtonStyle(
               padding: MaterialStateProperty.all(EdgeInsets.zero),
@@ -197,8 +196,7 @@ class _AgreementContainer extends ConsumerWidget {
           ),
           TextButton(
             onPressed: () {
-              openUrl(
-                  'https://snova301.github.io/AppService/common/privacypolicy.html');
+              openUrl('https://app-info.esunowba.dev/privacypolicy');
             },
             style: ButtonStyle(
               padding: MaterialStateProperty.all(EdgeInsets.zero),

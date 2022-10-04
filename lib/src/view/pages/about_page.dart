@@ -23,21 +23,19 @@ class AboutPage extends ConsumerWidget {
           /// 使い方ページ
           const LinkCard(
             urlTitle: '使い方',
-            urlName:
-                'https://snova301.github.io/AppService/elec_calculator/howtouse.html',
+            urlName: 'https://app-info.esunowba.dev/elec-calc-howtouse',
           ),
 
           /// 利用規約ページ
           const LinkCard(
             urlTitle: '利用規約',
-            urlName: 'https://snova301.github.io/AppService/common/terms.html',
+            urlName: 'https://app-info.esunowba.dev/terms',
           ),
 
           /// プライバシーポリシーページ
           const LinkCard(
             urlTitle: 'プライバシーポリシー',
-            urlName:
-                'https://snova301.github.io/AppService/common/privacypolicy.html',
+            urlName: 'https://app-info.esunowba.dev/privacypolicy',
           ),
 
           /// お問い合わせフォーム
@@ -45,20 +43,6 @@ class AboutPage extends ConsumerWidget {
             urlTitle: 'お問い合わせ',
             urlName: 'https://forms.gle/yBGDikXqZzWjco7z8',
           ),
-
-          /// 支援サイト
-          // Card(
-          //   child: ListTile(
-          //     leading: const Icon(
-          //       Icons.favorite_border,
-          //       color: Colors.pink,
-          //     ),
-          //     title: const Text('開発を支援'),
-          //     contentPadding: const EdgeInsets.all(10),
-          //     onTap: () => openUrl('https://www.buymeacoffee.com/snova301'),
-          //     trailing: const Icon(Icons.open_in_browser),
-          //   ),
-          // ),
 
           /// admobリワード広告
           existAds
