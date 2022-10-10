@@ -40,8 +40,21 @@ class CalcElecPowerPageState extends ConsumerState<CalcElecPowerPage> {
     /// shared_prefのデータ保存用非同期providerの読み込み
     ref.watch(elecPowerSPSetProvider);
 
+    /// 入力されている文字をNotifierへ通知するためのローカル関数
+    void runCheckFunc() {
+      ref.read(elecPowerProvider.notifier).isRunCheck(
+            ref.watch(elecPowerTxtCtrVoltProvider).text,
+            ref.watch(elecPowerTxtCtrCurrentProvider).text,
+            ref.watch(elecPowerTxtCtrCosFaiProvider).text,
+          );
+    }
+
+    /// 文字入力中に画面の別の部分をタップしたら入力が完了する
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
+      onTap: () {
+        FocusScope.of(context).unfocus();
+        runCheckFunc();
+      },
       child: Scaffold(
         appBar: AppBar(
           title: Text(
@@ -65,8 +78,11 @@ class CalcElecPowerPageState extends ConsumerState<CalcElecPowerPage> {
                   /// 相選択
                   CalcPhaseSelectCard(
                     phase: ref.watch(elecPowerProvider).phase.str,
-                    onPressedFunc: (PhaseNameEnum value) =>
-                        ref.read(elecPowerProvider.notifier).updatePhase(value),
+                    onPressedFunc: (PhaseNameEnum value) {
+                      // タップして変更した場合にすでに入力されている他の数値も通知
+                      runCheckFunc();
+                      ref.read(elecPowerProvider.notifier).updatePhase(value);
+                    },
                   ),
 
                   /// 電圧入力
@@ -75,9 +91,13 @@ class CalcElecPowerPageState extends ConsumerState<CalcElecPowerPage> {
                     unit: ref.watch(elecPowerProvider).voltUnit.str,
                     message: '整数のみ',
                     controller: ref.watch(elecPowerTxtCtrVoltProvider),
-                    onPressedVoltUnitFunc: (VoltUnitEnum value) => ref
-                        .read(elecPowerProvider.notifier)
-                        .updateVoltUnit(value),
+                    onPressedVoltUnitFunc: (VoltUnitEnum value) {
+                      // タップして変更した場合にすでに入力されている他の数値も通知
+                      runCheckFunc();
+                      ref
+                          .read(elecPowerProvider.notifier)
+                          .updateVoltUnit(value);
+                    },
                   ),
 
                   /// 電流値入力

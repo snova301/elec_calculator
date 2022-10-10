@@ -24,6 +24,7 @@ class AboutPage extends ConsumerWidget {
           const LinkCard(
             urlTitle: '使い方',
             urlName: 'https://app-info.esunowba.dev/elec-calc-howtouse',
+            showsMessage: true,
           ),
 
           /// 利用規約ページ

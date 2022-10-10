@@ -119,6 +119,7 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
     state = state.copyWith(current: current);
   }
 
+  /// ケーブルサイズのリスト作成
   List calcCableSize() {
     /// 計算用変数初期化
     String cableType = state.cableType;
@@ -310,6 +311,11 @@ class CableDesignNotifier extends StateNotifier<CableDesignData> {
 
       /// 力率が0-100%以外ならfalseを返す
       if (cosFai < 0 || cosFai > 100) {
+        return false;
+      }
+
+      /// 電圧が0以下ならfalseを返す
+      if (volt <= 0) {
         return false;
       }
 

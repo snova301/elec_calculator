@@ -5,16 +5,21 @@ import 'package:flutter/material.dart';
 class LinkCard extends StatelessWidget {
   final String urlTitle;
   final String urlName;
+  final bool showsMessage;
 
-  const LinkCard({Key? key, required this.urlTitle, required this.urlName})
-      : super(key: key);
+  const LinkCard({
+    Key? key,
+    required this.urlTitle,
+    required this.urlName,
+    this.showsMessage = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
         title: Text(urlTitle),
-        subtitle: Text('$urlTitleのwebページへ移動します。'),
+        subtitle: showsMessage ? Text('$urlTitleのwebページへ移動します。') : null,
         contentPadding: const EdgeInsets.all(10),
         onTap: () => openUrl(urlName),
         trailing: const Icon(Icons.open_in_browser),

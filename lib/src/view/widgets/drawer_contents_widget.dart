@@ -191,8 +191,7 @@ class DrawerContentsListTile extends ConsumerWidget {
             /// ページ遷移のanalytics
             AnalyticsService().logPage('計算方法');
 
-            openUrl(
-                'https://snova301.github.io/AppService/elec_calculator/method.html');
+            openUrl('https://app-info.esunowba.dev/elec-calc-method');
           },
         ),
 

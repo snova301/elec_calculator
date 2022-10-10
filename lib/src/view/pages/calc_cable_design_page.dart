@@ -40,8 +40,22 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
     /// shared_prefのデータ保存用非同期providerの読み込み
     ref.watch(cableDesignSPSetProvider);
 
+    /// 入力されている文字をNotifierへ通知するためのローカル関数
+    void runCheckFunc() {
+      ref.read(cableDesignProvider.notifier).isRunCheck(
+            ref.watch(cableDesignTxtCtrElecOutProvider).text,
+            ref.watch(cableDesignTxtCtrVoltProvider).text,
+            ref.watch(cableDesignTxtCtrCosFaiProvider).text,
+            ref.watch(cableDesignTxtCtrLengthProvider).text,
+          );
+    }
+
+    /// 文字入力中に画面の別の部分をタップしたら入力が完了する
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
+      onTap: () {
+        FocusScope.of(context).unfocus();
+        runCheckFunc();
+      },
       child: Scaffold(
         appBar: AppBar(
           title: Text(
@@ -65,9 +79,12 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
                   /// 相選択
                   CalcPhaseSelectCard(
                     phase: ref.watch(cableDesignProvider).phase.str,
-                    onPressedFunc: (PhaseNameEnum value) => ref
-                        .read(cableDesignProvider.notifier)
-                        .updatePhase(value),
+                    onPressedFunc: (PhaseNameEnum value) {
+                      // タップして変更した場合にすでに入力されている他の数値も通知
+                      runCheckFunc();
+                      // 相の変更
+                      ref.read(cableDesignProvider.notifier).updatePhase(value);
+                    },
                   ),
 
                   /// ケーブル種類選択
@@ -79,9 +96,14 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
                     unit: ref.watch(cableDesignProvider).powerUnit.strActive,
                     message: '整数のみ',
                     controller: ref.watch(cableDesignTxtCtrElecOutProvider),
-                    onPressedPowerUnitFunc: (PowerUnitEnum value) => ref
-                        .read(cableDesignProvider.notifier)
-                        .updatePowerUnit(value),
+                    onPressedPowerUnitFunc: (PowerUnitEnum value) {
+                      // タップして変更した場合にすでに入力されている他の数値も通知
+                      runCheckFunc();
+                      // 電気容量単位の変更
+                      ref
+                          .read(cableDesignProvider.notifier)
+                          .updatePowerUnit(value);
+                    },
                   ),
 
                   /// 線間電圧入力
@@ -90,9 +112,14 @@ class CalcCableDesignPageState extends ConsumerState<CalcCableDesignPage> {
                     unit: ref.watch(cableDesignProvider).voltUnit.str,
                     message: '整数のみ',
                     controller: ref.watch(cableDesignTxtCtrVoltProvider),
-                    onPressedVoltUnitFunc: (VoltUnitEnum value) => ref
-                        .read(cableDesignProvider.notifier)
-                        .updateVoltUnit(value),
+                    onPressedVoltUnitFunc: (VoltUnitEnum value) {
+                      // タップして変更した場合にすでに入力されている他の数値も通知
+                      runCheckFunc();
+                      // 電圧単位の変更
+                      ref
+                          .read(cableDesignProvider.notifier)
+                          .updateVoltUnit(value);
+                    },
                   ),
 
                   /// 力率入力
