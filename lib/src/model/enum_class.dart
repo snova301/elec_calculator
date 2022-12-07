@@ -2,6 +2,7 @@ import 'package:elec_facility_calc/src/view/pages/about_page.dart';
 import 'package:elec_facility_calc/src/view/pages/calc_cable_design_page.dart';
 import 'package:elec_facility_calc/src/view/pages/calc_conduit_page.dart';
 import 'package:elec_facility_calc/src/view/pages/calc_elec_power_page.dart';
+import 'package:elec_facility_calc/src/view/pages/calc_elec_rate.dart';
 import 'package:elec_facility_calc/src/view/pages/home_page.dart';
 import 'package:elec_facility_calc/src/view/pages/setting_page.dart';
 import 'package:elec_facility_calc/src/view/pages/show_law_select_page.dart';
@@ -48,6 +49,7 @@ enum PageNameEnum {
   cableDesign('ケーブル設計', CalcCableDesignPage(), Icons.design_services),
   elecPower('電力計算', CalcElecPowerPage(), Icons.calculate),
   conduit('電線管設計', CalcConduitPage(), Icons.gavel_rounded),
+  elecRate('需要率計算', CalcElecRatePage(), Icons.calculate),
   wiring('配線管理', WiringListPage(), Icons.list_alt),
   showLaw('法律表示', ShowLawPage(), Icons.library_books),
   setting('設定', SettingPage(), Icons.settings),

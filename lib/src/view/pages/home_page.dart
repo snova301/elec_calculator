@@ -1,4 +1,5 @@
 import 'package:elec_facility_calc/src/model/enum_class.dart';
+import 'package:elec_facility_calc/src/view/pages/calc_elec_rate.dart';
 import 'package:elec_facility_calc/src/view/pages/show_law_select_page.dart';
 import 'package:elec_facility_calc/src/view/widgets/drawer_contents_widget.dart';
 import 'package:flutter/material.dart';
@@ -59,6 +60,13 @@ class MyHomePage extends ConsumerWidget {
                   backGroundColor: Colors.green,
                   textColor: Colors.white,
                   icon: PageNameEnum.conduit.icon,
+                ),
+                _PagePush(
+                  title: PageNameEnum.elecRate.title,
+                  pagepush: const CalcElecRatePage(),
+                  backGroundColor: Colors.green,
+                  textColor: Colors.white,
+                  icon: PageNameEnum.elecRate.icon,
                 ),
                 _PagePush(
                   title: PageNameEnum.wiring.title,

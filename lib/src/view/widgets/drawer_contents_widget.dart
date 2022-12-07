@@ -131,6 +131,22 @@ class DrawerContentsListTile extends ConsumerWidget {
           },
         ),
 
+        /// 需要率計算画面へ
+        ListTile(
+          title: Text(
+            PageNameEnum.elecRate.title,
+            style: TextStyle(fontSize: fontSize),
+          ),
+          leading: Icon(PageNameEnum.elecRate.icon),
+          onTap: () {
+            toPagePush(
+              context,
+              PageNameEnum.elecRate.title,
+              PageNameEnum.elecRate.page,
+            );
+          },
+        ),
+
         /// 配線リスト画面へ
         ListTile(
           title: Text(
