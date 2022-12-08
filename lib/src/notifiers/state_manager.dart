@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'package:elec_facility_calc/src/model/cable_design_data_model.dart';
 import 'package:elec_facility_calc/src/model/conduit_calc_data_model.dart';
 import 'package:elec_facility_calc/src/model/elec_power_data_model.dart';
+import 'package:elec_facility_calc/src/model/elec_rate_data_model.dart';
 import 'package:elec_facility_calc/src/model/setting_data_model.dart';
 import 'package:elec_facility_calc/src/model/wiring_list_data_model.dart';
 import 'package:elec_facility_calc/src/notifiers/calc_cable_design_state.dart';
 import 'package:elec_facility_calc/src/notifiers/calc_conduit_state.dart';
 import 'package:elec_facility_calc/src/notifiers/calc_elec_power_state.dart';
+import 'package:elec_facility_calc/src/notifiers/calc_elec_rate_state.dart';
 import 'package:elec_facility_calc/src/notifiers/wiring_list_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,6 +18,7 @@ enum SharedPrefEnum {
   calcCableDesign,
   calcPower,
   calcConduit,
+  calcRate,
   calcWiringList,
   setting,
 }
@@ -29,10 +32,12 @@ class StateManagerClass {
     /// キャッシュ削除
     prefs.remove(SharedPrefEnum.calcCableDesign.name);
     prefs.remove(SharedPrefEnum.calcPower.name);
+    prefs.remove(SharedPrefEnum.calcRate.name);
 
     /// providerの中身を削除
     ref.read(cableDesignProvider.notifier).removeAll();
     ref.read(elecPowerProvider.notifier).removeAll();
+    ref.read(elecRateProvider.notifier).removeAll();
   }
 
   /// 以前の電線管設計データをshared_preferencesから削除
@@ -66,6 +71,7 @@ class StateManagerClass {
     var getCableDesign = prefs.getString(SharedPrefEnum.calcCableDesign.name);
     var getElecPower = prefs.getString(SharedPrefEnum.calcPower.name);
     var getConduit = prefs.getString(SharedPrefEnum.calcConduit.name);
+    var getElecRate = prefs.getString(SharedPrefEnum.calcRate.name);
     var getWiringList = prefs.getString(SharedPrefEnum.calcWiringList.name);
     var getSetting = prefs.getString(SharedPrefEnum.setting.name);
 
@@ -107,6 +113,18 @@ class StateManagerClass {
 
       /// 値をproviderへ
       ref.read(conduitCalcProvider.notifier).updateAll(conduitData);
+    } catch (e) {
+      // print(e);
+    }
+
+    /// 需要率計算
+    /// データがない場合、nullになるので、null以外の場合でデコードする
+    /// また、データクラスの変更があった場合は読み込みエラーになるので、回避
+    try {
+      var getElecRateData = ElecRateData.fromJson(jsonDecode(getElecRate!));
+
+      /// 値をproviderへ
+      ref.read(elecRateProvider.notifier).updateAll(getElecRateData);
     } catch (e) {
       // print(e);
     }
@@ -206,7 +224,19 @@ final conduitSPSetProvider = FutureProvider((ref) async {
   prefs.setString(SharedPrefEnum.calcConduit.name, setConduit);
 });
 
-/// shared_prefでケーブル設計データを非同期で保存するprovider
+/// shared_prefで需要率計算データを非同期で保存するprovider
+final elecRateSPSetProvider = FutureProvider((ref) async {
+  /// 初期化
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  ///  データの整形
+  var setElecRate = jsonEncode(ref.watch(elecRateProvider).toJson());
+
+  ///  書込み
+  prefs.setString(SharedPrefEnum.calcRate.name, setElecRate);
+});
+
+/// shared_prefで配線リストデータを非同期で保存するprovider
 final wiringListSPSetProvider = FutureProvider((ref) async {
   /// 初期化
   SharedPreferences prefs = await SharedPreferences.getInstance();
