@@ -8,37 +8,55 @@ part 'elec_rate_data_model.g.dart';
 @freezed
 class ElecRateData with _$ElecRateData {
   const factory ElecRateData({
-    /// 入力
-    /// 相
-    required PhaseNameEnum phase,
+    /// 需要率計算タブのデータ定義
+    /// 電力接頭語単位
+    required PowerUnitEnum ratePowerUnit,
 
-    /// 電圧
-    required double volt,
+    /// 電力単位(皮相と有効)
+    required PowerUnitEnum ratePowerUnitAppa,
 
-    /// 電圧単位
-    required VoltUnitEnum voltUnit,
+    /// 全設備容量
+    required double rateAllInstCapa,
 
-    /// 電流
-    required double current,
+    /// 最大需要電力
+    required double rateMaxDemandPower,
 
-    /// 力率
-    required double cosFai,
+    /// 負荷率の計算の有無
+    required bool rateIsLoadFactor,
 
-    /// 出力
-    /// 皮相電力
-    required double apparentPower,
+    /// 平均需要電力
+    required double rateAveDemandPower,
 
-    /// 有効電力
-    required double activePower,
+    /// 需要率
+    required double rateDemandRate,
 
-    /// 無効電力
-    required double reactivePower,
+    /// 負荷率
+    required double rateLoadRate,
 
-    /// sinφ
-    required double sinFai,
+    /// 最大需要電力計算タブのデータ定義
+    /// 電力接頭語単位
+    required PowerUnitEnum powerPowerUnit,
 
-    /// 電力単位
-    required PowerUnitEnum powerUnit,
+    /// 電力単位(皮相と有効)
+    required PowerUnitEnum powerPowerUnitAppa,
+
+    /// 全設備容量
+    required double powerAllInstCapa,
+
+    /// 最大需要電力
+    required double powerMaxDemandPower,
+
+    /// 負荷率の計算の有無
+    required bool powerIsLoadFactor,
+
+    /// 平均需要電力
+    required double powerAveDemandPower,
+
+    /// 需要率
+    required double powerDemandRate,
+
+    /// 負荷率
+    required double powerLoadRate,
   }) = _ElecRateData;
 
   /// from Json

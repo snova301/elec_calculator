@@ -30,7 +30,7 @@ class CableDesignData with _$CableDesignData {
     /// 電圧単位
     required VoltUnitEnum voltUnit,
 
-    /// 電力単位
+    /// 電力接頭語単位
     required PowerUnitEnum powerUnit,
 
     /// 出力

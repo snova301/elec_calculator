@@ -22,7 +22,21 @@ class CalcElecRatePage extends ConsumerStatefulWidget {
   CalcElecRatePageState createState() => CalcElecRatePageState();
 }
 
-class CalcElecRatePageState extends ConsumerState<CalcElecRatePage> {
+class CalcElecRatePageState extends ConsumerState<CalcElecRatePage>
+    with TickerProviderStateMixin {
+  late TabController _tabController;
+
+  /// tabcontollerの設定
+  /// vsyncのためにTickerProviderStateMixinが必要
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(
+      length: 2,
+      vsync: this,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     /// 画面情報取得
@@ -60,136 +74,147 @@ class CalcElecRatePageState extends ConsumerState<CalcElecRatePage> {
           title: Text(
             PageNameEnum.elecRate.title,
           ),
-        ),
-        body: Row(
-          children: [
-            /// 画面幅が規定以上でメニューを左側に固定
-            isDrawerFixed ? const DrawerContentsFixed() : Container(),
-
-            /// サイズ指定されていないとエラーなのでExpandedで囲む
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.fromLTRB(
-                    listViewPadding, 10, listViewPadding, 10),
-                children: <Widget>[
-                  /// 入力表示
-                  const SeparateText(title: '計算条件'),
-
-                  /// 相選択
-                  CalcPhaseSelectCard(
-                    phase: ref.watch(elecPowerProvider).phase.str,
-                    onPressedFunc: (PhaseNameEnum value) {
-                      // タップして変更した場合にすでに入力されている他の数値も通知
-                      runCheckFunc();
-                      ref.read(elecPowerProvider.notifier).updatePhase(value);
-                    },
+          bottom: TabBar(
+            controller: _tabController,
+            tabs: const <Widget>[
+              Tab(
+                child: Text(
+                  'tab1',
+                  style: TextStyle(
+                    color: Colors.green,
                   ),
-
-                  /// 電圧入力
-                  InputTextCard(
-                    title: '線間電圧',
-                    unit: ref.watch(elecPowerProvider).voltUnit.str,
-                    message: '整数のみ',
-                    controller: ref.watch(elecPowerTxtCtrVoltProvider),
-                    onPressedVoltUnitFunc: (VoltUnitEnum value) {
-                      // タップして変更した場合にすでに入力されている他の数値も通知
-                      runCheckFunc();
-                      ref
-                          .read(elecPowerProvider.notifier)
-                          .updateVoltUnit(value);
-                    },
-                  ),
-
-                  /// 電流値入力
-                  InputTextCard(
-                    title: '電流',
-                    unit: 'A',
-                    message: '整数のみ',
-                    controller: ref.watch(elecPowerTxtCtrCurrentProvider),
-                  ),
-
-                  /// 力率入力
-                  InputTextCard(
-                    title: '力率',
-                    unit: '%',
-                    message: '1-100%の整数のみ',
-                    controller: ref.watch(elecPowerTxtCtrCosFaiProvider),
-                  ),
-
-                  /// 計算実行ボタン
-                  CalcRunButton(
-                    // paddingSize: blockWidth,
-                    func: () {
-                      /// textcontrollerのデータを取得
-                      final volt = ref.read(elecPowerTxtCtrVoltProvider).text;
-                      final current =
-                          ref.read(elecPowerTxtCtrCurrentProvider).text;
-                      final cosFai =
-                          ref.read(elecPowerTxtCtrCosFaiProvider).text;
-
-                      /// 実行できるか確認
-                      bool isRunCheck = ref
-                          .read(elecPowerProvider.notifier)
-                          .isRunCheck(volt, current, cosFai);
-
-                      /// 実行可能なら計算実行
-                      if (isRunCheck) {
-                        ref.watch(elecPowerProvider.notifier).run();
-                      } else {
-                        /// 実行不可能ならエラーダイアログ
-                        showDialog<void>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return const CorrectAlertDialog();
-                          },
-                        );
-                      }
-                    },
-                  ),
-
-                  /// 広告表示
-                  existAds ? const RecBannerContainer() : Container(),
-
-                  /// 結果表示
-                  const SeparateText(title: '計算結果'),
-
-                  /// 単位選択
-                  CalcPowerUnitSelectCard(
-                    powerUnit: ref.watch(elecPowerProvider).powerUnit.str,
-                    onPressedFunc: (PowerUnitEnum value) => ref
-                        .read(elecPowerProvider.notifier)
-                        .updatePowerUnit(value),
-                  ),
-
-                  /// 皮相電力
-                  OutputTextCard(
-                    title: '皮相電力',
-                    unit: ref.watch(elecPowerProvider).powerUnit.strApparent,
-                    result: ref.watch(elecPowerApparentPowerProvider),
-                  ),
-
-                  /// 有効電力
-                  OutputTextCard(
-                    title: '有効電力',
-                    unit: ref.watch(elecPowerProvider).powerUnit.strActive,
-                    result: ref.watch(elecPowerActivePowerProvider),
-                  ),
-
-                  /// 無効電力
-                  OutputTextCard(
-                    title: '無効電力',
-                    unit: ref.watch(elecPowerProvider).powerUnit.strReactive,
-                    result: ref.watch(elecPowerReactivePowerProvider),
-                  ),
-
-                  /// sinφ
-                  OutputTextCard(
-                    title: 'sinφ',
-                    unit: '%',
-                    result: ref.watch(elecPowerSinFaiProvider),
-                  ),
-                ],
+                ),
               ),
+              Tab(
+                child: Text(
+                  'tab2',
+                  style: TextStyle(
+                    color: Colors.green,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: <Widget>[
+            Row(
+              children: [
+                /// 画面幅が規定以上でメニューを左側に固定
+                isDrawerFixed ? const DrawerContentsFixed() : Container(),
+
+                /// サイズ指定されていないとエラーなのでExpandedで囲む
+                Expanded(
+                  child: ListView(
+                    padding: EdgeInsets.fromLTRB(
+                        listViewPadding, 10, listViewPadding, 10),
+                    children: <Widget>[
+                      /// 入力表示
+                      const SeparateText(title: '計算条件'),
+
+                      /// 相選択
+                      CalcPhaseSelectCard(
+                        phase: ref.watch(elecPowerProvider).phase.str,
+                        onPressedFunc: (PhaseNameEnum value) {
+                          // タップして変更した場合にすでに入力されている他の数値も通知
+                          runCheckFunc();
+                          ref
+                              .read(elecPowerProvider.notifier)
+                              .updatePhase(value);
+                        },
+                      ),
+
+                      /// 電圧入力
+                      InputTextCard(
+                        title: '線間電圧',
+                        unit: ref.watch(elecPowerProvider).voltUnit.str,
+                        message: '整数のみ',
+                        controller: ref.watch(elecPowerTxtCtrVoltProvider),
+                        onPressedVoltUnitFunc: (VoltUnitEnum value) {
+                          // タップして変更した場合にすでに入力されている他の数値も通知
+                          runCheckFunc();
+                          ref
+                              .read(elecPowerProvider.notifier)
+                              .updateVoltUnit(value);
+                        },
+                      ),
+
+                      /// 計算実行ボタン
+                      CalcRunButton(
+                        // paddingSize: blockWidth,
+                        func: () {
+                          /// textcontrollerのデータを取得
+                          final volt =
+                              ref.read(elecPowerTxtCtrVoltProvider).text;
+                          final current =
+                              ref.read(elecPowerTxtCtrCurrentProvider).text;
+                          final cosFai =
+                              ref.read(elecPowerTxtCtrCosFaiProvider).text;
+
+                          /// 実行できるか確認
+                          bool isRunCheck = ref
+                              .read(elecPowerProvider.notifier)
+                              .isRunCheck(volt, current, cosFai);
+
+                          /// 実行可能なら計算実行
+                          if (isRunCheck) {
+                            ref.watch(elecPowerProvider.notifier).run();
+                          } else {
+                            /// 実行不可能ならエラーダイアログ
+                            showDialog<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const CorrectAlertDialog();
+                              },
+                            );
+                          }
+                        },
+                      ),
+
+                      /// 広告表示
+                      existAds ? const RecBannerContainer() : Container(),
+
+                      /// 結果表示
+                      const SeparateText(title: '計算結果'),
+
+                      /// 単位選択
+                      CalcPowerUnitSelectCard(
+                        powerUnit: ref.watch(elecPowerProvider).powerUnit.str,
+                        onPressedFunc: (PowerUnitEnum value) => ref
+                            .read(elecPowerProvider.notifier)
+                            .updatePowerUnit(value),
+                      ),
+
+                      /// 皮相電力
+                      OutputTextCard(
+                        title: '皮相電力',
+                        unit:
+                            ref.watch(elecPowerProvider).powerUnit.strApparent,
+                        result: ref.watch(elecPowerApparentPowerProvider),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                /// 画面幅が規定以上でメニューを左側に固定
+                isDrawerFixed ? const DrawerContentsFixed() : Container(),
+
+                /// サイズ指定されていないとエラーなのでExpandedで囲む
+                Expanded(
+                  child: ListView(
+                    padding: EdgeInsets.fromLTRB(
+                        listViewPadding, 10, listViewPadding, 10),
+                    children: const <Widget>[
+                      /// 入力表示
+                      SeparateText(title: '計算条件'),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
         ),

@@ -37,7 +37,7 @@ class ElecPowerData with _$ElecPowerData {
     /// sinφ
     required double sinFai,
 
-    /// 電力単位
+    /// 電力接頭語単位
     required PowerUnitEnum powerUnit,
   }) = _ElecPowerData;
 
