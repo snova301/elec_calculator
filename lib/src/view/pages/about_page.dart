@@ -46,24 +46,24 @@ class AboutPage extends ConsumerWidget {
           ),
 
           /// admobリワード広告
-          existAds
-              ? Card(
-                  child: ListTile(
-                    leading: const Icon(
-                      Icons.favorite_border,
-                      // color: Colors.pink,
-                    ),
-                    title: const Text('広告を見て開発を支援'),
-                    contentPadding: const EdgeInsets.all(10),
-                    onTap: () {
-                      /// 広告の表示
-                      ref
-                          .read(rewardedAdProvider.notifier)
-                          .showRewardedAd(context);
-                    },
-                  ),
-                )
-              : Container(),
+          // existAds
+          //     ? Card(
+          //         child: ListTile(
+          //           leading: const Icon(
+          //             Icons.favorite_border,
+          //             // color: Colors.pink,
+          //           ),
+          //           title: const Text('広告を見て開発を支援'),
+          //           contentPadding: const EdgeInsets.all(10),
+          //           onTap: () {
+          //             /// 広告の表示
+          //             ref
+          //                 .read(rewardedAdProvider.notifier)
+          //                 .showRewardedAd(context);
+          //           },
+          //         ),
+          //       )
+          //     : Container(),
 
           /// オープンソースライセンスの表示
           Card(
