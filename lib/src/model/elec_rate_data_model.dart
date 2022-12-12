@@ -12,8 +12,8 @@ class ElecRateData with _$ElecRateData {
     /// 電力接頭語単位
     required PowerUnitEnum ratePowerUnit,
 
-    /// 電力単位(皮相と有効)
-    required PowerUnitEnum ratePowerUnitAppa,
+    /// 電力種類(皮相と有効)
+    required PowerTypeEnum ratePowerType,
 
     /// 全設備容量
     required double rateAllInstCapa,
@@ -38,7 +38,7 @@ class ElecRateData with _$ElecRateData {
     required PowerUnitEnum powerPowerUnit,
 
     /// 電力単位(皮相と有効)
-    required PowerUnitEnum powerPowerUnitAppa,
+    required PowerTypeEnum powerPowerType,
 
     /// 全設備容量
     required double powerAllInstCapa,

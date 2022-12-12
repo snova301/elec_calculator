@@ -13,7 +13,7 @@ final elecRateProvider =
 /// 初期データ
 const _initData = ElecRateData(
   ratePowerUnit: PowerUnitEnum.w,
-  ratePowerUnitAppa: PowerUnitEnum.w,
+  ratePowerType: PowerTypeEnum.apparent,
   rateAllInstCapa: 0,
   rateMaxDemandPower: 0,
   rateIsLoadFactor: false,
@@ -21,7 +21,7 @@ const _initData = ElecRateData(
   rateDemandRate: 0,
   rateLoadRate: 0,
   powerPowerUnit: PowerUnitEnum.w,
-  powerPowerUnitAppa: PowerUnitEnum.w,
+  powerPowerType: PowerTypeEnum.apparent,
   powerAllInstCapa: 0,
   powerMaxDemandPower: 0,
   powerIsLoadFactor: false,
@@ -41,8 +41,13 @@ class ElecRateNotifier extends StateNotifier<ElecRateData> {
   }
 
   /// 電力単位の変更
-  void updatePowerUnit(PowerUnitEnum powerUnit) {
+  void updateRatePowerUnit(PowerUnitEnum powerUnit) {
     state = state.copyWith(ratePowerUnit: powerUnit);
+  }
+
+  /// 電力単位の変更
+  void updateRatePowerType(PowerTypeEnum powerType) {
+    state = state.copyWith(ratePowerType: powerType);
   }
 
   /// 電圧単位の倍率設定
@@ -73,54 +78,55 @@ class ElecRateNotifier extends StateNotifier<ElecRateData> {
   }
 
   /// 皮相電力の変更
-  void updateApparentPower() {
+  void updateTyperentPower() {
     /// 読み出し
     double current = state.rateAllInstCapa;
 
     /// 初期化
-    double appaPower = 0;
+    double TypePower = 0;
     double voltUnitRatio = calcVoltUnitRatio();
 
     // if (phase == PhaseNameEnum.single) {
     //   /// 単相2線電力計算
-    //   appaPower = volt * current * voltUnitRatio;
+    //   TypePower = volt * current * voltUnitRatio;
     // } else if (phase == PhaseNameEnum.singlePhaseThreeWire) {
     //   /// 単相3線電力計算
-    //   appaPower = 2 * volt * current * voltUnitRatio;
+    //   TypePower = 2 * volt * current * voltUnitRatio;
     // } else if (phase == PhaseNameEnum.three) {
     //   /// 三相3線電力計算
-    //   appaPower = sqrt(3) * volt * current * voltUnitRatio;
+    //   TypePower = sqrt(3) * volt * current * voltUnitRatio;
     // }
 
     /// 書込み
-    state = state.copyWith(rateAllInstCapa: appaPower);
+    state = state.copyWith(rateAllInstCapa: TypePower);
   }
 
   /// 計算実行
   void run() {
     /// 皮相電力を計算
-    updateApparentPower();
+    updateTyperentPower();
   }
 
   /// runメソッドが実行できるか確認するメソッド
-  bool isRunCheck(String strVolt, String strCurrent, String strCosFai) {
+  bool isRunCheck(String strAllInstCapa) {
     try {
       /// 数値に変換できるか確認
-      double volt = double.parse(strVolt);
-      double current = double.parse(strCurrent);
-      double cosFai = double.parse(strCosFai);
+      double allInstCapa = double.parse(strAllInstCapa);
+      // double current = double.parse(strCurrent);
+      // double cosFai = double.parse(strCosFai);
 
       /// 力率が0-100%以外ならfalseを返す
-      if (cosFai < 0 || cosFai > 100) {
-        return false;
-      }
+      // if (cosFai < 0 || cosFai > 100) {
+      //   return false;
+      // }
 
-      /// 入力した数値をTextEditingControllerに入れる
+      /// 入力した数値をstateに入れる
       // state = state.copyWith(
       //   volt: volt,
       //   current: current,
       //   cosFai: cosFai,
       // );
+      state = state.copyWith(rateAllInstCapa: allInstCapa);
     } catch (e) {
       /// 数値変換や整形に失敗した場合、falseを返す
       return false;
@@ -141,17 +147,24 @@ class ElecRateNotifier extends StateNotifier<ElecRateData> {
 /// 整数の場合、intからstringに変換
 
 /// 電圧
-final elecRateTxtCtrVoltProvider = StateProvider((ref) {
-  double volt = ref.watch(elecRateProvider).rateAllInstCapa;
+final elecRateTxtCtrAllInstCapaProvider = StateProvider((ref) {
+  double allInstCapa = ref.watch(elecRateProvider).rateAllInstCapa;
   return TextEditingController(
-      text: volt == volt.toInt().toDouble()
-          ? volt.toInt().toString()
-          : volt.toString());
+      text: allInstCapa == allInstCapa.toInt().toDouble()
+          ? allInstCapa.toInt().toString()
+          : allInstCapa.toString());
 });
+// final elecRateTxtCtrVoltProvider = StateProvider((ref) {
+//   double volt = ref.watch(elecRateProvider).rateAllInstCapa;
+//   return TextEditingController(
+//       text: volt == volt.toInt().toDouble()
+//           ? volt.toInt().toString()
+//           : volt.toString());
+// });
 
 /// 結果の値
 /// 皮相電力
-final elecRateApparentPowerProvider = StateProvider<String>((ref) {
+final elecRateTyperentPowerProvider = StateProvider<String>((ref) {
   /// 読み込み
   double power = ref.watch(elecRateProvider).rateAllInstCapa;
   double powerUnitRatio =

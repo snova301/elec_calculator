@@ -1,4 +1,6 @@
 import 'package:elec_facility_calc/src/model/enum_class.dart';
+import 'package:elec_facility_calc/src/notifiers/calc_elec_rate_state.dart';
+import 'package:elec_facility_calc/src/view/widgets/calc_power_unit_appa_select_card.dart';
 import 'package:elec_facility_calc/src/view/widgets/calc_power_unit_select_card.dart';
 import 'package:elec_facility_calc/src/view/widgets/drawer_contents_widget.dart';
 import 'package:elec_facility_calc/src/view/widgets/responsive_widget.dart';
@@ -56,10 +58,8 @@ class CalcElecRatePageState extends ConsumerState<CalcElecRatePage>
 
     /// 入力されている文字をNotifierへ通知するためのローカル関数
     void runCheckFunc() {
-      ref.read(elecPowerProvider.notifier).isRunCheck(
-            ref.watch(elecPowerTxtCtrVoltProvider).text,
-            ref.watch(elecPowerTxtCtrCurrentProvider).text,
-            ref.watch(elecPowerTxtCtrCosFaiProvider).text,
+      ref.read(elecRateProvider.notifier).isRunCheck(
+            ref.watch(elecRateTxtCtrAllInstCapaProvider).text,
           );
     }
 
@@ -79,7 +79,7 @@ class CalcElecRatePageState extends ConsumerState<CalcElecRatePage>
             tabs: const <Widget>[
               Tab(
                 child: Text(
-                  'tab1',
+                  '需要率計算',
                   style: TextStyle(
                     color: Colors.green,
                   ),
@@ -87,7 +87,7 @@ class CalcElecRatePageState extends ConsumerState<CalcElecRatePage>
               ),
               Tab(
                 child: Text(
-                  'tab2',
+                  '最大需要電力計算',
                   style: TextStyle(
                     color: Colors.green,
                   ),
@@ -113,86 +113,86 @@ class CalcElecRatePageState extends ConsumerState<CalcElecRatePage>
                       /// 入力表示
                       const SeparateText(title: '計算条件'),
 
-                      /// 相選択
-                      CalcPhaseSelectCard(
-                        phase: ref.watch(elecPowerProvider).phase.str,
-                        onPressedFunc: (PhaseNameEnum value) {
-                          // タップして変更した場合にすでに入力されている他の数値も通知
-                          runCheckFunc();
-                          ref
-                              .read(elecPowerProvider.notifier)
-                              .updatePhase(value);
-                        },
-                      ),
-
-                      /// 電圧入力
-                      InputTextCard(
-                        title: '線間電圧',
-                        unit: ref.watch(elecPowerProvider).voltUnit.str,
-                        message: '整数のみ',
-                        controller: ref.watch(elecPowerTxtCtrVoltProvider),
-                        onPressedVoltUnitFunc: (VoltUnitEnum value) {
-                          // タップして変更した場合にすでに入力されている他の数値も通知
-                          runCheckFunc();
-                          ref
-                              .read(elecPowerProvider.notifier)
-                              .updateVoltUnit(value);
-                        },
-                      ),
-
-                      /// 計算実行ボタン
-                      CalcRunButton(
-                        // paddingSize: blockWidth,
-                        func: () {
-                          /// textcontrollerのデータを取得
-                          final volt =
-                              ref.read(elecPowerTxtCtrVoltProvider).text;
-                          final current =
-                              ref.read(elecPowerTxtCtrCurrentProvider).text;
-                          final cosFai =
-                              ref.read(elecPowerTxtCtrCosFaiProvider).text;
-
-                          /// 実行できるか確認
-                          bool isRunCheck = ref
-                              .read(elecPowerProvider.notifier)
-                              .isRunCheck(volt, current, cosFai);
-
-                          /// 実行可能なら計算実行
-                          if (isRunCheck) {
-                            ref.watch(elecPowerProvider.notifier).run();
-                          } else {
-                            /// 実行不可能ならエラーダイアログ
-                            showDialog<void>(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const CorrectAlertDialog();
-                              },
-                            );
-                          }
-                        },
-                      ),
-
-                      /// 広告表示
-                      existAds ? const RecBannerContainer() : Container(),
-
-                      /// 結果表示
-                      const SeparateText(title: '計算結果'),
-
-                      /// 単位選択
+                      /// 接頭語単位選択
                       CalcPowerUnitSelectCard(
-                        powerUnit: ref.watch(elecPowerProvider).powerUnit.str,
-                        onPressedFunc: (PowerUnitEnum value) => ref
-                            .read(elecPowerProvider.notifier)
-                            .updatePowerUnit(value),
+                          powerUnit:
+                              ref.watch(elecRateProvider).ratePowerUnit.str,
+                          onPressedFunc: (PowerUnitEnum value) {
+                            // タップして変更した場合にすでに入力されている他の数値も通知
+                            runCheckFunc();
+                            ref
+                                .read(elecRateProvider.notifier)
+                                .updateRatePowerUnit(value);
+                          }),
+
+                      /// 電力種類選択
+                      CalcPowerTypeSelectCard(
+                          powerType:
+                              ref.watch(elecRateProvider).ratePowerType.str,
+                          onPressedFunc: (PowerTypeEnum value) {
+                            // タップして変更した場合にすでに入力されている他の数値も通知
+                            runCheckFunc();
+                            ref
+                                .read(elecRateProvider.notifier)
+                                .updateRatePowerType(value);
+                          }),
+
+                      /// 全設備容量入力
+                      InputTextCard(
+                        title: '全設備容量',
+                        unit:
+                            ref.watch(elecRateProvider).ratePowerUnit.strMark +
+                                ref.watch(elecRateProvider).ratePowerType.str,
+                        message: '整数のみ',
+                        controller:
+                            ref.watch(elecRateTxtCtrAllInstCapaProvider),
                       ),
 
-                      /// 皮相電力
-                      OutputTextCard(
-                        title: '皮相電力',
-                        unit:
-                            ref.watch(elecPowerProvider).powerUnit.strApparent,
-                        result: ref.watch(elecPowerApparentPowerProvider),
-                      ),
+                      // /// 計算実行ボタン
+                      // CalcRunButton(
+                      //   // paddingSize: blockWidth,
+                      //   func: () {
+                      //     /// textcontrollerのデータを取得
+                      //     final volt =
+                      //         ref.read(elecPowerTxtCtrVoltProvider).text;
+                      //     final current =
+                      //         ref.read(elecPowerTxtCtrCurrentProvider).text;
+                      //     final cosFai =
+                      //         ref.read(elecPowerTxtCtrCosFaiProvider).text;
+
+                      //     /// 実行できるか確認
+                      //     bool isRunCheck = ref
+                      //         .read(elecPowerProvider.notifier)
+                      //         .isRunCheck(volt, current, cosFai);
+
+                      //     /// 実行可能なら計算実行
+                      //     if (isRunCheck) {
+                      //       ref.watch(elecPowerProvider.notifier).run();
+                      //     } else {
+                      //       /// 実行不可能ならエラーダイアログ
+                      //       showDialog<void>(
+                      //         context: context,
+                      //         builder: (BuildContext context) {
+                      //           return const CorrectAlertDialog();
+                      //         },
+                      //       );
+                      //     }
+                      //   },
+                      // ),
+
+                      // /// 広告表示
+                      // existAds ? const RecBannerContainer() : Container(),
+
+                      // /// 結果表示
+                      // const SeparateText(title: '計算結果'),
+
+                      // /// 皮相電力
+                      // OutputTextCard(
+                      //   title: '皮相電力',
+                      //   unit:
+                      //       ref.watch(elecPowerProvider).powerUnit.strApparent,
+                      //   result: ref.watch(elecPowerApparentPowerProvider),
+                      // ),
                     ],
                   ),
                 ),

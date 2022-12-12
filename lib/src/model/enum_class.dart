@@ -30,17 +30,35 @@ enum VoltUnitEnum {
 
 /// 電力単位選択のenum
 enum PowerUnitEnum {
-  w('-', 'VA', 'W', 'Var'),
-  kw('k', 'kVA', 'kW', 'kVar'),
-  mw('M', 'MVA', 'MW', 'MVar');
+  w('-', 'VA', 'W', 'Var', ''),
+  kw('k', 'kVA', 'kW', 'kVar', 'k'),
+  mw('M', 'MVA', 'MW', 'MVar', 'M');
 
   final String str; // 名称
   final String strApparent; // 皮相電力
   final String strActive; // 有効電力
   final String strReactive; // 無効電力
+  final String strMark; // 接頭語のみ
 
   const PowerUnitEnum(
-      this.str, this.strApparent, this.strActive, this.strReactive);
+    this.str,
+    this.strApparent,
+    this.strActive,
+    this.strReactive,
+    this.strMark,
+  );
+}
+
+/// 電力種類選択のenum
+enum PowerTypeEnum {
+  apparent('VA'),
+  active('W'),
+  reactive('Var');
+
+  final String str; // 名称
+  const PowerTypeEnum(
+    this.str,
+  );
 }
 
 /// ページ名enum

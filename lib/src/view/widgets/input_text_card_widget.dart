@@ -5,12 +5,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// 入力用のwidget
 class InputTextCard extends ConsumerWidget {
-  final String title; // タイトル
-  final String? unit; // 単位
-  final String message; // tooltip用メッセージ
-  final TextEditingController? controller; // TextEditingController
-  final Function(VoltUnitEnum value)? onPressedVoltUnitFunc; // 電圧の単位選択
-  final Function(PowerUnitEnum value)? onPressedPowerUnitFunc; // 電力の単位選択
+  /// タイトル
+  final String title;
+
+  /// 単位
+  final String? unit;
+
+  /// tooltip用メッセージ
+  final String message;
+
+  /// TextEditingController
+  final TextEditingController? controller;
+
+  /// 電圧の単位選択
+  final Function(VoltUnitEnum value)? onPressedVoltUnitFunc;
+
+  /// 電力の単位選択
+  final Function(PowerUnitEnum value)? onPressedPowerUnitFunc;
 
   const InputTextCard({
     Key? key,
