@@ -1,12 +1,9 @@
-import 'package:elec_facility_calc/src/model/enum_class.dart';
-import 'package:elec_facility_calc/src/notifiers/calc_elec_rate_state.dart';
-import 'package:elec_facility_calc/src/view/widgets/calc_power_unit_appa_select_card.dart';
-import 'package:elec_facility_calc/src/view/widgets/calc_power_unit_select_card.dart';
-import 'package:elec_facility_calc/src/view/widgets/drawer_contents_widget.dart';
-import 'package:elec_facility_calc/src/view/widgets/responsive_widget.dart';
+import 'package:elec_facility_calc/src/view/widgets/checkbox_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elec_facility_calc/ads_options.dart';
+import 'package:elec_facility_calc/src/model/enum_class.dart';
+import 'package:elec_facility_calc/src/notifiers/calc_elec_rate_state.dart';
 import 'package:elec_facility_calc/src/notifiers/state_manager.dart';
 import 'package:elec_facility_calc/src/view/widgets/calc_phase_select_card.dart';
 import 'package:elec_facility_calc/src/view/widgets/calc_run_button_widget.dart';
@@ -14,7 +11,10 @@ import 'package:elec_facility_calc/src/view/widgets/correct_alert_dialog_widget.
 import 'package:elec_facility_calc/src/view/widgets/input_text_card_widget.dart';
 import 'package:elec_facility_calc/src/view/widgets/output_text_card_widget.dart';
 import 'package:elec_facility_calc/src/view/widgets/separate_text_widget.dart';
-import 'package:elec_facility_calc/src/notifiers/calc_elec_power_state.dart';
+import 'package:elec_facility_calc/src/view/widgets/calc_power_unit_appa_select_card.dart';
+import 'package:elec_facility_calc/src/view/widgets/calc_power_unit_select_card.dart';
+import 'package:elec_facility_calc/src/view/widgets/drawer_contents_widget.dart';
+import 'package:elec_facility_calc/src/view/widgets/responsive_widget.dart';
 
 /// 需要率計算ページ
 class CalcElecRatePage extends ConsumerStatefulWidget {
@@ -54,12 +54,14 @@ class CalcElecRatePageState extends ConsumerState<CalcElecRatePage>
     AdsSettingsClass().initRecBanner();
 
     /// shared_prefのデータ保存用非同期providerの読み込み
-    ref.watch(elecPowerSPSetProvider);
+    // ref.watch(elecPowerSPSetProvider);
 
     /// 入力されている文字をNotifierへ通知するためのローカル関数
     void runCheckFunc() {
       ref.read(elecRateProvider.notifier).isRunCheck(
             ref.watch(elecRateTxtCtrAllInstCapaProvider).text,
+            ref.watch(elecRateTxtCtrMaxDemandPowerProvider).text,
+            ref.watch(elecRateTxtCtrAveDemandPowerProvider).text,
           );
     }
 
@@ -99,6 +101,7 @@ class CalcElecRatePageState extends ConsumerState<CalcElecRatePage>
         body: TabBarView(
           controller: _tabController,
           children: <Widget>[
+            /// 需要率計算タブ
             Row(
               children: [
                 /// 画面幅が規定以上でメニューを左側に固定
@@ -148,56 +151,104 @@ class CalcElecRatePageState extends ConsumerState<CalcElecRatePage>
                             ref.watch(elecRateTxtCtrAllInstCapaProvider),
                       ),
 
-                      // /// 計算実行ボタン
-                      // CalcRunButton(
-                      //   // paddingSize: blockWidth,
-                      //   func: () {
-                      //     /// textcontrollerのデータを取得
-                      //     final volt =
-                      //         ref.read(elecPowerTxtCtrVoltProvider).text;
-                      //     final current =
-                      //         ref.read(elecPowerTxtCtrCurrentProvider).text;
-                      //     final cosFai =
-                      //         ref.read(elecPowerTxtCtrCosFaiProvider).text;
+                      /// 最大需要電力入力
+                      InputTextCard(
+                        title: '最大需要電力',
+                        unit:
+                            ref.watch(elecRateProvider).ratePowerUnit.strMark +
+                                ref.watch(elecRateProvider).ratePowerType.str,
+                        message: '整数のみ',
+                        controller:
+                            ref.watch(elecRateTxtCtrMaxDemandPowerProvider),
+                      ),
 
-                      //     /// 実行できるか確認
-                      //     bool isRunCheck = ref
-                      //         .read(elecPowerProvider.notifier)
-                      //         .isRunCheck(volt, current, cosFai);
+                      /// 負荷率の計算を行うか判断
+                      /// チェックボックスで実装
+                      CheckBoxCard(
+                        title: '負荷率計算の実施',
+                        isChecked: ref.watch(elecRateProvider).rateIsLoadFactor,
+                        func: (bool newVal) {
+                          ref
+                              .read(elecRateProvider.notifier)
+                              .updateRateIsLoadFactor(newVal);
+                        },
+                      ),
 
-                      //     /// 実行可能なら計算実行
-                      //     if (isRunCheck) {
-                      //       ref.watch(elecPowerProvider.notifier).run();
-                      //     } else {
-                      //       /// 実行不可能ならエラーダイアログ
-                      //       showDialog<void>(
-                      //         context: context,
-                      //         builder: (BuildContext context) {
-                      //           return const CorrectAlertDialog();
-                      //         },
-                      //       );
-                      //     }
-                      //   },
-                      // ),
+                      /// 平均需要電力入力
+                      /// 負荷率を計算する場合のみ表示
+                      ref.watch(elecRateProvider).rateIsLoadFactor
+                          ? InputTextCard(
+                              title: '平均需要電力',
+                              unit: ref
+                                      .watch(elecRateProvider)
+                                      .ratePowerUnit
+                                      .strMark +
+                                  ref.watch(elecRateProvider).ratePowerType.str,
+                              message: '整数のみ',
+                              controller: ref
+                                  .watch(elecRateTxtCtrAveDemandPowerProvider),
+                            )
+                          : Container(),
 
-                      // /// 広告表示
-                      // existAds ? const RecBannerContainer() : Container(),
+                      /// 計算実行ボタン
+                      CalcRunButton(
+                        // paddingSize: blockWidth,
+                        func: () {
+                          /// textcontrollerのデータを取得
+                          final allInstCapa =
+                              ref.watch(elecRateTxtCtrAllInstCapaProvider).text;
+                          final maxDemandPower = ref
+                              .watch(elecRateTxtCtrMaxDemandPowerProvider)
+                              .text;
+                          final aveDemandPower = ref
+                              .watch(elecRateTxtCtrAveDemandPowerProvider)
+                              .text;
 
-                      // /// 結果表示
-                      // const SeparateText(title: '計算結果'),
+                          /// 実行できるか確認
+                          bool isRunCheck =
+                              ref.read(elecRateProvider.notifier).isRunCheck(
+                                    allInstCapa,
+                                    maxDemandPower,
+                                    aveDemandPower,
+                                  );
 
-                      // /// 皮相電力
-                      // OutputTextCard(
-                      //   title: '皮相電力',
-                      //   unit:
-                      //       ref.watch(elecPowerProvider).powerUnit.strApparent,
-                      //   result: ref.watch(elecPowerApparentPowerProvider),
-                      // ),
+                          /// 実行可能なら計算実行
+                          if (isRunCheck) {
+                            ref.watch(elecRateProvider.notifier).run();
+                          } else {
+                            /// 実行不可能ならエラーダイアログ
+                            showDialog<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const CorrectAlertDialog();
+                              },
+                            );
+                          }
+                        },
+                      ),
+
+                      /// 広告表示
+                      existAds ? const RecBannerContainer() : Container(),
+
+                      /// 結果表示
+                      const SeparateText(title: '計算結果'),
+
+                      /// 需要率
+                      OutputTextCard(
+                        title: '需要率',
+                        unit: '%',
+                        result: ref
+                            .watch(elecRateProvider)
+                            .rateDemandRate
+                            .toString(),
+                      ),
                     ],
                   ),
                 ),
               ],
             ),
+
+            /// 最大需要計算タブ
             Row(
               children: [
                 /// 画面幅が規定以上でメニューを左側に固定
