@@ -110,7 +110,7 @@ class ElecRateNotifier extends StateNotifier<ElecRateData> {
   }
 
   /// 計算実行
-  void run() {
+  void runRate() {
     /// 需要率の計算
     updateDemandRate();
 
@@ -119,7 +119,7 @@ class ElecRateNotifier extends StateNotifier<ElecRateData> {
   }
 
   /// runメソッドが実行できるか確認するメソッド
-  bool isRunCheck(
+  bool isRunCheckRate(
     String strAllInstCapa,
     String strMaxDemandPower,
     String strAveDemandPower,
