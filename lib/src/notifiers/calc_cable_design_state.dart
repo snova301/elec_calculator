@@ -383,6 +383,7 @@ final cableDesignTxtCtrLengthProvider = StateProvider((ref) {
 });
 
 /// 結果の値
+/// 表示のため小数点の桁数を指定
 /// 電流
 final cableDesignCurrentProvider = StateProvider<String>((ref) {
   /// 読み込み

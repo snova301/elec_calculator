@@ -221,6 +221,7 @@ final elecPowerTxtCtrCosFaiProvider = StateProvider((ref) {
 });
 
 /// 結果の値
+/// 表示のため小数点の桁数を指定
 /// 皮相電力
 final elecPowerApparentPowerProvider = StateProvider<String>((ref) {
   /// 読み込み

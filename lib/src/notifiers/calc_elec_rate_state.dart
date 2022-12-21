@@ -96,10 +96,26 @@ class ElecRateNotifier extends StateNotifier<ElecRateData> {
     state = state.copyWith(rateDemandRate: demandRate);
   }
 
+  /// 需要率の計算
+  void updateLoadRate() {
+    /// 読み出し
+    double aveDemandPower = state.rateAveDemandPower;
+    double maxDemandPower = state.rateMaxDemandPower;
+
+    /// 負荷率 = 平均需要電力 / 最大需要電力 * 100%
+    double loadRate = aveDemandPower / maxDemandPower * 100;
+
+    /// 書込み
+    state = state.copyWith(rateLoadRate: loadRate);
+  }
+
   /// 計算実行
   void run() {
     /// 需要率の計算
     updateDemandRate();
+
+    /// 負荷率の計算
+    updateLoadRate();
   }
 
   /// runメソッドが実行できるか確認するメソッド
@@ -122,13 +138,13 @@ class ElecRateNotifier extends StateNotifier<ElecRateData> {
         return false;
       }
 
-      /// 負荷率を計算するとき、最大需要電力が平均需要電力以下ならfalseを返す
-      if (isLoadFactor && maxDemandPower < aveDemandPower) {
+      /// 全設備容量、最大需要電力が0ならfalseを返す
+      if (allInstCapa == 0 || maxDemandPower == 0) {
         return false;
       }
 
-      /// 全設備容量、最大需要電力が0ならfalseを返す
-      if (allInstCapa == 0 || maxDemandPower == 0) {
+      /// 負荷率を計算するとき、最大需要電力が平均需要電力以下ならfalseを返す
+      if (isLoadFactor && maxDemandPower < aveDemandPower) {
         return false;
       }
 
@@ -187,17 +203,4 @@ final elecRateTxtCtrAveDemandPowerProvider = StateProvider((ref) {
       text: aveDemandPower == aveDemandPower.toInt().toDouble()
           ? aveDemandPower.toInt().toString()
           : aveDemandPower.toString());
-});
-
-/// 結果の値
-/// 皮相電力
-final elecRateTyperentPowerProvider = StateProvider<String>((ref) {
-  /// 読み込み
-  double power = ref.watch(elecRateProvider).rateAllInstCapa;
-  double powerUnitRatio =
-      ref.watch(elecRateProvider.notifier).calcPowerUnitRatio();
-
-  /// 小数点1桁以下を四捨五入してString型に
-  String strPower = (power / powerUnitRatio).toStringAsFixed(1);
-  return strPower;
 });

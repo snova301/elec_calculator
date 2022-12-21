@@ -240,8 +240,20 @@ class CalcElecRatePageState extends ConsumerState<CalcElecRatePage>
                         result: ref
                             .watch(elecRateProvider)
                             .rateDemandRate
-                            .toString(),
+                            .toStringAsFixed(1),
                       ),
+
+                      /// 負荷率
+                      ref.watch(elecRateProvider).rateIsLoadFactor
+                          ? OutputTextCard(
+                              title: '負荷率',
+                              unit: '%',
+                              result: ref
+                                  .watch(elecRateProvider)
+                                  .rateLoadRate
+                                  .toStringAsFixed(1),
+                            )
+                          : Container(),
                     ],
                   ),
                 ),
