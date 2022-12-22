@@ -1,8 +1,6 @@
-import 'dart:math';
 import 'package:elec_facility_calc/src/model/elec_rate_data_model.dart';
 import 'package:elec_facility_calc/src/model/enum_class.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// 需要率計算のProviderの定義

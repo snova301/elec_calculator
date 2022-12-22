@@ -166,7 +166,7 @@ class WiringCreateCableTypeSelect extends ConsumerWidget {
         ).toList(),
         onChanged: (String? value) {
           /// 変更
-          ref.read(wiringListSettingProvider.state).state.cableType = value!;
+          ref.read(wiringListSettingProvider.notifier).state.cableType = value!;
         },
       ),
     );

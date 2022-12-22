@@ -163,7 +163,7 @@ class WiringListSearchCard extends ConsumerWidget {
           ).toList(),
           onChanged: (String? value) {
             /// 変更
-            ref.read(providerStr.state).state = value!;
+            ref.read(providerStr.notifier).state = value!;
           },
         ),
       ),
@@ -228,7 +228,7 @@ class WiringView extends ConsumerWidget {
               /// タップ時編集モードに遷移
               onTap: () {
                 /// 新規作成モードをOFFにし、各値を入れ込む
-                ref.read(wiringListSettingProvider.state).state =
+                ref.read(wiringListSettingProvider.notifier).state =
                     WiringListSettingDataClass(
                   isCreate: false,
                   id: wiringMapKeyList[index],
@@ -289,7 +289,7 @@ class WiringAddFAB extends ConsumerWidget {
       onPressed: () {
         if (ref.watch(wiringListProvider).length < maxNum) {
           /// データ更新
-          ref.read(wiringListSettingProvider.state).state =
+          ref.read(wiringListSettingProvider.notifier).state =
               WiringListSettingDataClass(
             isCreate: true,
             id: const Uuid().v4(),
