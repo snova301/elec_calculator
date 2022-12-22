@@ -48,18 +48,18 @@ class MyHomePage extends ConsumerWidget {
                   icon: PageNameEnum.cableDesign.icon,
                 ),
                 _PagePush(
-                  title: PageNameEnum.elecPower.title,
-                  pagepush: const CalcElecPowerPage(),
-                  backGroundColor: Colors.green,
-                  textColor: Colors.white,
-                  icon: PageNameEnum.elecPower.icon,
-                ),
-                _PagePush(
                   title: PageNameEnum.conduit.title,
                   pagepush: const CalcConduitPage(),
                   backGroundColor: Colors.green,
                   textColor: Colors.white,
                   icon: PageNameEnum.conduit.icon,
+                ),
+                _PagePush(
+                  title: PageNameEnum.elecPower.title,
+                  pagepush: const CalcElecPowerPage(),
+                  backGroundColor: Colors.green,
+                  textColor: Colors.white,
+                  icon: PageNameEnum.elecPower.icon,
                 ),
                 _PagePush(
                   title: PageNameEnum.elecRate.title,

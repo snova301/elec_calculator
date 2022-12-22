@@ -99,22 +99,6 @@ class DrawerContentsListTile extends ConsumerWidget {
           },
         ),
 
-        /// 電力計算画面へ
-        ListTile(
-          title: Text(
-            PageNameEnum.elecPower.title,
-            style: TextStyle(fontSize: fontSize),
-          ),
-          leading: Icon(PageNameEnum.elecPower.icon),
-          onTap: () {
-            toPagePush(
-              context,
-              PageNameEnum.elecPower.title,
-              PageNameEnum.elecPower.page,
-            );
-          },
-        ),
-
         /// 電線管設計画面へ
         ListTile(
           title: Text(
@@ -127,6 +111,22 @@ class DrawerContentsListTile extends ConsumerWidget {
               context,
               PageNameEnum.conduit.title,
               PageNameEnum.conduit.page,
+            );
+          },
+        ),
+
+        /// 電力計算画面へ
+        ListTile(
+          title: Text(
+            PageNameEnum.elecPower.title,
+            style: TextStyle(fontSize: fontSize),
+          ),
+          leading: Icon(PageNameEnum.elecPower.icon),
+          onTap: () {
+            toPagePush(
+              context,
+              PageNameEnum.elecPower.title,
+              PageNameEnum.elecPower.page,
             );
           },
         ),

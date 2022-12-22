@@ -65,8 +65,8 @@ enum PowerTypeEnum {
 enum PageNameEnum {
   toppage('トップページ', MyHomePage(), Icons.home_rounded),
   cableDesign('ケーブル設計', CalcCableDesignPage(), Icons.design_services),
+  conduit('電線管設計', CalcConduitPage(), Icons.design_services),
   elecPower('電力計算', CalcElecPowerPage(), Icons.calculate),
-  conduit('電線管設計', CalcConduitPage(), Icons.gavel_rounded),
   elecRate('需要率計算', CalcElecRatePage(), Icons.calculate),
   wiring('配線管理', WiringListPage(), Icons.list_alt),
   showLaw('法律表示', ShowLawPage(), Icons.library_books),
