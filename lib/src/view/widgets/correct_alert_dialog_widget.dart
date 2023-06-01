@@ -15,9 +15,9 @@ class CorrectAlertDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('入力数値異常'),
-      content: SingleChildScrollView(
+      content: const SingleChildScrollView(
         child: ListBody(
-          children: const <Widget>[
+          children: <Widget>[
             Text('入力した数値を確認してください。'),
           ],
         ),

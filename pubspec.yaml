@@ -15,10 +15,10 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 4.3.0+21
+version: 4.3.1+22
 
 environment:
-  sdk: ">=2.17.6 <3.0.0"
+  sdk: ">=2.18.1 <3.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -31,20 +31,20 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  google_mobile_ads: ^2.3.0
-  flutter_launcher_icons: ^0.11.0
-  flutter_riverpod: ^2.1.1
-  shared_preferences: ^2.0.15
-  url_launcher: ^6.1.7
+  google_mobile_ads: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
+  flutter_riverpod: ^2.3.6
+  shared_preferences: ^2.1.1
+  url_launcher: ^6.1.11
   freezed_annotation: ^2.2.0
 
   uuid: ^3.0.7
-  json_annotation: ^4.7.0
-  flutter_native_splash: ^2.2.16
+  json_annotation: ^4.8.1
+  flutter_native_splash: ^2.3.0
 
-  firebase_core: ^2.4.0
-  firebase_analytics: ^10.0.8
-  firebase_crashlytics: ^3.0.8
+  firebase_core: ^2.13.1
+  firebase_analytics: ^10.4.2
+  firebase_crashlytics: ^3.3.2
 
 flutter_icons:
   android: "launcher_icon"
@@ -74,9 +74,9 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.1
-  build_runner: ^2.3.3
-  freezed: ^2.3.2
-  json_serializable: ^6.5.4
+  build_runner: ^2.4.4
+  freezed: ^2.3.4
+  json_serializable: ^6.7.0
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
