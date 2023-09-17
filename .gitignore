@@ -130,3 +130,4 @@ ios/firebase_app_id_file.json
 lib/src/data/*
 android/
 ios/
+pubspec.lock
